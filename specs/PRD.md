@@ -15,10 +15,20 @@ whatever the mechanics, motors or control source turn out to be. Built for one h
 **Success test (CORE-01).** A new head with different mechanics needs a configuration change only: no new
 board, no new firmware build, no soldered wires.
 
+## Targets (proposed, not yet approved)
+
+Numbers in `docs/research/README.md`, R-01. Taken from a professional head so that they can be changed rather than guessed.
+
+- TGT-01 Payload 2.5 kg including plate: a DSLR or mirrorless up to 2 kg. Lens gets its zoom from a motor on its ring.
+- TGT-02 Slowest clean pan and tilt 0.08°/s.
+- TGT-03 Fastest quiet pan and tilt 60°/s.
+- TGT-04 No louder than NC35 up to 60°/s; slow moves inaudible at 2 m in a quiet room, judged by the owner. Used in theatres among the audience.
+- TGT-05 A preset lands within about 0.005°, from the same side each time.
+
 ## Hardware: on the board
 
 ### Power (POW)
-- POW-01 Single DC input, 12 to 24 V nominal, through a locking connector.
+- POW-01 Single DC input through a locking connector. 24 V is the leading candidate (R-07).
 - POW-02 Survives reverse polarity, a hot-plug spike and a short on any output connector. The previous board
   burned out on a 12 V/MOSFET problem, so this is checked by calculation and in the bring-up run.
 - POW-03 Motor supply and logic supply are fused separately.
@@ -34,8 +44,8 @@ board, no new firmware build, no soldered wires.
 - DRV-04 Stall and fault per axis reach the MCU (DIAG), so sensorless homing is possible.
 - DRV-05 Thermal: at the specified current, with stated assumptions about the enclosure, the calculated driver
   temperature leaves margin. Copper and vias under each driver are sized for that.
-- DRV-06 Each axis also has an **external driver port** (STEP, DIR, EN, UART, GND), so a closed-loop driver or a
-  larger stage can replace the on-board driver without new hardware.
+- DRV-06 Each axis also has an **external driver port** (STEP, DIR, GND at the least), so a closed-loop driver or a
+  larger stage can replace the on-board driver without new hardware. The TMC5240 can output STEP and DIR itself (datasheet p60).
 
 ### Position sensing (ENC)
 - ENC-01 One absolute sensor port per axis. Sensor and bus per R-05. Candidates: an SPI sensor (leading), or I2C through a mux.
@@ -55,13 +65,13 @@ board, no new firmware build, no soldered wires.
 - CTL-07 USB-C for flashing and logs, reachable with the head closed.
 
 ### Camera (CAM)
-- CAM-01 LANC port, for zoom and record on Sony and Canon cameras without a zoom motor.
+- CAM-01 Struck: the owner's camera has no LANC, and a zoom motor is needed anyway (2026-11-04).
 - CAM-02 Tally output and record trigger. **[OPEN]**
 
 ### Other I/O (AUX)
 - AUX-01 Spare I2C port for a display or sensor.
-- AUX-02 Status RGB LED and a user button.
-- AUX-03 One 12/24 V switched output with PWM, for a fan. **[OPEN]**
+- AUX-02 Status RGB LED, dark during a show, and a user button.
+- AUX-03 Struck: no fan in a theatre among the audience (2026-11-04).
 - AUX-04 Board temperature read by firmware.
 - AUX-05 Test points on every rail and bus.
 
@@ -89,6 +99,7 @@ A new code base. The old firmware in `PTZ-head` is reference only.
 - FW-08 Every per-head value (ratios, directions, currents, limits, sensor type) is configuration, set without a rebuild.
 - FW-09 OTA updates over the network, so the head need not be opened.
 - FW-10 A web page for setup and calibration. **[OPEN: v1 or later]**
+- FW-11 A preset always lands from the same side, to take out backlash and hysteresis (R-08).
 
 ## What the 3D design must provide (MEC)
 
@@ -102,7 +113,7 @@ These flow from the software and electronics into the mechanics, and are the inp
 - MEC-04 **Wire count through the shafts.** With absolute sensors on a shared SPI bus and no home switches: motors 12 + sensors 8 =
   20 wires for tilt, zoom and focus (R-05). The bore is sized for that, or a remote node sits above pan (IDEA-02).
 - MEC-05 A place for the external antenna outside the carbon-filled walls.
-- MEC-06 Heat: four drivers and their path out of a closed base (vent, fan, or a metal plate).
+- MEC-06 Heat: no fan. The board stays off the plastic; a printed part softens long before the chips reach their limit (R-03).
 - MEC-07 Pan range is limited, with a cable service loop (owner, 2026-11-04). No slip ring.
 
 ## Out of scope for v1

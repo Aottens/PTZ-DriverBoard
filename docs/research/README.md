@@ -3,29 +3,47 @@
 The owner and Claude work through these questions together before the hardware is fixed. Each ends in an entry in
 `DECISIONS.md` and a change to `specs/PRD.md`. No schematic work starts before they are closed.
 
-**Confidence tags:** `[zeker]` = from the JLC parts search on 2026-11-04 or a calculation shown here.
-`[bron]` = from a secondary source listed at the bottom; check against the datasheet. `[geheugen]` = from Claude's
-memory, no source yet; treat as a question. The Analog Devices site and LCSC datasheet links did not load in this round, so
-**no driver claim below has been checked against a datasheet yet.**
+**Confidence tags:** `[datasheet]` = read in the manufacturer's datasheet, page given. `[zeker]` = from the JLC parts search on
+2026-11-04 or a calculation shown here. `[bron]` = from a secondary source listed at the bottom. `[geheugen]` = from Claude's memory, no
+source yet; treat as a question.
 
 | Id | Question | Who first | Status |
 | --- | --- | --- | --- |
-| R-01 | What must the head do, in numbers? | Owner | open |
-| R-02 | Which motor technology? | Claude + bench test | first round |
-| R-03 | Which driver, and where does motion happen? | Claude + datasheets | first round |
-| R-04 | Which MCU? | Claude | first round, depends on R-03 |
-| R-05 | Which position sensor, over which bus? | Claude + bench test | first round |
+| R-01 | What must the head do, in numbers? | Owner | targets proposed, owner to approve |
+| R-02 | Which motor technology? | Claude + test rig | leading candidate |
+| R-03 | Which driver, and where does motion happen? | Claude + test rig | TMC5240 checked on paper, rig left |
+| R-04 | Which MCU? | Claude | leading candidate |
+| R-05 | Which position sensor, over which bus? | Claude + test rig | leading candidate |
 | R-06 | How small can the board get? | Claude + 3D design | first round |
-| R-07 | Which supply voltage? | Claude, after R-01 | open |
+| R-07 | Which supply voltage? | Claude | leading candidate: 24 V |
+| R-08 | Which reduction? (new) | Claude + test rig | leading candidate: about 30:1 |
 
 ## R-01 — What must the head do, in numbers?
 
-Every other question leans on this one. Needed from the owner: camera and lens (mass, zoom range), which axes really need a
-motor (a camera with LANC or IP zoom needs no zoom motor), slowest and fastest move, what counts as too loud, and how exactly a
-preset must land.
+**From the owner (2026-11-04):** usually a DSLR or mirrorless, 1.5 to 2 kg at most. The camera has no LANC or IP zoom, so a zoom motor is
+needed. Used in theatres among the audience, so fairly quiet. As exact as possible within DIY means. Speeds not known yet. The old head stays out of it.
 
-Why slowest speed and landing matter: at a narrow field of view of 3° on 1080p, one pixel is about 0.0016° (3 / 1920) `[zeker]`.
-That sets what "smooth" and "exact" mean, far beyond what the old brief assumed.
+**Proposed targets**, taken from a professional head so that we can change them instead of guessing. The Panasonic AW-UE150 runs from 0.08°/s up, and is
+rated NC35 or less up to 60°/s, its normal mode `[bron]`.
+
+| Id | Target | Proposal |
+| --- | --- | --- |
+| TGT-01 | Payload, including plate | 2.5 kg |
+| TGT-02 | Slowest clean pan and tilt | 0.08°/s |
+| TGT-03 | Fastest quiet pan and tilt | 60°/s |
+| TGT-04 | Noise while moving | No louder than NC35 up to 60°/s. Slow moves inaudible at 2 m in a quiet room, judged by the owner |
+| TGT-05 | Preset landing, always from the same side | Within 2 pixels at 200 mm on 4K, so about 0.005° |
+
+**What a pixel is worth** (horizontal field of view on full frame, `[zeker]`):
+
+| Lens | Field of view | Pixel at 1080p | Pixel at 4K |
+| --- | --- | --- | --- |
+| 70 mm | 28.8° | 0.015° | 0.0075° |
+| 200 mm | 10.3° | 0.0054° | 0.0027° |
+| 400 mm | 5.2° | 0.0027° | 0.0013° |
+| 600 mm | 3.4° | 0.0018° | 0.0009° |
+
+**Still needed from the owner:** the longest lens in use, and full frame or APS-C. A 200 mm is assumed here.
 
 ## R-02 — Which motor technology?
 
@@ -38,19 +56,20 @@ That sets what "smooth" and "exact" mean, far beyond what the old brief assumed.
 
 The search found **no measured comparison** of the two in a camera head, so this is reasoning, not evidence.
 
-**Leading candidate: stepper with belt reduction.** It keeps the board small and simple, which is the owner's goal.
-**What would overturn it:** bench test T-1 below shows jitter we cannot accept.
+**Leading candidate: stepper with belt reduction.** It keeps the board small and simple, which is the owner's goal, and the TMC5240 is built for this: StealthChop2 is
+specified as noiseless at standstill and low speed `[datasheet p29]`, and its microstep table can be reprogrammed per motor for smoother motion `[datasheet p74]`.
+**What would overturn it:** the test rig (T-1) shows noise or jitter we cannot accept.
 
 ## R-03 — Which driver, and where does motion happen?
 
 | | TMC2209 | TMC2240 | TMC5240 |
 | --- | --- | --- | --- |
-| Motion | MCU makes step pulses | MCU makes step pulses | **Ramp generator in the chip**, position and velocity modes `[bron]` |
+| Motion | MCU makes step pulses | MCU makes step pulses | **Ramp generator in the chip**, position and velocity modes `[datasheet p1]` |
 | Bus | UART `[bron]` | SPI or UART, plus step/dir `[bron]` | SPI `[bron]` |
-| Voltage | 29 V max `[bron]` | 36 V `[bron]` | 36 V `[bron]` |
-| Current | 2 A RMS `[bron]` | 2 A RMS+ `[bron]` | 2 A RMS `[bron]` |
-| Sense resistors | External, 2 per driver `[geheugen]` | Internal `[geheugen]` | Internal `[geheugen]` |
-| Encoder and home inputs | None | None `[geheugen]` | ABN encoder `[bron]`; home inputs that stop the motor in the chip `[geheugen]` |
+| Voltage | 29 V max `[bron]` | 36 V `[bron]` | 36 V, 41 V absolute `[datasheet p10]` |
+| Current | 2 A RMS `[bron]` | 2 A RMS+ `[bron]` | 2.1 A RMS `[datasheet p1]` |
+| Sense resistors | External, 2 per driver `[geheugen]` | Internal `[geheugen]` | None `[datasheet p1]` |
+| Encoder and home inputs | None | None `[geheugen]` | ABN encoder, home inputs that stop the motor in the chip `[datasheet p1, p58]` |
 | Package | QFN-28, 5×5 `[zeker]` | TQFN-32, 5×5 `[zeker]` | TQFN-32, 5×5 `[zeker]` |
 | JLC stock, price | 22,495, $2.83 `[zeker]` | 4,150, $7.52 `[zeker]` | 3,348, $7.24 `[zeker]` |
 | Four on a board | $11.32 | $30.08 | $28.96 `[zeker]` |
@@ -58,18 +77,38 @@ The search found **no measured comparison** of the two in a camera head, so this
 Left out: TMC5160 needs eight external MOSFETs, which works against a small board `[geheugen]`. TMC5272 is a two-axis chip
 on one small die, but JLC has 1 in stock `[zeker]`.
 
-**Leading candidate: TMC5240**, for three reasons:
-1. **Fewer pins and parts.** Eight STEP/DIR pins and the driver UART become one SPI bus with four chip selects. Home inputs land on
-   the driver, not the MCU. That probably removes the I/O expander (R-04).
-2. **Safer.** A home input that stops the motor in the chip works even when firmware hangs `[geheugen]`.
-3. **Simpler firmware.** The chip runs the ramp, so WiFi load cannot touch step timing, and velocity mode suits a joystick.
+**Leading candidate: TMC5240**, now checked against its datasheet (19-101625C, Rev 1, 4/24):
 
-Costs: about $18 more per board, which matters little for one head. Fewer open-source examples than the TMC2209 `[geheugen]`.
+| Claim | Result |
+| --- | --- |
+| **External driver port (DRV-06)** | **Yes.** DIAG0 and DIAG1 can output STEP and DIR from the internal ramp generator, for an external driver `[datasheet p17, p60-61]`. No extra pins |
+| Home inputs stop the motor in the chip | **Yes.** REFL and REFR, hard or soft stop, and they latch the exact position `[datasheet p58]` |
+| Supply | 4.5 to 36 V, absolute maximum **41 V** `[datasheet p1, p10]` |
+| Current | 2.1 A RMS at 25 °C on four layers; real limit is thermal `[datasheet p1]` |
+| No sense resistors | **Yes**, integrated current sensing `[datasheet p1]` |
+| Reprogrammable microstep table | **Yes**, for smoother motion with a given motor `[datasheet p74]` |
+| Encoder input | ABN, which is incremental, so it does not replace an absolute sensor `[datasheet p1, p77]` |
+| Daisy chain on SPI | **Yes**; all commands take effect when CSN goes high `[datasheet p25]` |
 
-**Check first, these can overturn it:**
-- Can a TMC5240 drive an **external driver** (DRV-06), or does that port need other wiring? If not, the "alles kan" port costs extra pins.
-- Is its low-speed smoothness the same as the TMC2209 at equal microstepping? Same chopper family, but unverified.
-- Do internal sensing and thermal limits really allow the current our motors need, on a small board?
+**The daisy chain may be the best part.** One chip select for all four drivers, so **a preset move can start on all axes at the same instant**. That follows from the datasheet's description
+and is still to prove on a real chain.
+
+**Limits to design for:**
+- Automatic StealthChop tuning has a lower current limit that rises with supply voltage, or set `pwm_meas_sd_enable` `[datasheet p33-34]`. To work out once the motors are chosen.
+- Fewer open-source examples than the TMC2209 `[geheugen]`.
+
+Costs: about $18 more per board than TMC2209, which matters little for one head.
+
+**Heat, by calculation** `[zeker, with these assumptions]`. Losses in the bridges only, RDS(on) 0.23 Ω, two bridges per motor, so `2 × I² × 0.23`. θJA 29 °C/W is for a JEDEC four-layer board `[datasheet p10]`, larger than ours.
+
+| Current per motor | Per driver | Junction rise |
+| --- | --- | --- |
+| 0.4 A | 0.07 W | 2 °C |
+| 1.0 A | 0.46 W | 13 °C |
+| 1.5 A | 1.04 W | 30 °C |
+
+Far below the 125 °C operating limit `[datasheet p10]`. A 50×50 mm board in still air (10 W/m²K, both sides) rises about 37 °C with all four at 1 A, and much less at the current R-08 suggests. **So the chip is not the limit; the
+3D print is**: PETG softens around 80 °C and PLA well below that `[geheugen]`. Keep the board off the plastic.
 
 ## R-04 — Which MCU?
 
@@ -84,8 +123,8 @@ Outside the ESP32 family: STM32 parts have almost no JLC stock (STM32G474RET6: 1
 separate radio. Both add a chip and lose the radio-on-board simplicity.
 
 **Leading candidate: ESP32-S3-MINI-1U-N8**, with an external antenna: smaller than the WROOM and probably more pins. The firmware has no clear need for PSRAM `[geheugen]`.
-Pin budget with TMC5240, without RS-232, expander or UART0 logs: **about 32, or about 35 if the sensors get their own SPI bus**, which a long cable argues for. This is a sum; the module's real pin count is still to check.
-The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still, but only an option if ports drop.
+Pin budget with a TMC5240 chain and no RS-232, LANC, fan or expander: **about 29** `[zeker, as a sum]`, which fits. The module's real pin count is still to check, and with it the strapping pins.
+The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still and could become an option at 29 pins; its pin count is the first thing to check.
 
 ## R-05 — Which position sensor, over which bus?
 
@@ -97,7 +136,7 @@ The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still
 | JLC stock, price | 401, $1.71 `[zeker]` | 5,054, $6.05 `[zeker]` | 1,219, $2.03 (QFN) `[zeker]` | 20,449, $3.56 `[zeker]` |
 
 **Two findings that change the question:**
-1. **±1° is about 640 pixels at 3° field of view**, a third of the frame (1 / 0.0016) `[zeker]`. No cheap sensor gives "exact" on its own, and it does not have to:
+1. **±1° is about 370 pixels on a 200 mm lens at 4K** (1 / 0.0027) `[zeker]`. No cheap sensor gives "exact" on its own, and it does not have to:
    the sensor says roughly where the head is at boot, the motor's step count does the fine work, and presets lean on repeatability rather than absolute
    accuracy. So the number to find is **repeatability and noise**, which the search did not give.
 2. **SPI may remove the mux.** One shared bus with a chip select per sensor needs no TCA9548A and cuts wires: 5 shared plus 3 chip selects is 8 through the shaft
@@ -120,23 +159,53 @@ A first estimate from rough block areas, not a layout `[geheugen]`:
 | **Parts** | **about 1,600** |
 | With routing and edges, times 1.5 | **about 2,400, so roughly 50×50 mm** |
 
-**The limit is probably heat, not parts.** Four drivers at 1 A or more in 50×50 mm need a way out: the base design has to take heat from the board, for example through a metal plate.
-That is the first thing the board and the 3D design must decide together, and R-07 and the current per axis feed into it.
+**Heat looks manageable without a fan** (R-03), which the theatre rules out anyway. The limit is keeping warmth away from the plastic, and that is the first thing the board and the 3D design agree on.
 
 Options to explore with the 3D design: smaller connectors, parts on both sides (at the cost of the bottom-side CPL risk from the scoreboard), a ring-shaped board around the pan shaft, and a remote node (IDEA-02) that
 moves heat and wires out of the base.
 
 ## R-07 — Which supply voltage?
 
-24 V gives more torque at speed; 12 V is simpler and easier to power. With a reduction, the motors may never turn fast enough for the difference to matter, so R-01 decides it. With a 36 V driver, 24 V has real margin; with the
-TMC2209's 29 V it has little.
+**Leading candidate: 24 V.** At about 30:1 a motor turns about 300 rpm at the fastest quiet speed (R-08), and low-current motors with high coil resistance need voltage to reach that: the
+17HS13-0404D from the July design needs 12 V just for its rated 0.4 A, given its 30 Ω coil `[geheugen]`. With the TMC5240's 41 V absolute maximum there is 17 V of margin `[datasheet p10]`.
 
-## Bench tests (owner)
+## R-08 — Which reduction?
 
-- **T-1 Smoothness baseline.** Old head with TMC2209, camera fully zoomed in: record the slowest clean pan. What is visible, at what speed? Answers R-02 and sets a target for R-03. Needs the old head to still run.
-- **T-2 Sensor cable.** A sensor on the longest cable next to a running stepper, I2C against SPI: count read errors. Answers R-05.
+New question, and it follows from "as exact as possible". Reduction shrinks every motor error at the output. On a 200 mm lens at 4K (one pixel 0.0027°) `[zeker]`, taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`:
+
+| Reduction | Microstep at output | Stepper error at output | In pixels | Motor at 60°/s | Tilt torque at the motor, worst case 1.47 Nm, 80 % efficient |
+| --- | --- | --- | --- | --- | --- |
+| 5:1 (July, pan) | 0.0014° | ±0.018° | 6.7 | 50 rpm | 0.37 Nm |
+| 9:1 (July, tilt) | 0.0008° | ±0.010° | 3.7 | 90 rpm | 0.20 Nm |
+| 16:1 | 0.0004° | ±0.006° | 2.1 | 160 rpm | 0.12 Nm |
+| **30:1** | **0.0002°** | **±0.003°** | **1.1** | **300 rpm** | **0.06 Nm** |
+| 60:1 | 0.0001° | ±0.0015° | 0.6 | 600 rpm | 0.03 Nm |
+
+**Leading candidate: about 30:1**, as two belt stages. This one choice helps almost everything: smaller errors, ripple that is smaller and faster, a smaller and cooler motor, and less heat on the board.
+It also helps noise, since the motor needs far less current, though 300 rpm may be louder than 90 rpm; only the rig can say. The step rate of 256,000 microsteps/s at 256 microstepping is above FastAccelStepper's 200 kHz `[bron]`, one more argument for a ramp generator in the driver.
+
+**The other half of exact is firmware:** always landing a preset from the same side takes out backlash and hysteresis, for no hardware at all (FW-11).
+**What would overturn it:** the belts' own stretch. A last stage that is too soft makes the head wobble after a stop, whatever the reduction. The rig measures that.
+
+## Zoom axis
+
+A DSLR or mirrorless lens zooms by a ring, so the zoom motor drives a gear belted or geared to that ring. This is its own small design: how much torque the ring needs, how to mount it per lens, and how to home it.
+A ring turning less than once allows an absolute sensor on a matching gear; otherwise soft stall homing against the ring's end `[datasheet p58]`. To do with the 3D design.
+
+## Test rig (owner, with Claude designing it)
+
+The old head stays out of it, so the evidence comes from **a one-axis test rig**: one real axis, before any board exists.
+
+- **Parts:** a TMC5240-BOB breakout (SPI, 2×12 pins; on sale at Mouser, element14 and MEV Elektronik `[bron]`, price still to check), any ESP32 dev board, one NEMA 17, GT2 pulleys and belts, magnet and sensor, 24 V supply, a printed frame.
+- **T-1 Motion and noise.** Camera fully zoomed in, slowest clean move, then fastest quiet move, then stopping: what shows on screen, what is audible at 1 and 2 m? Tried at 9:1 and 30:1. Answers R-02, R-03 and R-08 together.
+- **T-2 Sensor cable.** On the same rig: a sensor on the longest cable next to the running motor, I2C against SPI, counting read errors, and read noise at standstill for repeatability. Answers R-05.
 
 ## Sources
+
+- [TMC5240 datasheet, Rev 1, Analog Devices](https://www.analog.com/media/en/technical-documentation/data-sheets/tmc5240.pdf)
+- [Panasonic AW-UE150 specifications](https://latam.connect.panasonic.com/pa/en/download-specifications/134)
+- [TMC5240-BOB, Analog Devices](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5240-bob.html)
+- [TMC5240-BOB and TMC2240-BOB, Mouser](https://www.mouser.se/adi-tmc2240-bob-tmc5240-bob-boards)
 
 - [Analog Devices TMC5240 no-OS driver](https://analogdevicesinc.github.io/no-OS/drivers/motor/tmc5240.html)
 - [TMC5240 evaluation board](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5240-eval.html)

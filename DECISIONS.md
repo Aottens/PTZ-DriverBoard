@@ -4,6 +4,19 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — Theatre use sets the bar, and the old head is out
+
+**Decision:** The head carries a DSLR or mirrorless up to 2 kg, in theatres among the audience, as exact as DIY allows. No LANC, since the camera has none. No fan. The old head is left out, so
+the evidence comes from a new one-axis test rig. Targets TGT-01..05 are proposed, from a professional head, for the owner to approve.
+
+**Alternatives considered:** measuring the old head as a baseline; keeping LANC for other cameras (the board is for one head and should be small).
+
+**Reasoning:** the owner does not know the speeds yet, so a reference gives something to change. A rig answers noise, smoothness, reduction and cable questions on real hardware before any board is ordered.
+
+**Reversal trigger:** another camera with LANC comes into use; then CAM-01 returns.
+
+---
+
 ## 2026-11-04 — One head, small, a research phase first
 
 **Decision:** The board is for one head, the owner's own, and as small as possible. Four axes. Limited pan with a cable loop, no
