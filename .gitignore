@@ -1,0 +1,10 @@
+.DS_Store
+.pio/
+.claude/worktrees/
+.claude/settings.local.json
+hardware/.mcp-backups/
+hardware/*-backups/
+hardware/fp-info-cache
+hardware/*.kicad_prl
+hardware/~*.lck
+*.lck

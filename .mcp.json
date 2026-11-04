@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "kicad": {
+      "type": "stdio",
+      "command": "/usr/local/bin/node",
+      "args": [
+        "/Users/aernoutottens/Tools/KiCAD-MCP-Server/dist/index.js"
+      ],
+      "env": {
+        "KICAD_PYTHON": "/Users/aernoutottens/Tools/KiCAD-MCP-Server/venv/bin/python3",
+        "PYTHONPATH": "/Users/aernoutottens/Tools/KiCAD-MCP-Server/venv/lib/python3.9/site-packages",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}
