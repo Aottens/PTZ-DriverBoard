@@ -71,7 +71,7 @@ Numbers in `docs/research/README.md`, R-01. Taken from a professional head so th
 ### Other I/O (AUX)
 - AUX-01 Spare I2C port for a display or sensor.
 - AUX-02 Status RGB LED, dark during a show, and a user button.
-- AUX-03 Struck: no fan in a theatre among the audience (2026-11-04).
+- AUX-03 One optional switched output with PWM, for a fan (owner, 2026-11-04). Off by default; the head must meet its targets without it.
 - AUX-04 Board temperature read by firmware.
 - AUX-05 Test points on every rail and bus.
 
@@ -113,7 +113,7 @@ These flow from the software and electronics into the mechanics, and are the inp
 - MEC-04 **Wire count through the shafts.** With absolute sensors on a shared SPI bus and no home switches: motors 12 + sensors 8 =
   20 wires for tilt, zoom and focus (R-05). The bore is sized for that, or a remote node sits above pan (IDEA-02).
 - MEC-05 A place for the external antenna outside the carbon-filled walls.
-- MEC-06 Heat: no fan. The board stays off the plastic; a printed part softens long before the chips reach their limit (R-03).
+- MEC-06 Heat: designed to work without a fan, with room to add one (AUX-03). The board stays off the plastic; a printed part softens long before the chips reach their limit (R-03).
 - MEC-07 Pan range is limited, with a cable service loop (owner, 2026-11-04). No slip ring.
 
 ## Out of scope for v1

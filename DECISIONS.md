@@ -4,6 +4,18 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — The fan output stays, as an option
+
+**Decision:** Keep a switched PWM output for a fan (AUX-03), off by default. This corrects "No fan" in the entry below: the head is still designed to meet its targets without one.
+
+**Alternatives considered:** striking the output, to save a pin and some board space.
+
+**Reasoning:** the owner wants the option. It costs one pin and a small switch, and it is a reserve if the heat calculation proves optimistic.
+
+**Reversal trigger:** it turns out to be the part that keeps the board from getting smaller.
+
+---
+
 ## 2026-11-04 — Theatre use sets the bar, and the old head is out
 
 **Decision:** The head carries a DSLR or mirrorless up to 2 kg, in theatres among the audience, as exact as DIY allows. No LANC, since the camera has none. No fan. The old head is left out, so

@@ -123,8 +123,8 @@ Outside the ESP32 family: STM32 parts have almost no JLC stock (STM32G474RET6: 1
 separate radio. Both add a chip and lose the radio-on-board simplicity.
 
 **Leading candidate: ESP32-S3-MINI-1U-N8**, with an external antenna: smaller than the WROOM and probably more pins. The firmware has no clear need for PSRAM `[geheugen]`.
-Pin budget with a TMC5240 chain and no RS-232, LANC, fan or expander: **about 29** `[zeker, as a sum]`, which fits. The module's real pin count is still to check, and with it the strapping pins.
-The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still and could become an option at 29 pins; its pin count is the first thing to check.
+Pin budget with a TMC5240 chain and no RS-232, LANC or expander, with the fan output: **about 30** `[zeker, as a sum]`, which fits. The module's real pin count is still to check, and with it the strapping pins.
+The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still and could become an option at 30 pins; its pin count is the first thing to check.
 
 ## R-05 — Which position sensor, over which bus?
 
@@ -159,7 +159,7 @@ A first estimate from rough block areas, not a layout `[geheugen]`:
 | **Parts** | **about 1,600** |
 | With routing and edges, times 1.5 | **about 2,400, so roughly 50×50 mm** |
 
-**Heat looks manageable without a fan** (R-03), which the theatre rules out anyway. The limit is keeping warmth away from the plastic, and that is the first thing the board and the 3D design agree on.
+**Heat looks manageable without a fan** (R-03), which is what a theatre needs. The optional fan output (AUX-03) is a reserve, not part of the plan. The limit is keeping warmth away from the plastic, and that is the first thing the board and the 3D design agree on.
 
 Options to explore with the 3D design: smaller connectors, parts on both sides (at the cost of the bottom-side CPL risk from the scoreboard), a ring-shaped board around the pan shaft, and a remote node (IDEA-02) that
 moves heat and wires out of the base.
