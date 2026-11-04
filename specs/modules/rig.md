@@ -50,11 +50,39 @@ Belts and centres from `mechanica/belts.py`, which checks at least 6 teeth in me
 | B, middle shaft to output | 16T to 96T | 280 mm | 79.9 mm |
 | 9:1, motor to output | 16T to 144T | 400 mm | 112.6 mm |
 
-**Layout, top view:** middle shaft at x = -79.9; 30:1 motor at x = -79.9, y = -69; 9:1 motor at x = +112.6. Everything falls within about 240 × 140 mm, which fits the printer's 256 mm bed.
+**Layout, top view:** middle shaft at x = -79.9; 30:1 motor at x = -79.9, y = -69; 9:1 motor at x = 0, y = -112.6. The bottom plate is 180 × 203 mm, which fits the printer's 256 mm bed.
 
-**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; belt plane B with the 96T; belt plane A with the 144T, for the 9:1 set-up only; a bottom plate carrying the motors underneath it; the magnet on the end of the output shaft, with the sensor bracket below it. Two plates on four pillars, each printed flat.
+**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; belt plane B at z = 36.5 with the 96T; belt plane A at z = 13 with the 80T, and the 144T in the 9:1 set-up; a bottom plate with the motors in pockets underneath it; the magnet on the end of the output shaft, with the sensor tray below it. Two plates on four pillars, on four feet.
 
 **Tension:** the middle shaft's bearing holders slide in slots along x for belt B. Then each motor slides in slots along its own belt. 8 mm of travel.
+
+**Pulleys on the output** are carried by a hexagon on the shaft, held in a stack by the magnet holder and three M3 bolts into the shaft end. The 80T clamps to the 8 mm middle shaft with one M3 set screw in a heat-set insert.
+
+**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Fit is checked there: no overlap in the 30:1 set-up or between the 144T and its neighbours in the 9:1 set-up. Belts are not modelled, and bought parts are drawn from estimated sizes (see Printing).
+
+## Printing
+
+STL files in `mechanica/rig/export/`, plus `rig.f3d`. Print orientation is the owner's call; below is the proposal.
+
+| Part | Qty | Lay it |
+| --- | --- | --- |
+| `bottom_plate`, `top_plate` | 1 each | Flat |
+| `pillar`, `foot` | 4 each | Standing |
+| `bearing_holder` | 2 | Pocket up |
+| `bearing_housing` | 1 | Flange down |
+| `output_shaft` | 1 | Flange down, 100 % infill |
+| `camera_plate` | 1 | Slot side up |
+| `magnet_holder`, `sensor_tray` | 1 each | Flat |
+| `pulley_80T`, `pulley_96T`, `pulley_144T` | 1 each | Flange down, 0.12 mm layers |
+| `spacer_9`, `spacer_11`, `spacer_12_5` | 1 each | Flat |
+
+**Before printing the lot:**
+1. **Print the 96T first and try it on a belt.** The tooth shape is simplified and untested; `GROOVE_W` and `GROOVE_D` in the script adjust it.
+2. **Check the bearing and hexagon fits** on that same print and on the housing; `BEARING_FIT` and `HEX_FIT` adjust them.
+3. **Wait with `sensor_tray`** until the sensor boards are in: the tray is a placeholder until the boards are measured.
+4. **Check the 16T pulleys on arrival.** Their height and hub are estimated, and they set the belt planes.
+
+**Also needed:** 34 M3 heat-set inserts, M3 bolts and one M3 set screw. Stainless bolts near the magnet. File a small flat on the 8 mm shaft for the set screws. The 8 mm shaft needs about 67 mm of its 100 mm.
 
 ## Parts
 

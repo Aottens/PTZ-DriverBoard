@@ -62,7 +62,7 @@ latency, which is fine for homing but must not be the only stop on a fast move. 
 | `specs/` | PRD and module specs |
 | `hardware/` | KiCad project, `check_netlist.py`, `fab/`, `review/`, `datasheets/`, `archief/` |
 | `firmware/` | Firmware and host tests |
-| `mechanica/` | Board-related brackets and exports |
+| `mechanica/` | Belt calculations, and in `rig/` the test rig's generator script and exports |
 | `tests/hardware/` | Bring-up checklists and runs (gate 3) |
 | `docs/history/` | Earlier designs, kept for reference only; never a source of requirements |
 
