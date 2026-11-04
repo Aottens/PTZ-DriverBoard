@@ -13,6 +13,7 @@ How an idea moves: **new** → **triaged** → **specced** → **backlog** → *
 | IDEA-01 | Field control box with joystick over ESP-NOW | triaged | after v1 | firmware |
 | IDEA-02 | Remote axis node above pan | new | decide in R-06 | hardware |
 | IDEA-03 | Power over Ethernet | new | after v1 | hardware |
+| IDEA-04 | Capstan drive instead of a belt | new | if the rig shows a visible wave | mechanics |
 
 ### IDEA-01 — Field control box with joystick over ESP-NOW
 From the June work in `PTZ-head` (`controlbox_main.cpp`, `ptz_link_packet.h`), which measured the raw link. The board
@@ -26,3 +27,6 @@ ring is off the table (MEC-07), so it is no longer needed for that.
 ### IDEA-03 — Power over Ethernet
 No wall adapter in fixed installs. Open question: can it deliver enough for the motors, given what the power calculation
 in slice 1 shows?
+
+### IDEA-04 — Capstan drive instead of a belt
+A thin cable around a small shaft and a large drum: about 18:1 in one stage on a Ø100 mm drum, with no teeth to hear and almost no backlash. A limited pan range suits it. Open questions, none researched yet: cable wear and stretch, how to mount and tension it, and whether it stays quiet.

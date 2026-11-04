@@ -14,7 +14,7 @@ R-07 (voltage) and R-08 (reduction) in `docs/research/README.md`.
 | Is the fastest move quiet? | R-T1, by ear and phone meter | TGT-03, TGT-04 |
 | Does the head wobble after a stop? | R-T1, video | Owner's judgement, then a number |
 | Does a preset land the same every time? | R-T1, video and logged position | TGT-05 |
-| 12 or 24 V, 9:1 or 30:1: which is quieter and cleaner? | R-T1, compared side by side | R-07, R-08 |
+| 12 or 24 V, 9:1 or 12.5:1, and which motor: which is quieter and cleaner? | R-T1, compared side by side | R-07, R-08 |
 | Does a sensor survive a long cable next to a motor? | R-T2, read errors | ENC-04 |
 | How repeatable is a sensor at standstill? | R-T2, logged noise | Input for R-05 |
 
@@ -22,7 +22,7 @@ R-07 (voltage) and R-08 (reduction) in `docs/research/README.md`.
 
 ### Mechanics
 - **RIG-01** A printed frame holds a vertical output shaft on two 6806-2RS bearings, with the camera on top, at the axis, and stands on a tripod or is bolted to a bench.
-- **RIG-02** Two drive set-ups fit one frame without reprinting it: 30:1 in two belt stages (16T to 80T, then 16T to 96T) and 9:1 in one stage (16T to 144T). Each belt's tension is adjustable by slotted holes.
+- **RIG-02** Two drive set-ups fit one frame without reprinting it, both a single belt stage: 9:1 (16T to 144T) and 12.5:1 (16T to 200T). One motor slot serves both, and it sets the belt tension.
 - **RIG-03** A diametric magnet sits on the output axis centre in a printed holder, with no steel within 5 mm, and the sensor on a bracket above it with an adjustable gap.
 - **RIG-04** The output turns at least ±170°, and the camera's own cables do not snag. A printed stop limits the range, so a software error cannot wind up a cable.
 
@@ -35,30 +35,27 @@ R-07 (voltage) and R-08 (reduction) in `docs/research/README.md`.
 Kept in `firmware/rig/`, separate from the final firmware. Written against this spec, not a start of the final design.
 
 - **RIG-08** From serial, set at runtime: velocity in °/s, target position in °, run current, hold current, chopper mode, microsteps setting and reduction.
-- **RIG-09** Conversion from output °/s to TMC5240 velocity units is pure code with a host test: at 30:1 and 256 microsteps, 0.08°/s is 341 microsteps/s and 60°/s is 256,000 microsteps/s, and the units follow datasheet p50.
+- **RIG-09** Conversion from output °/s to TMC5240 velocity units is pure code with a host test: at 12.5:1 and 256 microsteps, 0.08°/s is 142.2 microsteps/s and 60°/s is 106,667 microsteps/s, and the units follow datasheet p50.
 - **RIG-10** A preset move always lands from the same side, with the overshoot distance configurable (FW-11).
 - **RIG-11** Motion stops by itself: on a stop key, when the host goes silent for 2 s during a jog, and on any driver fault flag. Position limits are enforced in the driver's own limits or the ramp target, not only in the host script.
 - **RIG-12** Logs a CSV over serial with time, commanded position, driver position, sensor angle, sensor read errors and driver status, and a host script saves it per run.
 
 ## Geometry
 
-Belts and centres from `mechanica/belts.py`, which checks at least 6 teeth in mesh on each small pulley. The output shaft is the origin.
+Belts and centres from `mechanica/belts.py`. A single stage is the owner's decision (2026-11-04): no double belt.
 
-| Belt | Pulleys | Length | Centres |
-| --- | --- | --- | --- |
-| A, motor to middle shaft | 16T to 80T | 240 mm | 69.0 mm |
-| B, middle shaft to output | 16T to 96T | 280 mm | 79.9 mm |
-| 9:1, motor to output | 16T to 144T | 400 mm | 112.6 mm |
+| Set-up | Pulleys | Belt | Centres | Teeth in mesh on the 16T |
+| --- | --- | --- | --- | --- |
+| 9:1 | 16T to 144T | 400 mm | 112.6 mm | 6.2 |
+| 12.5:1 | 16T to 200T | 500 mm | 128.7 mm | 5.7, a little under the usual 6; a 550 mm belt reaches 6 but no longer fits the printer's bed |
 
-**Layout, top view:** middle shaft at x = -79.9; 30:1 motor at x = -79.9, y = -69; 9:1 motor at x = 0, y = -112.6. The bottom plate is 180 × 203 mm, which fits the printer's 256 mm bed.
+**Layout, top view:** the output shaft is the origin. The motor sits on the line x = 0, in one slot from y = -108.6 to y = -132.7. The bottom plate is 136 × 233 mm, which fits the printer's 256 mm bed.
 
-**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; belt plane B at z = 36.5 with the 96T; belt plane A at z = 13 with the 80T, and the 144T in the 9:1 set-up; a bottom plate with the motors in pockets underneath it; the magnet on the end of the output shaft, with the sensor tray below it. Two plates on four pillars, on four feet.
+**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; the belt plane at z = 13 with the pulley; a bottom plate with the motor in a pocket underneath it; the magnet on the end of the output shaft, with the sensor tray below it. Two plates on four pillars, on four feet.
 
-**Tension:** the middle shaft's bearing holders slide in slots along x for belt B. Then each motor slides in slots along its own belt. 8 mm of travel.
+**The pulley on the output** is carried by a hexagon on the shaft, held in a stack by the magnet holder and three M3 bolts into the shaft end.
 
-**Pulleys on the output** are carried by a hexagon on the shaft, held in a stack by the magnet holder and three M3 bolts into the shaft end. The 80T clamps to the 8 mm middle shaft with one M3 set screw in a heat-set insert.
-
-**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Fit is checked there: no overlap in the 30:1 set-up or between the 144T and its neighbours in the 9:1 set-up. Belts are not modelled, and bought parts are drawn from estimated sizes (see Printing).
+**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Fit is checked there: no overlap in either set-up. Belts are not modelled, and bought parts other than the motor are drawn from estimated sizes (see Printing).
 
 ## Printing
 
@@ -68,21 +65,19 @@ STL files in `mechanica/rig/export/`, plus `rig.f3d`. Print orientation is the o
 | --- | --- | --- |
 | `bottom_plate`, `top_plate` | 1 each | Flat |
 | `pillar`, `foot` | 4 each | Standing |
-| `bearing_holder` | 2 | Pocket up |
 | `bearing_housing` | 1 | Flange down |
 | `output_shaft` | 1 | Flange down, 100 % infill |
 | `camera_plate` | 1 | Slot side up |
-| `magnet_holder`, `sensor_tray` | 1 each | Flat |
-| `pulley_80T`, `pulley_96T`, `pulley_144T` | 1 each | Flange down, 0.12 mm layers |
-| `spacer_9`, `spacer_11`, `spacer_12_5` | 1 each | Flat |
+| `magnet_holder`, `sensor_tray`, `spacer` | 1 each | Flat |
+| `pulley_144T`, `pulley_200T` | 1 each | Flange down, 0.12 mm layers |
 
 **Before printing the lot:**
-1. **Print the 96T first and try it on a belt.** The tooth shape is simplified and untested; `GROOVE_W` and `GROOVE_D` in the script adjust it.
+1. **Print the 144T first and try it on a belt.** The tooth shape is simplified and untested; `GROOVE_W` and `GROOVE_D` in the script adjust it.
 2. **Check the bearing and hexagon fits** on that same print and on the housing; `BEARING_FIT` and `HEX_FIT` adjust them.
 3. **Wait with `sensor_tray`** until the sensor boards are in: the tray is a placeholder until the boards are measured.
-4. **Check the 16T pulleys on arrival.** Their height and hub are estimated, and they set the belt planes.
+4. **Check the 16T pulley on arrival.** Its height and hub are estimated, and they set the belt plane.
 
-**Also needed:** 34 M3 heat-set inserts, M3 bolts and one M3 set screw. Stainless bolts near the magnet. File a small flat on the 8 mm shaft for the set screws. The 8 mm shaft needs about 67 mm of its 100 mm.
+**Also needed:** 29 M3 heat-set inserts and M3 bolts. Stainless bolts near the magnet.
 
 ## Parts
 
@@ -92,20 +87,18 @@ Prices are ex VAT and shipping. Checked in the shop on 2026-11-04 where marked; 
 | --- | --- | --- | --- |
 | TMC5240-BOB breakout | 1 | €27.05 | DigiKey NL, 17 in stock, checked |
 | AS5047P adapter board | 1 | €17.22 | DigiKey NL, 199 in stock, checked; being discontinued there |
-| Motor 17HE08-1004S: 17 Ncm, 1 A, 3.6 Ω, 4 mH, 23 mm, for 30:1 | 1 | €4.03 | StepperOnline, checked; €2.20 more from Germany |
-| Motor 17HE12-1204S: 26 Ncm, 1.2 A, 2.5 Ω, 3.3 mH, 30 mm, for 9:1 | 1 | €4.13 | StepperOnline, checked; €2.55 more from Germany |
+| Motor 17HE12-1204S: 26 Ncm, 1.2 A, 2.5 Ω, 3.3 mH, 30 mm | 1 | €4.13 | StepperOnline, checked; €2.55 more from Germany |
+| Motor 17HE15-1504S: 42 Ncm, 1.5 A, 2.3 Ω, 4 mH, 38 mm | 1 | €4.30 | StepperOnline, checked; €1.27 more from Germany |
 | AS5600 breakout with magnet | 1 | €3 | Estimate |
 | Diametric magnet, D6×2.5, in case the AS5047P board comes without | 1 | €2 | Estimate |
 | GT2 pulley, 16T, 5 mm bore | 2 | €4 | Estimate |
-| GT2 pulley, 16T, 8 mm bore, for the middle shaft | 1 | €2 | Estimate |
-| GT2 closed belts, 6 mm wide: 240, 280 and 400 mm | 3 | €9 | Estimate |
-| Bearings: 2× 6806-2RS, 2× 608 | 4 | €12 | Estimate |
-| 8 mm steel shaft, 100 mm | 1 | €3 | Estimate |
+| GT2 closed belts, 6 mm wide: 400 and 500 mm | 2 | €6 | Estimate |
+| Bearings: 2× 6806-2RS | 2 | €8 | Estimate |
 
-**About €90, plus shipping, VAT and filament.** The 17HE12 needs 10 V at 300 rpm by the same calculation as R-07.
+**About €75, plus shipping, VAT and filament.** Both motors go on the rig to compare noise: at 9:1 the worst-case tilt needs about 0.18 Nm, which the final head may need the 42 Ncm for.
 
 **The owner already has, to confirm:** an ESP32 dev board, a lab supply reaching 24 V, the camera and lens, a Bambu printer, M3 inserts and bolts, and a 1/4" camera bolt.
-Printed: plates, pillars, output shaft and flange, 80T, 96T and 144T pulleys, motor brackets, magnet holder, sensor bracket, camera plate.
+Printed: see Printing.
 
 ## Out of scope
 

@@ -1,7 +1,7 @@
 """Builds the one-axis test rig (specs/modules/rig.md) in the active, empty Fusion design.
 
 Run inside Fusion: exec this file, then call build(). All sizes in mm, z up, output axis at the origin.
-Shows the 30:1 set-up assembled; the 9:1 parts are in the model but hidden.
+Shows the 12.5:1 set-up assembled; the 144T for 9:1 is in the model but hidden.
 print_* components are printed, koop_* are bought parts, modelled only to check fit.
 """
 import math
@@ -10,27 +10,23 @@ import adsk.core
 import adsk.fusion
 
 # --- Belt geometry, from mechanica/belts.py ---
-C_A = 69.0  # motor to middle shaft, 240 mm belt
-C_B = 79.9  # middle shaft to output, 280 mm belt
-C_9 = 112.6  # 9:1 motor to output, 400 mm belt
-MIDDLE = (-C_B, 0.0)
-MOTOR_30 = (-C_B, -C_A)
-MOTOR_9 = (0.0, -C_9)
-TRAVEL = 4.0  # slot travel either way, for belt tension
+C_9 = 112.6  # 400 mm belt
+C_125 = 128.7  # 500 mm belt
+TENSION = 4.0  # slot travel either way, for belt tension
+MOTOR_Y = -(C_9 + C_125) / 2  # one motor slot serves both belts
+MOTOR_TRAVEL = (C_125 - C_9) / 2 + TENSION
 
 # --- Height stack ---
 PLATE_B = (0.0, 6.0)  # bottom plate
 MOTOR_FACE = 3.0  # motor sits in a pocket from below
-PLANE_A = 13.0  # belt plane A
+PLANE = 13.0  # belt plane
 PULLEY_H = 11.0
-PLANE_B = 36.5  # belt plane B
-PLATE_T = (45.0, 51.0)  # top plate
+PLATE_T = (22.0, 28.0)  # top plate
 HEX_END = 7.5  # bottom of the output shaft
-S_MID_END = 31.0  # top of the middle spacer, bottom of the 96T
-SEAT_L = (51.0, 58.0)  # lower bearing
-SEAT_U = (91.0, 98.0)  # upper bearing
-FLANGE = (99.0, 105.0)
-CAMERA_PLATE = (105.0, 117.0)
+SEAT_L = (28.0, 35.0)  # lower bearing
+SEAT_U = (68.0, 75.0)  # upper bearing
+FLANGE = (76.0, 82.0)
+CAMERA_PLATE = (82.0, 94.0)
 FOOT_H = 45.0
 
 # --- Fits, adjust to the printer ---
@@ -39,7 +35,6 @@ HEX_AF = 26.0
 HEX_FIT = 0.3
 M3_CLEAR = 3.4
 INSERT = 4.0  # M3 heat-set insert hole
-PIN_R = 8.0
 
 # --- GT2 tooth, simplified for printing ---
 PLD = 0.254
@@ -48,11 +43,10 @@ GROOVE_D = 0.76
 FLANGE_T = 1.5
 FLANGE_OVER = 1.75
 
-X0, X1, Y0, Y1 = -122.0, 58.0, -145.0, 58.0  # bottom plate
-Y0_T, Y1_T = -58.0, 58.0  # top plate
-PILLARS = [(-107.0, 50.0), (50.0, 50.0), (50.0, -50.0), (-107.0, -50.0)]
-FEET = [(-107.0, -137.0), (50.0, -137.0), (20.0, 50.0), (-60.0, 50.0)]
-HOLDER_BOLT = 32.0
+X0, X1, Y0, Y1 = -68.0, 68.0, -165.0, 68.0  # bottom plate
+Y0_T, Y1_T = -68.0, 68.0  # top plate
+PILLARS = [(-56.0, 56.0), (56.0, 56.0), (56.0, -56.0), (-56.0, -56.0)]  # 6 mm clear of the 200T flange
+FEET = [(-60.0, -157.0), (60.0, -157.0), (40.0, 60.0), (-40.0, 60.0)]  # clear of the pillar bolts and the 200T
 TRAY_BOLT = 25.0
 
 
@@ -97,15 +91,6 @@ class Part:
         self._extrude(col, z1 - z0, ops[op])
         return self
 
-    def radial_hole(self, z, d, length):
-        sk = self.comp.sketches.add(self.comp.yZConstructionPlane)
-        c = sk.modelToSketchSpace(adsk.core.Point3D.create(0, 0, cm(z)))
-        sk.sketchCurves.sketchCircles.addByCenterRadius(c, cm(d / 2))
-        col = adsk.core.ObjectCollection.create()
-        col.add(sk.profiles.item(0))
-        self._extrude(col, length, adsk.fusion.FeatureOperations.CutFeatureOperation)
-        return self
-
 
 def pt(x, y):
     return adsk.core.Point3D.create(cm(x), cm(y), 0)
@@ -135,11 +120,9 @@ def hexagon(af):
     return poly([(r * math.cos(math.radians(a)), r * math.sin(math.radians(a))) for a in range(0, 360, 60)])
 
 
-def slot(x, y, d, along):
-    """A hole that can move +-TRAVEL along 'x' or 'y'."""
-    dx, dy = (TRAVEL, 0) if along == "x" else (0, TRAVEL)
-    w, h = (2 * TRAVEL, d) if along == "x" else (d, 2 * TRAVEL)
-    return [circle(x - dx, y - dy, d), circle(x + dx, y + dy, d), rect(x, y, w, h)]
+def slot(x, y, d, travel):
+    """A hole that can move +-travel along y."""
+    return [circle(x, y - travel, d), circle(x, y + travel, d), rect(x, y, d, 2 * travel)]
 
 
 def ring(radius, d, count, start=0.0):
@@ -160,7 +143,7 @@ def pulley_outline(teeth):
     return poly(pts), outer
 
 
-def pulley(root, name, teeth, centre_z, bore):
+def pulley(root, name, teeth, centre_z):
     bottom = centre_z - PULLEY_H / 2
     outline, outer = pulley_outline(teeth)
     p = Part(root, name)
@@ -170,27 +153,18 @@ def pulley(root, name, teeth, centre_z, bore):
 
 
 def motor_cuts(p, x, y):
-    p.ext(PLATE_B[0], MOTOR_FACE, [rect(x, y, 43, 42 + 2 * TRAVEL + 1)], "cut")
-    p.ext(MOTOR_FACE, PLATE_B[1], slot(x, y, 23, "y"), "cut")
+    p.ext(PLATE_B[0], MOTOR_FACE, [rect(x, y, 43, 42 + 2 * MOTOR_TRAVEL + 1)], "cut")
+    p.ext(MOTOR_FACE, PLATE_B[1], slot(x, y, 23, MOTOR_TRAVEL), "cut")
     for sx in (-15.5, 15.5):
         for sy in (-15.5, 15.5):
-            p.ext(MOTOR_FACE, PLATE_B[1], slot(x + sx, y + sy, M3_CLEAR, "y"), "cut")
-
-
-def middle_cuts(p, z0, z1, bolts):
-    x, y = MIDDLE
-    p.ext(z0, z1, slot(x, y, 12, "x"), "cut")
-    for dx, dy in bolts:
-        p.ext(z0, z1, slot(x + dx, y + dy, M3_CLEAR, "x"), "cut")
+            p.ext(MOTOR_FACE, PLATE_B[1], slot(x + sx, y + sy, M3_CLEAR, MOTOR_TRAVEL), "cut")
 
 
 def bottom_plate(root):
     p = Part(root, "print_bottom_plate")
     p.ext(*PLATE_B, [rect((X0 + X1) / 2, (Y0 + Y1) / 2, X1 - X0, Y1 - Y0)])
     p.ext(*PLATE_B, [circle(0, 0, 44)], "cut")
-    motor_cuts(p, *MOTOR_30)
-    motor_cuts(p, *MOTOR_9)
-    middle_cuts(p, *PLATE_B, [(-HOLDER_BOLT, 0), (HOLDER_BOLT, 0)])
+    motor_cuts(p, 0.0, MOTOR_Y)
     p.ext(*PLATE_B, [circle(x, y, M3_CLEAR) for x, y in PILLARS + FEET], "cut")
     p.ext(PLATE_B[0], 5.0, [circle(sx, sy, INSERT) for sx in (-TRAY_BOLT, TRAY_BOLT) for sy in (-TRAY_BOLT, TRAY_BOLT)], "cut")
     return p
@@ -200,8 +174,6 @@ def top_plate(root):
     p = Part(root, "print_top_plate")
     p.ext(*PLATE_T, [rect((X0 + X1) / 2, (Y0_T + Y1_T) / 2, X1 - X0, Y1_T - Y0_T)])
     p.ext(*PLATE_T, [circle(0, 0, 38)], "cut")
-    # Holder turned a quarter here, along y: along x it would hit the housing flange.
-    middle_cuts(p, *PLATE_T, [(0, -HOLDER_BOLT), (0, HOLDER_BOLT)])
     p.ext(*PLATE_T, [circle(x, y, M3_CLEAR) for x, y in PILLARS] + ring(36, M3_CLEAR, 4, 45), "cut")
     return p
 
@@ -220,23 +192,6 @@ def tube(root, name, x, y, z0, z1, ends):
         p.ext(z0, z0 + 6, [circle(x, y, INSERT)], "cut")
     if "top" in ends:
         p.ext(z1 - 6, z1, [circle(x, y, INSERT)], "cut")
-    return p
-
-
-def holder(root):
-    x, y = MIDDLE
-    p = Part(root, "print_bearing_holder")
-    p.ext(-9, 0, [rect(x, y, 2 * HOLDER_BOLT + 12, 24)])
-    p.ext(-7, 0, [circle(x, y, 22 + BEARING_FIT)], "cut")
-    p.ext(-9, -7, [circle(x, y, 12)], "cut")
-    p.ext(-6, 0, [circle(x - HOLDER_BOLT, y, INSERT), circle(x + HOLDER_BOLT, y, INSERT)], "cut")
-    m = adsk.core.Matrix3D.create()
-    # Second holder on top of the top plate, flipped: z -> PLATE_T[1] - z
-    m.setToRotation(math.pi, adsk.core.Vector3D.create(1, 0, 0), adsk.core.Point3D.create(0, 0, cm(PLATE_T[1] / 2)))
-    quarter = adsk.core.Matrix3D.create()
-    quarter.setToRotation(math.pi / 2, adsk.core.Vector3D.create(0, 0, 1), adsk.core.Point3D.create(cm(x), cm(y), 0))
-    m.transformBy(quarter)
-    root.occurrences.addExistingComponent(p.comp, m)
     return p
 
 
@@ -296,28 +251,18 @@ def sensor_tray(root):
 
 
 def bought_parts(root):
-    x, y = MOTOR_30
-    m = Part(root, "koop_motor_17HE08")
-    m.ext(MOTOR_FACE - 23, MOTOR_FACE, [rect(x, y, 42, 42)])
-    m.ext(MOTOR_FACE, MOTOR_FACE + 2, [circle(x, y, 22)], "join")
-    m.ext(MOTOR_FACE + 2, MOTOR_FACE + 20, [circle(x, y, 5)], "join")
+    y = -C_125
+    m = Part(root, "koop_motor_17HE15")
+    m.ext(MOTOR_FACE - 38, MOTOR_FACE, [rect(0, y, 42, 42)])
+    m.ext(MOTOR_FACE, MOTOR_FACE + 2, [circle(0, y, 22)], "join")
+    m.ext(MOTOR_FACE + 2, MOTOR_FACE + 23.5, [circle(0, y, 5)], "join")
     pm = Part(root, "koop_pulley_16T_5mm")
-    pm.ext(PLANE_A - 4.5, PLANE_A + 11.5, [circle(x, y, 12)])
-    pm.ext(PLANE_A - 4.5, PLANE_A + 11.5, [circle(x, y, 5)], "cut")
-    mx, my = MIDDLE
-    s = Part(root, "koop_shaft_8mm")
-    s.ext(-8, 59, [circle(mx, my, 8)])
-    pb = Part(root, "koop_pulley_16T_8mm")
-    pb.ext(PLANE_B - 11.5, PLANE_B + 4.5, [circle(mx, my, 13)])
-    pb.ext(PLANE_B - 11.5, PLANE_B + 4.5, [circle(mx, my, 8)], "cut")
+    pm.ext(PLANE - 4.5, PLANE + 11.5, [circle(0, y, 12)])
+    pm.ext(PLANE - 4.5, PLANE + 11.5, [circle(0, y, 5)], "cut")
     for name, z0 in (("koop_6806_lower", SEAT_L[0]), ("koop_6806_upper", SEAT_U[0])):
         b = Part(root, name)
         b.ext(z0, z0 + 7, [circle(0, 0, 42)])
         b.ext(z0, z0 + 7, [circle(0, 0, 30)], "cut")
-    for name, z0 in (("koop_608_lower", -7.0), ("koop_608_upper", PLATE_T[1])):
-        b = Part(root, name)
-        b.ext(z0, z0 + 7, [circle(mx, my, 22)])
-        b.ext(z0, z0 + 7, [circle(mx, my, 8)], "cut")
     g = Part(root, "koop_magnet_D6x2.5")
     g.ext(3.5, 6.0, [circle(0, 0, 6)])
 
@@ -335,32 +280,17 @@ def build():
     copies(root, pillar, PILLARS[0], PILLARS[1:])
     foot = tube(root, "print_foot", *FEET[0], -FOOT_H, 0.0, ("top",))
     copies(root, foot, FEET[0], FEET[1:])
-    holder(root)
     housing(root)
     shaft(root)
     magnet_holder(root)
     camera_plate(root)
     sensor_tray(root)
+    spacer(root, "print_spacer", HEX_END + PULLEY_H, SEAT_L[0])
 
-    # Spacers: the 9:1 set-up swaps 11 mm spacer and 96T for 144T and the same spacer one level up.
-    spacer(root, "print_spacer_11", HEX_END, HEX_END + PULLEY_H)
-    spacer(root, "print_spacer_12_5", HEX_END + PULLEY_H, S_MID_END)
-    spacer(root, "print_spacer_9", S_MID_END + PULLEY_H, SEAT_L[0])
-
-    p96, b96 = pulley(root, "print_pulley_96T", 96, PLANE_B, "hex")
-    p96.ext(b96, b96 + PULLEY_H, [hexagon(HEX_AF + HEX_FIT)], "cut")
-    p144, b144 = pulley(root, "print_pulley_144T", 144, PLANE_A, "hex")
-    p144.ext(b144, b144 + PULLEY_H, [hexagon(HEX_AF + HEX_FIT)], "cut")
-    p144.occ.isLightBulbOn = False
-
-    p80, b80 = pulley(root, "print_pulley_80T", 80, PLANE_A, "round")
-    p80.ext(b80 + PULLEY_H, b80 + PULLEY_H + 6, [circle(0, 0, 20)], "join")
-    p80.ext(b80, b80 + PULLEY_H + 6, [circle(0, 0, 8.2)], "cut")
-    p80.radial_hole(b80 + PULLEY_H + 3, INSERT, 15)
-    m = adsk.core.Matrix3D.create()
-    m.translation = adsk.core.Vector3D.create(cm(MIDDLE[0]), cm(MIDDLE[1]), 0)
-    p80.occ.transform = m
-    design.snapshots.add()
+    for teeth, shown in ((200, True), (144, False)):
+        p, bottom = pulley(root, f"print_pulley_{teeth}T", teeth, PLANE)
+        p.ext(bottom, bottom + PULLEY_H, [hexagon(HEX_AF + HEX_FIT)], "cut")
+        p.occ.isLightBulbOn = shown
 
     bought_parts(root)
     print("occurrences", root.allOccurrences.count, "timeline", design.timeline.count)
