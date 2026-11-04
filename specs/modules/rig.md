@@ -47,10 +47,10 @@ Belts and centres from `mechanica/belts.py`, which checks at least 6 teeth in me
 | Belt | Pulleys | Length | Centres |
 | --- | --- | --- | --- |
 | A, motor to middle shaft | 16T to 80T | 240 mm | 69.0 mm |
-| B, middle shaft to output | 16T to 96T | 250 mm | 63.9 mm |
+| B, middle shaft to output | 16T to 96T | 280 mm | 79.9 mm |
 | 9:1, motor to output | 16T to 144T | 400 mm | 112.6 mm |
 
-**Layout, top view:** middle shaft at x = -63.9; 30:1 motor at x = -63.9, y = -69; 9:1 motor at x = +112.6. Everything falls within about 225 × 140 mm, which fits the printer's 256 mm bed.
+**Layout, top view:** middle shaft at x = -79.9; 30:1 motor at x = -79.9, y = -69; 9:1 motor at x = +112.6. Everything falls within about 240 × 140 mm, which fits the printer's 256 mm bed.
 
 **Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; belt plane B with the 96T; belt plane A with the 144T, for the 9:1 set-up only; a bottom plate carrying the motors underneath it; the magnet on the end of the output shaft, with the sensor bracket below it. Two plates on four pillars, each printed flat.
 
@@ -70,7 +70,7 @@ Prices are ex VAT and shipping. Checked in the shop on 2026-11-04 where marked; 
 | Diametric magnet, D6×2.5, in case the AS5047P board comes without | 1 | €2 | Estimate |
 | GT2 pulley, 16T, 5 mm bore | 2 | €4 | Estimate |
 | GT2 pulley, 16T, 8 mm bore, for the middle shaft | 1 | €2 | Estimate |
-| GT2 closed belts, 6 mm wide: 240, 250 and 400 mm | 3 | €9 | Estimate |
+| GT2 closed belts, 6 mm wide: 240, 280 and 400 mm | 3 | €9 | Estimate |
 | Bearings: 2× 6806-2RS, 2× 608 | 4 | €12 | Estimate |
 | 8 mm steel shaft, 100 mm | 1 | €3 | Estimate |
 
