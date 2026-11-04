@@ -8,24 +8,39 @@ Status (first word of the Status cell, checked by `scripts/check-tracking.py` in
 - `gate3: <checklist path>` = merged, only the owner's run on hardware is left; the path must exist.
 - Open points found in a run become their own row (or an IDEA) in the same PR.
 
-Slices after 1 are a proposal: their `Builds:` lines and full criteria come when each slice starts.
+Everything after the research phase is a proposal: their `Builds:` lines and full criteria come when each slice starts.
 
 ## Slice 0 — harness
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
 | S0-01 | The harness, tooling config and PRD draft are in this repo and `scripts/check-tracking.py` passes. | CORE-01 | S | done (2026-11-04) |
-| S0-02 | A GitHub repository exists, with `tracking.yml` green on a first PR. | CORE-01 | S | todo |
+| S0-02 | A GitHub repository exists, with `tracking.yml` green on a first PR. | CORE-01 | S | done (2026-11-04, #1) |
+
+## Research phase — before the hardware is fixed
+
+Questions and first findings: `docs/research/README.md`. Each closes with an entry in `DECISIONS.md`.
+
+| Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
+| --- | --- | --- | --- | --- |
+| R-01 | The owner approves the targets, and gives the longest lens and sensor size. | CORE-01, TGT-01..05 | S | done (2026-11-04, #1) |
+| R-02 | The motor technology is decided in `DECISIONS.md`, with R-T1 as evidence. | DRV-01 | S | todo |
+| R-03 | The driver is decided, on its datasheet and R-T1. | DRV-02..06 | M | doing: TMC5240 datasheet checked, rig left |
+| R-04 | The MCU is decided, with a pin table for every signal checked against its datasheet, including strapping pins. | CTL-01 | M | todo |
+| R-05 | The sensor and bus are decided on repeatability data and T-2. | ENC-01..04 | M | todo |
+| R-06 | The board size, heat path and base layout are agreed with a first 3D concept, with a calculation of temperature at the current per axis. | BRD-01, BRD-04, DRV-05, MEC-01..06 | L | todo |
+| R-07 | The supply voltage is decided from the R-01 numbers. | POW-01, POW-04 | S | todo |
+| R-08 | The reduction per axis is decided from R-T1. | TGT-02..05 | S | todo |
+| R-TR | A one-axis test rig is designed with the owner, printed and running on a TMC5240 breakout. | R-02, R-03, R-08 | L | todo |
+| R-T1 | The owner's run on the rig records slowest clean move, fastest quiet move and the stop, on screen and by ear at 1 and 2 m, at 9:1 and 30:1. | TGT-02..05 | M | todo |
+| R-T2 | On the rig, the owner's run counts sensor read errors over the longest cable next to the motor, I2C against SPI, and records read noise at standstill. | ENC-04 | M | todo |
 
 ## Slice 1 — what the board is
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
-| S1-01 | The owner approves the PRD with no OPEN line left (gate 1). | CORE-01 | S | todo |
-| S1-02 | The 3D design has the MEC requirements, and a written board outline, height and connector zones come back. | MEC-01..07, BRD-01 | S | blocked: where does the 3D design live? |
-| S1-03 | A power and thermal calculation shows how many amps per axis the board can carry at 12 and 24 V. | POW-04, DRV-05 | M | todo |
-| S1-04 | A pin table for every signal fits the ESP32-S3 against its datasheet, including strapping pins. | CTL-01, DRV-04 | M | todo |
-| S1-05 | The owner's bench test shows encoder reads stay clean over the longest cable run, next to a running stepper. | ENC-04 | M | todo |
+| S1-01 | The owner approves the PRD with no OPEN line left and the research closed (gate 1). | CORE-01 | S | todo |
+| S1-02 | The first 3D design of the new head holds the agreed board, heat path, bore and sensor positions. | MEC-01..07, BRD-01 | L | todo |
 
 ## Slice 2 — schematic
 
