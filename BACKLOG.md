@@ -27,11 +27,11 @@ Questions and first findings: `docs/research/README.md`. Each closes with an ent
 | R-02 | The motor technology is decided in `DECISIONS.md`, with R-T1 as evidence. | DRV-01 | S | todo |
 | R-03 | The driver is decided, on its datasheet and R-T1. | DRV-02..06 | M | doing: TMC5240 datasheet checked, rig left |
 | R-04 | The MCU is decided, with a pin table for every signal checked against its datasheet, including strapping pins. | CTL-01 | M | todo |
-| R-05 | The sensor and bus are decided on repeatability data and T-2. | ENC-01..04 | M | todo |
+| R-05 | The sensor and bus are decided on repeatability data and R-T2. | ENC-01..04 | M | todo |
 | R-06 | The board size, heat path and base layout are agreed with a first 3D concept, with a calculation of temperature at the current per axis. | BRD-01, BRD-04, DRV-05, MEC-01..06 | L | todo |
 | R-07 | The supply voltage is decided from the R-01 numbers. | POW-01, POW-04 | S | todo |
 | R-08 | The reduction per axis is decided from R-T1. | TGT-02..05 | S | todo |
-| R-TR | A one-axis test rig is designed with the owner, printed and running on a TMC5240 breakout. | R-02, R-03, R-08 | L | todo |
+| R-TR | A one-axis test rig is designed with the owner, printed and running on a TMC5240 breakout. | RIG-01..12 | L | doing: spec waits for approval |
 | R-T1 | The owner's run on the rig records slowest clean move, fastest quiet move and the stop, on screen and by ear at 1 and 2 m, at 9:1 and 30:1. | TGT-02..05 | M | todo |
 | R-T2 | On the rig, the owner's run counts sensor read errors over the longest cable next to the motor, I2C against SPI, and records read noise at standstill. | ENC-04 | M | todo |
 

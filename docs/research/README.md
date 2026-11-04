@@ -59,7 +59,7 @@ The search found **no measured comparison** of the two in a camera head, so this
 
 **Leading candidate: stepper with belt reduction.** It keeps the board small and simple, which is the owner's goal, and the TMC5240 is built for this: StealthChop2 is
 specified as noiseless at standstill and low speed `[datasheet p29]`, and its microstep table can be reprogrammed per motor for smoother motion `[datasheet p74]`.
-**What would overturn it:** the test rig (RIG-T1) shows noise or jitter we cannot accept.
+**What would overturn it:** the test rig (R-T1) shows noise or jitter we cannot accept.
 
 ## R-03 — Which driver, and where does motion happen?
 
@@ -141,9 +141,9 @@ The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still
    the sensor says roughly where the head is at boot, the motor's step count does the fine work, and presets lean on repeatability rather than absolute
    accuracy. So the number to find is **repeatability and noise**, which the search did not give.
 2. **SPI may remove the mux.** One shared bus with a chip select per sensor needs no TCA9548A and cuts wires: 5 shared plus 3 chip selects is 8 through the shaft
-   for tilt, zoom and focus, against 12 for separate I2C. SPI's driven lines should also cope better with a long cable than open-drain I2C `[geheugen]`; T-2 tests that.
+   for tilt, zoom and focus, against 12 for separate I2C. SPI's driven lines should also cope better with a long cable than open-drain I2C `[geheugen]`; R-T2 tests that.
 
-**Leading candidate: an SPI sensor.** Which one follows from repeatability data and T-2.
+**Leading candidate: an SPI sensor.** Which one follows from repeatability data and R-T2.
 
 **Wire count (MEC-04) drops.** With an absolute sensor on each output axis, home switches are redundant. Motors 12 + sensors 8 = **20 wires**, against 33 in the first draft `[zeker]`.
 
