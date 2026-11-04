@@ -9,13 +9,13 @@ source yet; treat as a question.
 
 | Id | Question | Who first | Status |
 | --- | --- | --- | --- |
-| R-01 | What must the head do, in numbers? | Owner | targets proposed, owner to approve |
+| R-01 | What must the head do, in numbers? | Owner | closed: targets approved 2026-11-04 |
 | R-02 | Which motor technology? | Claude + test rig | leading candidate |
 | R-03 | Which driver, and where does motion happen? | Claude + test rig | TMC5240 checked on paper, rig left |
 | R-04 | Which MCU? | Claude | leading candidate |
 | R-05 | Which position sensor, over which bus? | Claude + test rig | leading candidate |
 | R-06 | How small can the board get? | Claude + 3D design | first round |
-| R-07 | Which supply voltage? | Claude | leading candidate: 24 V |
+| R-07 | Which supply voltage? | Claude + test rig | open: 12 or 24 V, rig decides |
 | R-08 | Which reduction? (new) | Claude + test rig | leading candidate: about 30:1 |
 
 ## R-01 — What must the head do, in numbers?
@@ -23,27 +23,28 @@ source yet; treat as a question.
 **From the owner (2026-11-04):** usually a DSLR or mirrorless, 1.5 to 2 kg at most. The camera has no LANC or IP zoom, so a zoom motor is
 needed. Used in theatres among the audience, so fairly quiet. As exact as possible within DIY means. Speeds not known yet. The old head stays out of it.
 
-**Proposed targets**, taken from a professional head so that we can change them instead of guessing. The Panasonic AW-UE150 runs from 0.08°/s up, and is
-rated NC35 or less up to 60°/s, its normal mode `[bron]`.
+**Targets, approved by the owner on 2026-11-04.** Taken from a professional head: the Panasonic AW-UE150 runs from 0.08°/s up, and is rated NC35 or less up to 60°/s, its normal mode `[bron]`.
 
-| Id | Target | Proposal |
+| Id | Target | Value |
 | --- | --- | --- |
 | TGT-01 | Payload, including plate | 2.5 kg |
 | TGT-02 | Slowest clean pan and tilt | 0.08°/s |
 | TGT-03 | Fastest quiet pan and tilt | 60°/s |
 | TGT-04 | Noise while moving | No louder than NC35 up to 60°/s. Slow moves inaudible at 2 m in a quiet room, judged by the owner |
-| TGT-05 | Preset landing, always from the same side | Within 2 pixels at 200 mm on 4K, so about 0.005° |
+| TGT-05 | Preset landing, always from the same side | Within about 0.005° |
 
-**What a pixel is worth** (horizontal field of view on full frame, `[zeker]`):
+**First camera:** a Panasonic G7 with a 14-140 mm, Micro Four Thirds (owner, 2026-11-04). Lens 265 g `[bron]`; the older F4.0-5.8 version is 460 g `[bron]`, so check which one it is. With the body it stays well under the 2 kg payload, which remains the design limit. Keep the lens stabiliser off on the head `[geheugen]`.
+
+**What a pixel is worth** (horizontal field of view, `[zeker]`). The G7 at 140 mm is the reference from here on:
 
 | Lens | Field of view | Pixel at 1080p | Pixel at 4K |
 | --- | --- | --- | --- |
-| 70 mm | 28.8° | 0.015° | 0.0075° |
-| 200 mm | 10.3° | 0.0054° | 0.0027° |
-| 400 mm | 5.2° | 0.0027° | 0.0013° |
-| 600 mm | 3.4° | 0.0018° | 0.0009° |
+| G7 at 14 mm | 63.4° | 0.033° | 0.017° |
+| **G7 at 140 mm** | **7.1°** | **0.0037°** | **0.0018°** |
+| 200 mm on full frame | 10.3° | 0.0054° | 0.0027° |
+| 600 mm on full frame | 3.4° | 0.0018° | 0.0009° |
 
-**Still needed from the owner:** the longest lens in use, and full frame or APS-C. A 200 mm is assumed here.
+At 140 mm, TGT-05 is about 3 pixels at 4K and 1.4 at 1080p. The G7 may crop further in 4K `[geheugen]`, which would make a pixel slightly smaller.
 
 ## R-02 — Which motor technology?
 
@@ -58,7 +59,7 @@ The search found **no measured comparison** of the two in a camera head, so this
 
 **Leading candidate: stepper with belt reduction.** It keeps the board small and simple, which is the owner's goal, and the TMC5240 is built for this: StealthChop2 is
 specified as noiseless at standstill and low speed `[datasheet p29]`, and its microstep table can be reprogrammed per motor for smoother motion `[datasheet p74]`.
-**What would overturn it:** the test rig (T-1) shows noise or jitter we cannot accept.
+**What would overturn it:** the test rig (RIG-T1) shows noise or jitter we cannot accept.
 
 ## R-03 — Which driver, and where does motion happen?
 
@@ -136,7 +137,7 @@ The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still
 | JLC stock, price | 401, $1.71 `[zeker]` | 5,054, $6.05 `[zeker]` | 1,219, $2.03 (QFN) `[zeker]` | 20,449, $3.56 `[zeker]` |
 
 **Two findings that change the question:**
-1. **±1° is about 370 pixels on a 200 mm lens at 4K** (1 / 0.0027) `[zeker]`. No cheap sensor gives "exact" on its own, and it does not have to:
+1. **±1° is about 540 pixels on the G7 at 140 mm in 4K** (1 / 0.0018) `[zeker]`. No cheap sensor gives "exact" on its own, and it does not have to:
    the sensor says roughly where the head is at boot, the motor's step count does the fine work, and presets lean on repeatability rather than absolute
    accuracy. So the number to find is **repeatability and noise**, which the search did not give.
 2. **SPI may remove the mux.** One shared bus with a chip select per sensor needs no TCA9548A and cuts wires: 5 shared plus 3 chip selects is 8 through the shaft
@@ -166,22 +167,28 @@ moves heat and wires out of the base.
 
 ## R-07 — Which supply voltage?
 
-**Leading candidate: 24 V.** At about 30:1 a motor turns about 300 rpm at the fastest quiet speed (R-08), and low-current motors with high coil resistance need voltage to reach that: the
-17HS13-0404D from the July design needs 12 V just for its rated 0.4 A, given its 30 Ω coil `[geheugen]`. With the TMC5240's 41 V absolute maximum there is 17 V of margin `[datasheet p10]`.
+**Open, and the first answer changed.** The motor decides it. Voltage needed at 300 rpm, from `sqrt((I·R + E)² + (ω·L·I)²)` with StepperOnline's figures `[zeker, as a calculation]`:
+
+| Motor | Rated | R, L | Holding | Length | Volts needed at rated current | Price |
+| --- | --- | --- | --- | --- | --- | --- |
+| 17HS13-0404S1 (July design) | 0.4 A | 30 Ω, 37 mH | 26 Ncm | 34 mm | **35 V: more than 24 V supplies** | €7.72 |
+| **17HE08-1004S** | 1 A | 3.6 Ω, 4 mH | 17 Ncm | **23 mm** | **9.7 V** | **€4.03** |
+
+**So the July motor does not suit 30:1 at full current, and a low-resistance motor runs on 12 V.** That points to 12 V being enough, and possibly better: the lowest current StealthChop can tune rises with supply voltage `[datasheet p34]`, and it might also be quieter, though nothing here measures that. 24 V remains the reserve for more speed. **The rig tests both, and the board accepts 12 to 24 V either way.**
 
 ## R-08 — Which reduction?
 
-New question, and it follows from "as exact as possible". Reduction shrinks every motor error at the output. On a 200 mm lens at 4K (one pixel 0.0027°) `[zeker]`, taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`:
+New question, and it follows from "as exact as possible". Reduction shrinks every motor error at the output. On the G7 at 140 mm in 4K (one pixel 0.0018°) `[zeker]`, taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`:
 
 | Reduction | Microstep at output | Stepper error at output | In pixels | Motor at 60°/s | Tilt torque at the motor, worst case 1.47 Nm, 80 % efficient |
 | --- | --- | --- | --- | --- | --- |
-| 5:1 (July, pan) | 0.0014° | ±0.018° | 6.7 | 50 rpm | 0.37 Nm |
-| 9:1 (July, tilt) | 0.0008° | ±0.010° | 3.7 | 90 rpm | 0.20 Nm |
-| 16:1 | 0.0004° | ±0.006° | 2.1 | 160 rpm | 0.12 Nm |
-| **30:1** | **0.0002°** | **±0.003°** | **1.1** | **300 rpm** | **0.06 Nm** |
-| 60:1 | 0.0001° | ±0.0015° | 0.6 | 600 rpm | 0.03 Nm |
+| 5:1 (July, pan) | 0.0014° | ±0.018° | 9.8 | 50 rpm | 0.37 Nm |
+| 9:1 (July, tilt) | 0.0008° | ±0.010° | 5.4 | 90 rpm | 0.20 Nm |
+| 16:1 | 0.0004° | ±0.006° | 3.1 | 160 rpm | 0.12 Nm |
+| **30:1** | **0.0002°** | **±0.003°** | **1.6** | **300 rpm** | **0.06 Nm** |
+| 60:1 | 0.0001° | ±0.0015° | 0.8 | 600 rpm | 0.03 Nm |
 
-**Leading candidate: about 30:1**, as two belt stages. This one choice helps almost everything: smaller errors, ripple that is smaller and faster, a smaller and cooler motor, and less heat on the board.
+**Leading candidate: about 30:1**, as two belt stages. This one choice helps almost everything: smaller errors, ripple that is smaller and faster, a smaller and cooler motor, and less heat on the board. The 17 Ncm 17HE08-1004S has 2.8 times the worst-case torque at 30:1, and too little at 9:1 `[zeker]`, so that motor fits this reduction only.
 It also helps noise, since the motor needs far less current, though 300 rpm may be louder than 90 rpm; only the rig can say. The step rate of 256,000 microsteps/s at 256 microstepping is above FastAccelStepper's 200 kHz `[bron]`, one more argument for a ramp generator in the driver.
 
 **The other half of exact is firmware:** always landing a preset from the same side takes out backlash and hysteresis, for no hardware at all (FW-11).
@@ -189,19 +196,21 @@ It also helps noise, since the motor needs far less current, though 300 rpm may 
 
 ## Zoom axis
 
-A DSLR or mirrorless lens zooms by a ring, so the zoom motor drives a gear belted or geared to that ring. This is its own small design: how much torque the ring needs, how to mount it per lens, and how to home it.
+The G7's 14-140 mm zooms by a ring, so the zoom motor drives a gear on that ring. Its focus ring may be by-wire, with no end stops `[geheugen]`, so focus needs checking on the real lens. This is its own small design: how much torque the ring needs, how to mount it per lens, and how to home it.
 A ring turning less than once allows an absolute sensor on a matching gear; otherwise soft stall homing against the ring's end `[datasheet p58]`. To do with the 3D design.
 
-## Test rig (owner, with Claude designing it)
+## Test rig
 
-The old head stays out of it, so the evidence comes from **a one-axis test rig**: one real axis, before any board exists.
-
-- **Parts:** a TMC5240-BOB breakout (SPI, 2×12 pins; on sale at Mouser, element14 and MEV Elektronik `[bron]`, price still to check), any ESP32 dev board, one NEMA 17, GT2 pulleys and belts, magnet and sensor, 24 V supply, a printed frame.
-- **T-1 Motion and noise.** Camera fully zoomed in, slowest clean move, then fastest quiet move, then stopping: what shows on screen, what is audible at 1 and 2 m? Tried at 9:1 and 30:1. Answers R-02, R-03 and R-08 together.
-- **T-2 Sensor cable.** On the same rig: a sensor on the longest cable next to the running motor, I2C against SPI, counting read errors, and read noise at standstill for repeatability. Answers R-05.
+A one-axis rig answers R-02, R-03, R-05, R-07 and R-08 on real hardware before any board exists. Its spec, parts and tests are in `specs/modules/rig.md`.
 
 ## Sources
 
+- [StepperOnline 17HE08-1004S](https://www.omc-stepperonline.com/e-series-nema-17-bipolar-1-8deg-17ncm-24-07oz-in-1a-42x42x23mm-4-wires-17he08-1004s)
+- [StepperOnline 17HS13-0404S1](https://www.omc-stepperonline.com/nema-17-bipolar-1-8deg-26ncm-36-8oz-in-0-4a-12v-42x42x34mm-4-wires-17hs13-0404s1)
+- [Panasonic 14-140 mm II, DXOMARK](https://www.dxomark.com/Lenses/Panasonic/Panasonic-LUMIX-G-VARIO-14-140mm-F35-56-ASPH-POWER-OIS-mounted-on-Olympus-PEN-E-PL7---Specifications__972)
+- [Panasonic 14-140 mm F4.0-5.8, PhotographyBlog](https://www.photographyblog.com/reviews/panasonic_lumix_g_vario_14_140mm_f4_58_asph_mega_ois_review/specifications)
+- [TMC5240-BOB, DigiKey](https://www.digikey.nl/en/products/detail/analog-devices-inc-maxim-integrated/TMC5240-BOB/21292888)
+- [AS5047P adapter board, DigiKey](https://www.digikey.at/en/products/detail/ams-osram-usa-inc/AS5047P-ADAPTERBOARD/5452344)
 - [TMC5240 datasheet, Rev 1, Analog Devices](https://www.analog.com/media/en/technical-documentation/data-sheets/tmc5240.pdf)
 - [Panasonic AW-UE150 specifications](https://latam.connect.panasonic.com/pa/en/download-specifications/134)
 - [TMC5240-BOB, Analog Devices](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5240-bob.html)

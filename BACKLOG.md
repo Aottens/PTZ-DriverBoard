@@ -23,7 +23,7 @@ Questions and first findings: `docs/research/README.md`. Each closes with an ent
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
-| R-01 | The owner approves the targets, and gives the longest lens and sensor size. | CORE-01, TGT-01..05 | S | doing: targets proposed |
+| R-01 | The owner approves the targets, and gives the longest lens and sensor size. | CORE-01, TGT-01..05 | S | done (2026-11-04, #1) |
 | R-02 | The motor technology is decided in `DECISIONS.md`, with R-T1 as evidence. | DRV-01 | S | todo |
 | R-03 | The driver is decided, on its datasheet and R-T1. | DRV-02..06 | M | doing: TMC5240 datasheet checked, rig left |
 | R-04 | The MCU is decided, with a pin table for every signal checked against its datasheet, including strapping pins. | CTL-01 | M | todo |

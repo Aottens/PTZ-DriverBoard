@@ -15,11 +15,11 @@ whatever the mechanics, motors or control source turn out to be. Built for one h
 **Success test (CORE-01).** A new head with different mechanics needs a configuration change only: no new
 board, no new firmware build, no soldered wires.
 
-## Targets (proposed, not yet approved)
+## Targets (approved by the owner, 2026-11-04)
 
-Numbers in `docs/research/README.md`, R-01. Taken from a professional head so that they can be changed rather than guessed.
+Numbers and reasoning in `docs/research/README.md`, R-01. First camera: Panasonic G7 with a 14-140 mm (Micro Four Thirds).
 
-- TGT-01 Payload 2.5 kg including plate: a DSLR or mirrorless up to 2 kg. Lens gets its zoom from a motor on its ring.
+- TGT-01 Payload 2.5 kg including plate: a camera up to 2 kg.
 - TGT-02 Slowest clean pan and tilt 0.08°/s.
 - TGT-03 Fastest quiet pan and tilt 60°/s.
 - TGT-04 No louder than NC35 up to 60°/s; slow moves inaudible at 2 m in a quiet room, judged by the owner. Used in theatres among the audience.
@@ -28,7 +28,7 @@ Numbers in `docs/research/README.md`, R-01. Taken from a professional head so th
 ## Hardware: on the board
 
 ### Power (POW)
-- POW-01 Single DC input through a locking connector. 24 V is the leading candidate (R-07).
+- POW-01 Single DC input of 12 to 24 V through a locking connector. Which of the two the head runs on follows from the rig (R-07).
 - POW-02 Survives reverse polarity, a hot-plug spike and a short on any output connector. The previous board
   burned out on a 12 V/MOSFET problem, so this is checked by calculation and in the bring-up run.
 - POW-03 Motor supply and logic supply are fused separately.

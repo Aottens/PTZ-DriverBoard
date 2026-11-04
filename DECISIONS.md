@@ -4,6 +4,18 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — Targets approved, G7 first, and the rig goes ahead
+
+**Decision:** TGT-01..05 are approved. The first camera is a Panasonic G7 with a 14-140 mm, Micro Four Thirds. A one-axis test rig goes ahead.
+
+**Alternatives considered:** designing the board first and measuring on it.
+
+**Reasoning:** at 140 mm on this sensor a pixel is smaller than the 200 mm assumed so far, so exactness gets harder. The rig tests motor, reduction, voltage and cable before an order that costs weeks.
+
+**Reversal trigger:** the rig shows the targets are out of reach within DIY means; then the targets go back to the owner.
+
+---
+
 ## 2026-11-04 — The fan output stays, as an option
 
 **Decision:** Keep a switched PWM output for a fan (AUX-03), off by default. This corrects "No fan" in the entry below: the head is still designed to meet its targets without one.
