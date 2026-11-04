@@ -59,11 +59,11 @@ The motor's distance sets the base: at 55.7 mm its corner reaches the Ø165 limi
 
 **The idlers** are two F623 back to back on an M3 bolt per idler, from the top plate down through printed spacers, into the 3 mm under it. They come out for 6.25:1.
 
-**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Belts are not modelled, and bought parts other than the motor are drawn from estimated sizes (see Printing).
+**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Fit is checked there: no overlap in either set-up. Belts are not modelled, and bought parts other than the motor are drawn from estimated sizes (see Printing).
 
 ## Printing
 
-STL files go in `mechanica/rig/export/`, once the model is rebuilt in Fusion. Print orientation is the owner's call; below is the proposal.
+STL files in `mechanica/rig/export/`, plus `rig.f3d`. Print orientation is the owner's call; below is the proposal.
 
 | Part | Qty | Lay it |
 | --- | --- | --- |
