@@ -21,9 +21,9 @@ R-07 (voltage) and R-08 (reduction) in `docs/research/README.md`.
 ## Acceptance criteria
 
 ### Mechanics
-- **RIG-01** A printed frame holds a vertical output shaft on two 6806-2RS bearings, with the camera on top, at the axis, and stands on a tripod or is bolted to a bench.
+- **RIG-01** A printed frame holds a vertical output shaft on two 6806-2RS bearings, with the camera on top, at the axis, and stands on four feet, clamped to a bench by the edge of its bottom plate.
 - **RIG-02** Two drive set-ups fit one frame without reprinting it, each a single belt stage within the head's real base limit of Ø165 mm: 6.25:1 without idlers (16T to 100T) and 7.5:1 with two idlers (16T to 120T). The motor sits under the pulley, as in the real head, and one slot serves both and sets the belt tension.
-- **RIG-03** A diametric magnet sits on the output axis centre in a printed holder, with no steel within 5 mm, and the sensor on a bracket above it with an adjustable gap.
+- **RIG-03** A diametric magnet sits on the output axis centre in a printed holder, with no steel within 5 mm, and the sensor on a tray below it, with shims to set the gap.
 - **RIG-04** The output turns at least ±170°, and the camera's own cables do not snag. A printed stop limits the range, so a software error cannot wind up a cable.
 
 ### Electronics
@@ -53,36 +53,61 @@ The motor's distance sets the base: at 55.7 mm its corner reaches the Ø165 limi
 
 **Layout, top view:** the output shaft is the origin, the motor is on the line x = 0 at y = -55.65, ±2 mm. The rig's plates are 136 × 156 and 136 × 136 mm: square, not round, since the rig has no need for a round base.
 
-**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; the belt plane at z = 13 with the pulley and the idlers; a bottom plate with the motor in a pocket underneath it; the magnet on the end of the output shaft, with the sensor tray below it, on four legs bolted to the bottom plate. Shims between legs and plate set the gap to the magnet. Two plates on four pillars, on four feet.
+**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; the belt plane at z = 13 with the pulley and the idlers; a bottom plate with the motor in a pocket underneath it; the magnet on the end of the output shaft, with the sensor tray below it, on four legs bolted to the bottom plate. Shims between legs and plate set the gap to the magnet.
+
+**The end stop** is a rib on the housing and a tab on the shaft's flange: about ±171°. Two plates on four pillars, on four feet.
 
 **The pulley on the output** is carried by a hexagon on the shaft, held in a stack by the magnet holder and three M3 bolts into the shaft end. It has no flange: the 16T and the idlers keep the belt in line.
 
-**The idlers** are two F623 back to back on an M3 bolt per idler, from the top plate down through printed spacers, into the 3 mm under it. They come out for 6.25:1.
+**The idlers** are two F623 back to back, with a 0.5 mm shim between their inner rings, on an M3 bolt per idler: from the top plate down through printed spacers into a thin nut held in the lower spacer. They come out for 6.25:1.
 
-**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Fit is checked there: no overlap in either set-up. Belts are not modelled, and bought parts other than the motor are drawn from estimated sizes (see Printing).
+**Model:** `mechanica/rig/build_rig.py` builds everything in Fusion. Fit is checked there: no overlap in either set-up. Printability is checked by `mechanica/rig/check_print.py`. Bolts and belts are not modelled, and bought parts other than the motor are drawn from estimated sizes (see Printing).
 
 ## Printing
 
-STL files in `mechanica/rig/export/`, plus `rig.f3d`. Print orientation is the owner's call; below is the proposal.
+STL files in `mechanica/rig/export/`, plus `rig.f3d`. The STL files lie as in the assembly, so four must be turned over in the slicer. No part needs support.
 
-| Part | Qty | Lay it |
+| Part | Qty | On the bed |
 | --- | --- | --- |
-| `bottom_plate`, `top_plate` | 1 each | Flat |
-| `pillar`, `foot` | 4 each | Standing |
-| `bearing_housing` | 1 | Flange down |
-| `output_shaft` | 1 | Flange down, 100 % infill |
-| `camera_plate` | 1 | Slot side up |
-| `magnet_holder`, `sensor_tray`, `spacer` | 1 each | Flat |
-| `idler_spacer_top`, `idler_spacer_low` | 2 each | Standing |
-| `pulley_100T`, `pulley_120T` | 1 each | Flat, 0.12 mm layers |
+| `fit_seat`, `fit_shaft` | 1 each | As exported: **print these first** |
+| `pulley_120T`, `pulley_100T` | 1 each | As exported, 0.12 mm layers |
+| `bottom_plate` | 1 | **Turn over:** top face on the bed, pockets up |
+| `top_plate` | 1 | As exported |
+| `pillar`, `foot` | 4 each | As exported, standing |
+| `bearing_housing` | 1 | As exported, flange on the bed |
+| `output_shaft` | 1 | **Turn over:** flange on the bed, 100 % infill |
+| `camera_plate` | 1 | **Turn over:** top face on the bed, channel up |
+| `magnet_holder` | 1 | **Turn over:** pockets up |
+| `sensor_tray` | 1 | As exported; wait for the boards |
+| `spacer` | 1 | As exported |
+| `idler_spacer_top` | 2 | **Turn over:** small boss up |
+| `idler_spacer_low` | 2 | As exported; a small part, so use a brim |
 
 **Before printing the lot:**
-1. **Print the 120T first and try it on a belt.** A 144T already printed for the tooth test is just as good for that. The tooth shape is simplified and untested; `GROOVE_W` and `GROOVE_D` in the script adjust it.
-2. **Check the bearing and hexagon fits** on that same print and on the housing; `BEARING_FIT` and `HEX_FIT` adjust them.
-3. **Wait with `sensor_tray`** until the sensor boards are in: the tray is a placeholder until the boards are measured.
-4. **Check the 16T pulley on arrival.** Its height and hub are estimated, and they set the belt plane.
+1. **Print `pulley_120T` and try it on a belt.** A 144T already printed is just as good for that. The tooth land is 0.66 mm, one extrusion line. `GROOVE_W` and `GROOVE_D` adjust it.
+2. **Print `fit_seat` and `fit_shaft`, and try them on a 6806 and the pulley.** The seat should take the bearing by hand or a light press, the round end should slide through the bearing, and the hexagon should slide into the pulley. `BEARING_FIT`, `SHAFT_D` and `HEX_FIT` adjust them.
+3. **Wait with `sensor_tray`** until the boards are in: the tray is a placeholder, with no mounting for a board yet.
+4. **Check the 16T pulley on arrival.** Its height, hub and flange are estimated. At the tightest belt setting its flange has about 0.5 mm to the idler.
 
-**Also needed:** 29 M3 heat-set inserts and M3 bolts, including two M3 × 30 for the idlers. Stainless bolts near the magnet.
+## Assembly
+
+Hardware: 27 M3 × 4 heat-set inserts (short ones: some holes are 5 mm deep). M3 bolts: 16 × 10, 4 × 12, 4 × 8 button head with washers, 3 × 8 button head in stainless, 2 × 30. Two thin M3 nuts (DIN 439). Two 0.5 mm M3 shims. Calculated from the model, not yet built.
+
+1. Press all inserts. Try the pulley on the shaft after the shaft's three: the wall to the hexagon's flat is about 1.8 mm.
+2. Press the lower bearing into the housing from below, the upper from the top. Bolt the housing to the top plate from below (M3 × 10).
+3. Bolt the feet to the bottom plate (M3 × 10 from the top). Bolt the pillars to the top plate (M3 × 10 from the top).
+4. Slide the shaft in from the top, with the tab away from the rib. Turn the assembly over.
+5. Slide on the spacer, then the pulley with its belt looped on. Bolt on the magnet holder (M3 × 8). Tighten gently until the shaft has no axial play and still turns freely: these three bolts set the bearing load.
+6. Turn it back and bolt the bottom plate to the pillars, from below (M3 × 10).
+7. Set the 16T on the motor off the rig, hub up, with its lower edge 5.5 mm above the motor's face. Raise the motor from below, inside the belt loop. Fit its bolts with washers, with the motor forward. The inner two are reached through the top plate's holes; push the belt aside with the key if needed.
+8. For 7.5:1, fit the idlers with the belt slack: bolt from the top through spacer, bearing, shim, bearing and lower spacer into the nut, with the parts outside the belt loop.
+9. Pull the motor back by hand to tension the belt, and tighten.
+10. Fit the tray with shims when its boards are in (M3 × 12).
+11. **Bolt the camera to the plate first,** off the rig, with the head of the 1/4" bolt in the channel. A rubber pad stops it twisting. Then bolt the plate to the flange from below (M3 × 10), with a ball-end key between the housing and the flange. Turn the shaft to reach each bolt.
+
+**Swapping the pulley:** take off the camera and tray, and the magnet holder's bolts. Lift the shaft 11 mm, holding the spacer. Lift the belt over the motor's shaft into the top plate's opening with the motor loosened, and take the pulley out sideways. Reverse, with the idlers fitted or removed.
+
+**Clamping:** clamp the bottom plate's rear edge to a bench. Lenses over about 66 mm in diameter hit the camera plate's end, so check it before fitting one.
 
 ## Parts
 
@@ -100,10 +125,11 @@ Prices are ex VAT and shipping. Checked in the shop on 2026-11-04 where marked; 
 | GT2 closed belts, 6 mm wide: 240 and 270 mm | 2 | €6 | Estimate; check that 270 mm is on sale, or the idlers move |
 | Bearings: 2× 6806-2RS | 2 | €8 | Estimate |
 | Idler bearings: F623 (3 × 10 × 4 mm, flange 11.5 mm) | 4 | €4 | Estimate |
+| M3 × 4 inserts, bolts, thin nuts and shims: see Assembly | | | Check what you have |
 
 **About €80, plus shipping, VAT and filament.** Both motors go on the rig to compare noise. Worst-case tilt at 7.5:1 needs about 0.22 Nm, so the 42 Ncm is the likely choice for the real tilt.
 
-**The owner already has, to confirm:** an ESP32 dev board, a lab supply reaching 24 V, the camera and lens, a Bambu printer, M3 inserts and bolts, and a 1/4" camera bolt.
+**The owner already has, to confirm:** an ESP32 dev board, a lab supply reaching 24 V, the camera and lens, a Bambu printer, a 1/4" camera bolt, and a ball-end hex key.
 Printed: see Printing.
 
 ## Out of scope
