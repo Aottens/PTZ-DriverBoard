@@ -4,6 +4,21 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — One head, small, a research phase first
+
+**Decision:** The board is for one head, the owner's own, and as small as possible. Four axes. Limited pan with a cable loop, no
+slip ring. RS-232 is dropped, so VISCA only runs over IP. ESP32-S3 and TMC2209 go back to being candidates, and a joint research phase
+comes before the hardware is fixed. The new 3D head does not exist yet, and Claude helps design it.
+
+**Alternatives considered:** fixing the proposed parts directly, as in the first PRD draft.
+
+**Reasoning:** the owner named those parts as examples and wants to look for better solutions together. One head means CE and series cost
+do not steer the choices, so a dearer driver can win if it makes the board smaller.
+
+**Reversal trigger:** selling it after all; then this entry and the out-of-scope list get reopened.
+
+---
+
 ## 2026-11-04 — A new hardware and software pair, as one driver board for all heads
 
 **Decision:** Start over on both board and firmware, in this repo. The board carries its stepper drivers in SMD and is

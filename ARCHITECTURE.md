@@ -1,6 +1,7 @@
 # PTZ driver board — Architecture
 
-Draft, until `specs/PRD.md` passes gate 1.
+Draft, until `specs/PRD.md` passes gate 1. **This reflects the first draft (ESP32-S3 WROOM, TMC2209, I2C mux); the research phase in
+`docs/research/README.md` may replace all of it, and this file is rewritten when R-03, R-04 and R-05 close.**
 
 ## Blocks
 
