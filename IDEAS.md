@@ -29,4 +29,4 @@ No wall adapter in fixed installs. Open question: can it deliver enough for the 
 in slice 1 shows?
 
 ### IDEA-04 — Capstan drive instead of a belt
-A thin cable around a small shaft and a large drum: about 18:1 in one stage on a Ø100 mm drum, with no teeth to hear and almost no backlash. A limited pan range suits it. Open questions, none researched yet: cable wear and stretch, how to mount and tension it, and whether it stays quiet.
+A thin cable around a small shaft and a large drum: about 18:1 in one stage on a Ø100 mm drum, fitting the base of Ø165 mm, with no teeth to hear and almost no backlash. A limited pan range suits it. Open questions, none researched yet: cable wear and stretch, how to mount and tension it, and whether it stays quiet.

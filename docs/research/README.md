@@ -16,7 +16,7 @@ source yet; treat as a question.
 | R-05 | Which position sensor, over which bus? | Claude + test rig | leading candidate |
 | R-06 | How small can the board get? | Claude + 3D design | first round |
 | R-07 | Which supply voltage? | Claude + test rig | open: 12 or 24 V, rig decides |
-| R-08 | Which reduction? | Claude + test rig | one belt stage (owner), 9:1 or 12.5:1 on the rig |
+| R-08 | Which reduction? | Claude + test rig | one belt stage in Ø165 (owner), 6.25:1 or 7.5:1 on the rig |
 
 ## R-01 — What must the head do, in numbers?
 
@@ -167,32 +167,33 @@ moves heat and wires out of the base.
 
 ## R-07 — Which supply voltage?
 
-**Open.** The motor decides it. Voltage needed at full current, from `sqrt((I·R + E)² + (ω·L·I)²)` with StepperOnline's figures, at the 125 rpm that 12.5:1 needs for 60°/s `[zeker, as a calculation]`:
+**Open.** The motor decides it. Voltage needed at full current, from `sqrt((I·R + E)² + (ω·L·I)²)` with StepperOnline's figures, at the 75 rpm that 7.5:1 needs for 60°/s `[zeker, as a calculation]`:
 
 | Motor | Rated | R, L | Holding | Length | Volts needed | Price |
 | --- | --- | --- | --- | --- | --- | --- |
-| 17HS13-0404S1 (July design) | 0.4 A | 30 Ω, 37 mH | 26 Ncm | 34 mm | 20.5 V | €7.72 |
-| 17HE12-1204S | 1.2 A | 2.5 Ω, 3.3 mH | 26 Ncm | 30 mm | 5.6 V | €4.13 |
-| 17HE15-1504S | 1.5 A | 2.3 Ω, 4 mH | 42 Ncm | 38 mm | 7.2 V | €4.30 |
+| 17HS13-0404S1 (July design) | 0.4 A | 30 Ω, 37 mH | 26 Ncm | 34 mm | 16.7 V | €7.72 |
+| 17HE12-1204S | 1.2 A | 2.5 Ω, 3.3 mH | 26 Ncm | 30 mm | 4.5 V | €4.13 |
+| 17HE15-1504S | 1.5 A | 2.3 Ω, 4 mH | 42 Ncm | 38 mm | 5.5 V | €4.30 |
 
 **The low-resistance motors run comfortably on 12 V**, and that might also be quieter: the lowest current StealthChop can tune rises with supply voltage `[datasheet p34]`. Nothing here measures the noise. **The rig tests both, and the board accepts 12 to 24 V either way.**
 
 ## R-08 — Which reduction?
 
-**One belt stage: the owner rules out a double belt (2026-11-04).** The first draft here advised about 30:1 in two stages. That was too strong: it counted the stepper's absolute error, while a preset landing from the same side mostly repeats that error, so 30:1 is not needed for TGT-05.
+**One belt stage, in a base of at most Ø165 mm: the owner's limits (2026-11-04).** The first draft here advised about 30:1 in two stages. That was too strong: it counted the stepper's absolute error, while a preset landing from the same side mostly repeats that error, so 30:1 is not needed for TGT-05. A later draft used a 200T and long belts, which fixed tooth grip but made the base far too big.
 
-**The real risk of a lower ratio is smoothness at very low speed:** the same error then appears as a slow wave in the picture. On the G7 at 140 mm in 4K (one pixel 0.0018°), taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`, and 90 % efficiency `[geheugen]`:
+**What sets the base is the motor's distance from the axis.** The motor can sit under the pulley, so its corner is the limit: at Ø165, the centres are at most 55.7 mm. Tooth grip then needs idlers above a certain pulley size. They press on the belt's back between the pulley and the 16T, so a larger pulley leaves them less room, and that sets the top end.
 
-| Reduction | Large pulley | Wave in the picture, at most | One step at 0.08°/s | Motor at 60°/s | Worst-case tilt torque at the motor |
-| --- | --- | --- | --- | --- | --- |
-| **9:1** | 144T, Ø92 mm | ±5.4 pixels | 2.5 s | 90 rpm | 0.18 Nm |
-| **12.5:1** | 200T, Ø127 mm | ±3.9 pixels | 1.8 s | 125 rpm | 0.13 Nm |
+On the G7 at 140 mm in 4K (one pixel 0.0018°), taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`, and 90 % efficiency `[geheugen]`:
 
-**What one stage gains:** fewer parts, one belt to stretch rather than two, and a lower motor speed. **What it costs:** a larger, slower wave, and more torque from the motor. A balanced G7 needs far less than this worst case.
+| Reduction | Large pulley | Idlers | Teeth on the 16T | Wave in the picture, at most | One step at 0.08°/s | Motor at 60°/s | Worst-case tilt torque at the motor |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 6.25:1 | 100T, Ø64 mm | no | 5.5 | ±7.8 pixels | 3.6 s | 62 rpm | 0.26 Nm |
+| **7.5:1** | **120T, Ø76 mm** | **yes** | **6.9** | **±6.5 pixels** | **3.0 s** | **75 rpm** | **0.22 Nm** |
+| 9:1 | 144T, Ø92 mm | yes, with no margin | 6.1 at best | ±5.4 pixels | 2.5 s | 90 rpm | 0.18 Nm |
 
-**What can shrink the wave:** the TMC5240's reprogrammable microstep table `[datasheet p74]`. How much is for the rig to show. A capstan drive (IDEA-04) is the fallback if the wave stays too large.
+**The rig compares 6.25:1 and 7.5:1:** do idlers cost more in noise than they gain in tooth grip and smoothness? A balanced G7 needs far less than this worst case.
 
-**Proposal for the head:** 12.5:1 on pan, where the base has room, and 9:1 on tilt, where a Ø127 mm pulley is large. The rig decides.
+**What can shrink the wave:** the TMC5240's reprogrammable microstep table `[datasheet p74]`. How much is for the rig to show. A capstan drive (IDEA-04) is the fallback if the wave stays too large: about 18:1 and ±2.7 pixels in the same Ø165 `[zeker, as a calculation; the drive itself is unresearched]`.
 
 **The other half of exact is firmware:** always landing a preset from the same side takes out backlash and hysteresis, for no hardware at all (FW-11).
 

@@ -1,7 +1,8 @@
 """Builds the one-axis test rig (specs/modules/rig.md) in the active, empty Fusion design.
 
 Run inside Fusion: exec this file, then call build(). All sizes in mm, z up, output axis at the origin.
-Shows the 12.5:1 set-up assembled; the 144T for 9:1 is in the model but hidden.
+Shows the 7.5:1 set-up with idlers assembled; the 100T for 6.25:1 is in the model but hidden.
+The layout keeps to the base limit of 165 mm: the motor sits under the pulley, as in the real head.
 print_* components are printed, koop_* are bought parts, modelled only to check fit.
 """
 import math
@@ -10,23 +11,25 @@ import adsk.core
 import adsk.fusion
 
 # --- Belt geometry, from mechanica/belts.py ---
-C_9 = 112.6  # 400 mm belt
-C_125 = 128.7  # 500 mm belt
-TENSION = 4.0  # slot travel either way, for belt tension
-MOTOR_Y = -(C_9 + C_125) / 2  # one motor slot serves both belts
-MOTOR_TRAVEL = (C_125 - C_9) / 2 + TENSION
+C_625 = 55.6  # 16T-100T, 240 mm belt, no idlers
+C_75 = 55.7  # 16T-120T, 270 mm belt, with idlers
+IDLERS = [(-12.2, -48.6), (12.2, -48.6)]  # on the belt's back, 7.5:1 only
+TENSION = 2.0  # slot travel either way, for belt tension
+MOTOR_Y = -(C_625 + C_75) / 2
+MOTOR_TRAVEL = TENSION
 
 # --- Height stack ---
 PLATE_B = (0.0, 6.0)  # bottom plate
 MOTOR_FACE = 3.0  # motor sits in a pocket from below
 PLANE = 13.0  # belt plane
 PULLEY_H = 11.0
-PLATE_T = (22.0, 28.0)  # top plate
+IDLER_Z = (9.0, 17.0)  # two F623 back to back
+PLATE_T = (28.0, 34.0)  # top plate, above the motor shaft's tip
 HEX_END = 7.5  # bottom of the output shaft
-SEAT_L = (28.0, 35.0)  # lower bearing
-SEAT_U = (68.0, 75.0)  # upper bearing
-FLANGE = (76.0, 82.0)
-CAMERA_PLATE = (82.0, 94.0)
+SEAT_L = (34.0, 41.0)  # lower bearing
+SEAT_U = (74.0, 81.0)  # upper bearing
+FLANGE = (82.0, 88.0)
+CAMERA_PLATE = (88.0, 100.0)
 FOOT_H = 45.0
 
 # --- Fits, adjust to the printer ---
@@ -40,13 +43,11 @@ INSERT = 4.0  # M3 heat-set insert hole
 PLD = 0.254
 GROOVE_W = 0.66  # half width at the outer diameter
 GROOVE_D = 0.76
-FLANGE_T = 1.5
-FLANGE_OVER = 1.75
 
-X0, X1, Y0, Y1 = -68.0, 68.0, -165.0, 68.0  # bottom plate
+X0, X1, Y0, Y1 = -68.0, 68.0, -88.0, 68.0  # bottom plate
 Y0_T, Y1_T = -68.0, 68.0  # top plate
-PILLARS = [(-56.0, 56.0), (56.0, 56.0), (56.0, -56.0), (-56.0, -56.0)]  # 6 mm clear of the 200T flange
-FEET = [(-60.0, -157.0), (60.0, -157.0), (40.0, 60.0), (-40.0, 60.0)]  # clear of the pillar bolts and the 200T
+PILLARS = [(-56.0, 56.0), (56.0, 56.0), (56.0, -56.0), (-56.0, -56.0)]  # clear of the pulley and belt
+FEET = [(-60.0, -80.0), (60.0, -80.0), (40.0, 60.0), (-40.0, 60.0)]  # clear of the pillar bolts and motor
 TRAY_BOLT = 25.0
 
 
@@ -144,11 +145,11 @@ def pulley_outline(teeth):
 
 
 def pulley(root, name, teeth, centre_z):
+    # No flange: the 16T and the idlers keep the belt in line, and a smaller radius leaves room for them.
     bottom = centre_z - PULLEY_H / 2
-    outline, outer = pulley_outline(teeth)
+    outline, _ = pulley_outline(teeth)
     p = Part(root, name)
-    p.ext(bottom + FLANGE_T, bottom + PULLEY_H, [outline])
-    p.ext(bottom, bottom + FLANGE_T, [circle(0, 0, 2 * (outer + FLANGE_OVER))], "join")
+    p.ext(bottom, bottom + PULLEY_H, [outline])
     return p, bottom
 
 
@@ -167,6 +168,7 @@ def bottom_plate(root):
     motor_cuts(p, 0.0, MOTOR_Y)
     p.ext(*PLATE_B, [circle(x, y, M3_CLEAR) for x, y in PILLARS + FEET], "cut")
     p.ext(PLATE_B[0], 5.0, [circle(sx, sy, INSERT) for sx in (-TRAY_BOLT, TRAY_BOLT) for sy in (-TRAY_BOLT, TRAY_BOLT)], "cut")
+    p.ext(MOTOR_FACE, PLATE_B[1], [circle(x, y, 2.5) for x, y in IDLERS], "cut")  # the idler bolts' lower end
     return p
 
 
@@ -174,7 +176,7 @@ def top_plate(root):
     p = Part(root, "print_top_plate")
     p.ext(*PLATE_T, [rect((X0 + X1) / 2, (Y0_T + Y1_T) / 2, X1 - X0, Y1_T - Y0_T)])
     p.ext(*PLATE_T, [circle(0, 0, 38)], "cut")
-    p.ext(*PLATE_T, [circle(x, y, M3_CLEAR) for x, y in PILLARS] + ring(36, M3_CLEAR, 4, 45), "cut")
+    p.ext(*PLATE_T, [circle(x, y, M3_CLEAR) for x, y in PILLARS + IDLERS] + ring(36, M3_CLEAR, 4, 45), "cut")
     return p
 
 
@@ -250,8 +252,23 @@ def sensor_tray(root):
     return p
 
 
+def idler_parts(root):
+    x, y = IDLERS[0]
+    top = Part(root, "print_idler_spacer_top")
+    top.ext(IDLER_Z[1], PLATE_T[0], [circle(x, y, 8)])
+    top.ext(IDLER_Z[1], PLATE_T[0], [circle(x, y, M3_CLEAR)], "cut")
+    low = Part(root, "print_idler_spacer_low")
+    low.ext(PLATE_B[1], IDLER_Z[0], [circle(x, y, 6)])
+    low.ext(PLATE_B[1], IDLER_Z[0], [circle(x, y, M3_CLEAR)], "cut")
+    bearing = Part(root, "koop_idler_2xF623")
+    bearing.ext(*IDLER_Z, [circle(x, y, 10)])
+    bearing.ext(*IDLER_Z, [circle(x, y, 3)], "cut")
+    for part in (top, low, bearing):
+        copies(root, part, IDLERS[0], IDLERS[1:])
+
+
 def bought_parts(root):
-    y = -C_125
+    y = -C_75
     m = Part(root, "koop_motor_17HE15")
     m.ext(MOTOR_FACE - 38, MOTOR_FACE, [rect(0, y, 42, 42)])
     m.ext(MOTOR_FACE, MOTOR_FACE + 2, [circle(0, y, 22)], "join")
@@ -287,10 +304,11 @@ def build():
     sensor_tray(root)
     spacer(root, "print_spacer", HEX_END + PULLEY_H, SEAT_L[0])
 
-    for teeth, shown in ((200, True), (144, False)):
+    for teeth, shown in ((120, True), (100, False)):
         p, bottom = pulley(root, f"print_pulley_{teeth}T", teeth, PLANE)
         p.ext(bottom, bottom + PULLEY_H, [hexagon(HEX_AF + HEX_FIT)], "cut")
         p.occ.isLightBulbOn = shown
 
+    idler_parts(root)
     bought_parts(root)
     print("occurrences", root.allOccurrences.count, "timeline", design.timeline.count)
