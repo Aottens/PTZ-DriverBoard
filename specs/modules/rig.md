@@ -1,6 +1,6 @@
 # Module spec: test rig (RIG)
 
-Status: **draft, waiting for owner approval (gate 1).** Built by R-TR, run by R-T1 and R-T2.
+Status: **approved by the owner (2026-11-04).** Built by R-TR, run by R-T1 and R-T2.
 
 One real pan axis, carrying the real camera, before any board exists. It exists to answer questions, so it stays a test tool:
 it is allowed to be ugly, and nothing here is a design for the final head. It answers R-02 (motor), R-03 (driver), R-05 (sensor),
@@ -40,27 +40,44 @@ Kept in `firmware/rig/`, separate from the final firmware. Written against this 
 - **RIG-11** Motion stops by itself: on a stop key, when the host goes silent for 2 s during a jog, and on any driver fault flag. Position limits are enforced in the driver's own limits or the ramp target, not only in the host script.
 - **RIG-12** Logs a CSV over serial with time, commanded position, driver position, sensor angle, sensor read errors and driver status, and a host script saves it per run.
 
+## Geometry
+
+Belts and centres from `mechanica/belts.py`, which checks at least 6 teeth in mesh on each small pulley. The output shaft is the origin.
+
+| Belt | Pulleys | Length | Centres |
+| --- | --- | --- | --- |
+| A, motor to middle shaft | 16T to 80T | 240 mm | 69.0 mm |
+| B, middle shaft to output | 16T to 96T | 250 mm | 63.9 mm |
+| 9:1, motor to output | 16T to 144T | 400 mm | 112.6 mm |
+
+**Layout, top view:** middle shaft at x = -63.9; 30:1 motor at x = -63.9, y = -69; 9:1 motor at x = +112.6. Everything falls within about 225 × 140 mm, which fits the printer's 256 mm bed.
+
+**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; belt plane B with the 96T; belt plane A with the 144T, for the 9:1 set-up only; a bottom plate carrying the motors underneath it; the magnet on the end of the output shaft, with the sensor bracket below it. Two plates on four pillars, each printed flat.
+
+**Tension:** the middle shaft's bearing holders slide in slots along x for belt B. Then each motor slides in slots along its own belt. 8 mm of travel.
+
 ## Parts
 
-Prices are first-tier, ex shipping, and checked on 2026-11-04 where marked. To be rechecked when ordering.
+Prices are ex VAT and shipping. Checked in the shop on 2026-11-04 where marked; estimates are from memory. To be rechecked when ordering.
 
-| Part | Qty | About | Source |
+| Part | Qty | Price | Source |
 | --- | --- | --- | --- |
-| TMC5240-BOB breakout | 1 | €23 ex VAT | DigiKey listing, undated |
-| Motor 17HE08-1004S, 17 Ncm, 23 mm, for 30:1 | 1 | €4 | StepperOnline, checked |
-| Motor 17HE12-1204S, 26 Ncm, for 9:1, where the 17 Ncm has too little reserve | 1 | €4 | StepperOnline, checked |
-| AS5047P-TS_EK_AB adapter board, with D6×2.5 magnet | 1 | €15 ex VAT | DigiKey and RS listings, undated |
+| TMC5240-BOB breakout | 1 | €27.05 | DigiKey NL, 17 in stock, checked |
+| AS5047P adapter board | 1 | €17.22 | DigiKey NL, 199 in stock, checked; being discontinued there |
+| Motor 17HE08-1004S: 17 Ncm, 1 A, 3.6 Ω, 4 mH, 23 mm, for 30:1 | 1 | €4.03 | StepperOnline, checked; €2.20 more from Germany |
+| Motor 17HE12-1204S: 26 Ncm, 1.2 A, 2.5 Ω, 3.3 mH, 30 mm, for 9:1 | 1 | €4.13 | StepperOnline, checked; €2.55 more from Germany |
 | AS5600 breakout with magnet | 1 | €3 | Estimate |
+| Diametric magnet, D6×2.5, in case the AS5047P board comes without | 1 | €2 | Estimate |
 | GT2 pulley, 16T, 5 mm bore | 2 | €4 | Estimate |
 | GT2 pulley, 16T, 8 mm bore, for the middle shaft | 1 | €2 | Estimate |
-| GT2 closed belts, 6 mm wide, lengths from CAD | 3 | €9 | Estimate |
+| GT2 closed belts, 6 mm wide: 240, 250 and 400 mm | 3 | €9 | Estimate |
 | Bearings: 2× 6806-2RS, 2× 608 | 4 | €12 | Estimate |
 | 8 mm steel shaft, 100 mm | 1 | €3 | Estimate |
 
-**About €80, plus shipping, VAT and filament.** Motors from the EU warehouse cost about €2 more each.
+**About €90, plus shipping, VAT and filament.** The 17HE12 needs 10 V at 300 rpm by the same calculation as R-07.
 
 **The owner already has, to confirm:** an ESP32 dev board, a lab supply reaching 24 V, the camera and lens, a Bambu printer, M3 inserts and bolts, and a 1/4" camera bolt.
-Printed: frame, 80T, 96T and 144T pulleys, motor plates, magnet holder, sensor bracket, camera plate.
+Printed: plates, pillars, output shaft and flange, 80T, 96T and 144T pulleys, motor brackets, magnet holder, sensor bracket, camera plate.
 
 ## Out of scope
 

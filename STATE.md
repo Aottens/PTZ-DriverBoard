@@ -9,8 +9,8 @@ The research phase, before the hardware is fixed. Findings are in `docs/research
 TMC5240 passed its datasheet check; on real hardware it is untested. Leading: stepper, about 30:1 belts, TMC5240, ESP32-S3-MINI-1U, SPI sensor. Open: 12 or 24 V. No schematic exists.
 
 ## Next
-1. The owner approves `specs/modules/rig.md` (gate 1), then orders parts.
-2. R-TR: design the rig's frame and pulleys, and write its firmware.
+1. The owner orders the rig parts from `specs/modules/rig.md`.
+2. R-TR: model the rig in Fusion from its Geometry section. Needs Fusion running with its MCP add-in.
 
 ## Waiting for a run on hardware (gate 3, owner)
 - none
@@ -19,5 +19,4 @@ TMC5240 passed its datasheet check; on real hardware it is untested. Leading: st
 - none
 
 ## Owner decisions open
-- The rig spec, `specs/modules/rig.md`.
 - The remaining **[OPEN]** lines in `specs/PRD.md`.

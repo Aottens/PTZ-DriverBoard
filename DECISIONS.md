@@ -4,6 +4,18 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — The rig spec is approved
+
+**Decision:** `specs/modules/rig.md` is approved (gate 1), with the 17HE08-1004S and 17HE12-1204S motors instead of the 0.4 A motor from the July design.
+
+**Alternatives considered:** the 17HS13-0404S1, which needs 35 V at 300 rpm at rated current by calculation.
+
+**Reasoning:** low-resistance motors reach the speed on 12 V and are thinner, which suits a small base.
+
+**Reversal trigger:** R-T1 shows these motors are too weak or too loud.
+
+---
+
 ## 2026-11-04 — Targets approved, G7 first, and the rig goes ahead
 
 **Decision:** TGT-01..05 are approved. The first camera is a Panasonic G7 with a 14-140 mm, Micro Four Thirds. A one-axis test rig goes ahead.
