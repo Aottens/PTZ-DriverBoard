@@ -248,7 +248,9 @@ def sensor_tray(root):
     p = Part(root, "print_sensor_tray")
     p.ext(-8, -5, [rect(0, 0, 60, 60)])
     p.ext(-5, -1, [circle(0, 0, 30)], "join")
-    p.ext(-8, -5, [circle(sx, sy, M3_CLEAR) for sx in (-TRAY_BOLT, TRAY_BOLT) for sy in (-TRAY_BOLT, TRAY_BOLT)], "cut")
+    corners = [(sx, sy) for sx in (-TRAY_BOLT, TRAY_BOLT) for sy in (-TRAY_BOLT, TRAY_BOLT)]
+    p.ext(-5, 0, [circle(x, y, 8) for x, y in corners], "join")  # legs up to the plate; shims under them set the magnet gap
+    p.ext(-8, 0, [circle(x, y, M3_CLEAR) for x, y in corners], "cut")
     return p
 
 

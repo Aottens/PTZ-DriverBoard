@@ -53,7 +53,7 @@ The motor's distance sets the base: at 55.7 mm its corner reaches the Ø165 limi
 
 **Layout, top view:** the output shaft is the origin, the motor is on the line x = 0 at y = -55.65, ±2 mm. The rig's plates are 136 × 156 and 136 × 136 mm: square, not round, since the rig has no need for a round base.
 
-**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; the belt plane at z = 13 with the pulley and the idlers; a bottom plate with the motor in a pocket underneath it; the magnet on the end of the output shaft, with the sensor tray below it. Two plates on four pillars, on four feet.
+**Stack, from the top:** camera plate on the output flange; bearing housing with two 6806-2RS on a top plate; the belt plane at z = 13 with the pulley and the idlers; a bottom plate with the motor in a pocket underneath it; the magnet on the end of the output shaft, with the sensor tray below it, on four legs bolted to the bottom plate. Shims between legs and plate set the gap to the magnet. Two plates on four pillars, on four feet.
 
 **The pulley on the output** is carried by a hexagon on the shaft, held in a stack by the magnet holder and three M3 bolts into the shaft end. It has no flange: the 16T and the idlers keep the belt in line.
 
