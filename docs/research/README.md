@@ -16,7 +16,7 @@ source yet; treat as a question.
 | R-05 | Which position sensor, over which bus? | Claude + test rig | leading candidate |
 | R-06 | How small can the board get? | Claude + 3D design | first round |
 | R-07 | Which supply voltage? | Claude + test rig | open: 12 or 24 V, rig decides |
-| R-08 | Which reduction? (new) | Claude + test rig | leading candidate: about 30:1 |
+| R-08 | Which reduction? | Claude + test rig | one belt stage in Ø165 (owner), 6.25:1 or 7.5:1 on the rig |
 
 ## R-01 — What must the head do, in numbers?
 
@@ -59,7 +59,7 @@ The search found **no measured comparison** of the two in a camera head, so this
 
 **Leading candidate: stepper with belt reduction.** It keeps the board small and simple, which is the owner's goal, and the TMC5240 is built for this: StealthChop2 is
 specified as noiseless at standstill and low speed `[datasheet p29]`, and its microstep table can be reprogrammed per motor for smoother motion `[datasheet p74]`.
-**What would overturn it:** the test rig (RIG-T1) shows noise or jitter we cannot accept.
+**What would overturn it:** the test rig (R-T1) shows noise or jitter we cannot accept.
 
 ## R-03 — Which driver, and where does motion happen?
 
@@ -108,7 +108,7 @@ Costs: about $18 more per board than TMC2209, which matters little for one head.
 | 1.0 A | 0.46 W | 13 °C |
 | 1.5 A | 1.04 W | 30 °C |
 
-Far below the 125 °C operating limit `[datasheet p10]`. A 50×50 mm board in still air (10 W/m²K, both sides) rises about 37 °C with all four at 1 A, and much less at the current R-08 suggests. **So the chip is not the limit; the
+Far below the 125 °C operating limit `[datasheet p10]`. A 50×50 mm board in still air (10 W/m²K, both sides) rises about 37 °C with all four at 1 A, and these motors need that much only near their limit. **So the chip is not the limit; the
 3D print is**: PETG softens around 80 °C and PLA well below that `[geheugen]`. Keep the board off the plastic.
 
 ## R-04 — Which MCU?
@@ -141,9 +141,9 @@ The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still
    the sensor says roughly where the head is at boot, the motor's step count does the fine work, and presets lean on repeatability rather than absolute
    accuracy. So the number to find is **repeatability and noise**, which the search did not give.
 2. **SPI may remove the mux.** One shared bus with a chip select per sensor needs no TCA9548A and cuts wires: 5 shared plus 3 chip selects is 8 through the shaft
-   for tilt, zoom and focus, against 12 for separate I2C. SPI's driven lines should also cope better with a long cable than open-drain I2C `[geheugen]`; T-2 tests that.
+   for tilt, zoom and focus, against 12 for separate I2C. SPI's driven lines should also cope better with a long cable than open-drain I2C `[geheugen]`; R-T2 tests that.
 
-**Leading candidate: an SPI sensor.** Which one follows from repeatability data and T-2.
+**Leading candidate: an SPI sensor.** Which one follows from repeatability data and R-T2.
 
 **Wire count (MEC-04) drops.** With an absolute sensor on each output axis, home switches are redundant. Motors 12 + sensors 8 = **20 wires**, against 33 in the first draft `[zeker]`.
 
@@ -167,32 +167,35 @@ moves heat and wires out of the base.
 
 ## R-07 — Which supply voltage?
 
-**Open, and the first answer changed.** The motor decides it. Voltage needed at 300 rpm, from `sqrt((I·R + E)² + (ω·L·I)²)` with StepperOnline's figures `[zeker, as a calculation]`:
+**Open.** The motor decides it. Voltage needed at full current, from `sqrt((I·R + E)² + (ω·L·I)²)` with StepperOnline's figures, at the 75 rpm that 7.5:1 needs for 60°/s `[zeker, as a calculation]`:
 
-| Motor | Rated | R, L | Holding | Length | Volts needed at rated current | Price |
+| Motor | Rated | R, L | Holding | Length | Volts needed | Price |
 | --- | --- | --- | --- | --- | --- | --- |
-| 17HS13-0404S1 (July design) | 0.4 A | 30 Ω, 37 mH | 26 Ncm | 34 mm | **35 V: more than 24 V supplies** | €7.72 |
-| **17HE08-1004S** | 1 A | 3.6 Ω, 4 mH | 17 Ncm | **23 mm** | **9.7 V** | **€4.03** |
+| 17HS13-0404S1 (July design) | 0.4 A | 30 Ω, 37 mH | 26 Ncm | 34 mm | 16.7 V | €7.72 |
+| 17HE12-1204S | 1.2 A | 2.5 Ω, 3.3 mH | 26 Ncm | 30 mm | 4.5 V | €4.13 |
+| 17HE15-1504S | 1.5 A | 2.3 Ω, 4 mH | 42 Ncm | 38 mm | 5.5 V | €4.30 |
 
-**So the July motor does not suit 30:1 at full current, and a low-resistance motor runs on 12 V.** That points to 12 V being enough, and possibly better: the lowest current StealthChop can tune rises with supply voltage `[datasheet p34]`, and it might also be quieter, though nothing here measures that. 24 V remains the reserve for more speed. **The rig tests both, and the board accepts 12 to 24 V either way.**
+**The low-resistance motors run comfortably on 12 V**, and that might also be quieter: the lowest current StealthChop can tune rises with supply voltage `[datasheet p34]`. Nothing here measures the noise. **The rig tests both, and the board accepts 12 to 24 V either way.**
 
 ## R-08 — Which reduction?
 
-New question, and it follows from "as exact as possible". Reduction shrinks every motor error at the output. On the G7 at 140 mm in 4K (one pixel 0.0018°) `[zeker]`, taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`:
+**One belt stage, in a base of at most Ø165 mm: the owner's limits (2026-11-04).** The first draft here advised about 30:1 in two stages. That was too strong: it counted the stepper's absolute error, while a preset landing from the same side mostly repeats that error, so 30:1 is not needed for TGT-05. A later draft used a 200T and long belts, which fixed tooth grip but made the base far too big.
 
-| Reduction | Microstep at output | Stepper error at output | In pixels | Motor at 60°/s | Tilt torque at the motor, worst case 1.47 Nm, 80 % efficient |
-| --- | --- | --- | --- | --- | --- |
-| 5:1 (July, pan) | 0.0014° | ±0.018° | 9.8 | 50 rpm | 0.37 Nm |
-| 9:1 (July, tilt) | 0.0008° | ±0.010° | 5.4 | 90 rpm | 0.20 Nm |
-| 16:1 | 0.0004° | ±0.006° | 3.1 | 160 rpm | 0.12 Nm |
-| **30:1** | **0.0002°** | **±0.003°** | **1.6** | **300 rpm** | **0.06 Nm** |
-| 60:1 | 0.0001° | ±0.0015° | 0.8 | 600 rpm | 0.03 Nm |
+**What sets the base is the motor's distance from the axis.** The motor can sit under the pulley, so its corner is the limit: at Ø165, the centres are at most 55.7 mm. Tooth grip then needs idlers above a certain pulley size. They press on the belt's back between the pulley and the 16T, so a larger pulley leaves them less room, and that sets the top end.
 
-**Leading candidate: about 30:1**, as two belt stages. This one choice helps almost everything: smaller errors, ripple that is smaller and faster, a smaller and cooler motor, and less heat on the board. The 17 Ncm 17HE08-1004S has 2.8 times the worst-case torque at 30:1, and too little at 9:1 `[zeker]`, so that motor fits this reduction only.
-It also helps noise, since the motor needs far less current, though 300 rpm may be louder than 90 rpm; only the rig can say. The step rate of 256,000 microsteps/s at 256 microstepping is above FastAccelStepper's 200 kHz `[bron]`, one more argument for a ramp generator in the driver.
+On the G7 at 140 mm in 4K (one pixel 0.0018°), taking a stepper's full-step error as ±5 % of 1.8° `[geheugen]`, and 90 % efficiency `[geheugen]`:
+
+| Reduction | Large pulley | Idlers | Teeth on the 16T | Wave in the picture, at most | One step at 0.08°/s | Motor at 60°/s | Worst-case tilt torque at the motor |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 6.25:1 | 100T, Ø64 mm | no | 5.5 | ±7.8 pixels | 3.6 s | 62 rpm | 0.26 Nm |
+| **7.5:1** | **120T, Ø76 mm** | **yes** | **6.9** | **±6.5 pixels** | **3.0 s** | **75 rpm** | **0.22 Nm** |
+| 9:1 | 144T, Ø92 mm | yes, with no margin | 6.1 at best | ±5.4 pixels | 2.5 s | 90 rpm | 0.18 Nm |
+
+**The rig compares 6.25:1 and 7.5:1:** do idlers cost more in noise than they gain in tooth grip and smoothness? A balanced G7 needs far less than this worst case.
+
+**What can shrink the wave:** the TMC5240's reprogrammable microstep table `[datasheet p74]`. How much is for the rig to show. A capstan drive (IDEA-04) is the fallback if the wave stays too large: about 18:1 and ±2.7 pixels in the same Ø165 `[zeker, as a calculation; the drive itself is unresearched]`.
 
 **The other half of exact is firmware:** always landing a preset from the same side takes out backlash and hysteresis, for no hardware at all (FW-11).
-**What would overturn it:** the belts' own stretch. A last stage that is too soft makes the head wobble after a stop, whatever the reduction. The rig measures that.
 
 ## Zoom axis
 
@@ -205,7 +208,8 @@ A one-axis rig answers R-02, R-03, R-05, R-07 and R-08 on real hardware before a
 
 ## Sources
 
-- [StepperOnline 17HE08-1004S](https://www.omc-stepperonline.com/e-series-nema-17-bipolar-1-8deg-17ncm-24-07oz-in-1a-42x42x23mm-4-wires-17he08-1004s)
+- [StepperOnline 17HE12-1204S](https://www.omc-stepperonline.com/e-series-nema-17-bipolar-26ncm-36-82oz-in-1-2a-42x42x30mm-4-wires-w-1m-cable-connector-17he12-1204s)
+- [StepperOnline 17HE15-1504S](https://www.omc-stepperonline.com/e-series-nema-17-bipolar-42ncm-59-49oz-in-1-5a-42x42x38mm-4-wires-w-1m-cable-connector-17he15-1504s)
 - [StepperOnline 17HS13-0404S1](https://www.omc-stepperonline.com/nema-17-bipolar-1-8deg-26ncm-36-8oz-in-0-4a-12v-42x42x34mm-4-wires-17hs13-0404s1)
 - [Panasonic 14-140 mm II, DXOMARK](https://www.dxomark.com/Lenses/Panasonic/Panasonic-LUMIX-G-VARIO-14-140mm-F35-56-ASPH-POWER-OIS-mounted-on-Olympus-PEN-E-PL7---Specifications__972)
 - [Panasonic 14-140 mm F4.0-5.8, PhotographyBlog](https://www.photographyblog.com/reviews/panasonic_lumix_g_vario_14_140mm_f4_58_asph_mega_ois_review/specifications)

@@ -115,6 +115,7 @@ These flow from the software and electronics into the mechanics, and are the inp
 - MEC-05 A place for the external antenna outside the carbon-filled walls.
 - MEC-06 Heat: designed to work without a fan, with room to add one (AUX-03). The board stays off the plastic; a printed part softens long before the chips reach their limit (R-03).
 - MEC-07 Pan range is limited, with a cable service loop (owner, 2026-11-04). No slip ring.
+- MEC-08 The base is at most Ø165 mm (owner, 2026-11-04). One belt stage per axis, no double belt (owner, 2026-11-04).
 
 ## Out of scope for v1
 

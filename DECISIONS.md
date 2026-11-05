@@ -4,6 +4,42 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — The base is at most Ø165 mm
+
+**Decision:** The head's base is at most Ø165 mm. The motor sits under the pulley, so the centres are at most 55.7 mm. The rig keeps to that and compares 6.25:1 without idlers against 7.5:1 with two idlers. This replaces the 9:1 and 12.5:1 rig in the entry below.
+
+**Alternatives considered:** 12.5:1 with a 200T (Ø196 with idlers, about Ø300 without); 9:1 with a 144T, which reaches the limit with no margin.
+
+**Reasoning:** the owner rejected the size of a 200T and a 400 mm belt, and small is a stated goal. Claude had let tooth grip set the layout. A rig with the head's real geometry also tests the right question.
+
+**Reversal trigger:** the rig shows neither ratio is acceptable; then the capstan (IDEA-04) comes first, within the same base.
+
+---
+
+## 2026-11-04 — One belt stage, no double belt
+
+**Decision:** The head uses one belt stage per axis. The rig compares 9:1 and 12.5:1, with 26 and 42 Ncm motors. This replaces the 30:1 two-stage layout and the 17 Ncm motor in the rig entry below.
+
+**Alternatives considered:** 30:1 in two stages; a capstan drive (IDEA-04); gearboxes, worm gears and harmonic drives, set aside for backlash, noise or price.
+
+**Reasoning:** the owner does not want a double belt. Claude's case for 30:1 counted absolute stepper error, while a preset landing from the same side mostly repeats it. The remaining risk is a slow wave at very low speed, which the rig measures.
+
+**Reversal trigger:** the wave stays visible at 12.5:1 even with a tuned microstep table; then a capstan comes first, before a second belt.
+
+---
+
+## 2026-11-04 — The rig spec is approved
+
+**Decision:** `specs/modules/rig.md` is approved (gate 1), with the 17HE08-1004S and 17HE12-1204S motors instead of the 0.4 A motor from the July design.
+
+**Alternatives considered:** the 17HS13-0404S1, which needs 35 V at 300 rpm at rated current by calculation.
+
+**Reasoning:** low-resistance motors reach the speed on 12 V and are thinner, which suits a small base.
+
+**Reversal trigger:** R-T1 shows these motors are too weak or too loud.
+
+---
+
 ## 2026-11-04 — Targets approved, G7 first, and the rig goes ahead
 
 **Decision:** TGT-01..05 are approved. The first camera is a Panasonic G7 with a 14-140 mm, Micro Four Thirds. A one-axis test rig goes ahead.
