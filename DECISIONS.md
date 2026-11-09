@@ -4,6 +4,18 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-09 — Working rules for board design, from Anthropic's electronics work
+
+**Decision:** Schematic and layout go to the strongest model available instead of Sonnet. Added to `CLAUDE.md`: route the hard nets first, a layout may overturn the pin table, check the board in its housing by code, sort every manufacturability and sourcing flag. The owner approved this.
+
+**Alternatives considered:** keeping Sonnet for all building; waiting with these rules until the board starts.
+
+**Reasoning:** [Anthropic's write-up with Diode Computers](https://www.anthropic.com/research/claude-electronics-design) reports a benchmark for placement and rerouting going from 25 % to 69 % between two model generations, and describes these habits. Diode has a commercial relationship with Anthropic, and the prototypes were not electrically validated, so this is a working habit and not proof.
+
+**Reversal trigger:** a Sonnet layout holds up against the blind review, or the rules slow the work without catching defects.
+
+---
+
 ## 2026-11-04 — The base is at most Ø165 mm
 
 **Decision:** The head's base is at most Ø165 mm. The motor sits under the pulley, so the centres are at most 55.7 mm. The rig keeps to that and compares 6.25:1 without idlers against 7.5:1 with two idlers. This replaces the 9:1 and 12.5:1 rig in the entry below.

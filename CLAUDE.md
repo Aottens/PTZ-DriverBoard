@@ -16,9 +16,10 @@ Talk to the owner in **Dutch**; write specs, code, comments and commits in **Eng
    - **Board:** ERC and DRC clean through `kicad-cli`, and a check for each number the spec states.
    - **Firmware:** a host test named after the id (`test_drv_02_...`) in `firmware/test/`, against
      pure logic with no hardware.
-3. **Build third, by a Sonnet subagent.** The main session writes spec and failing checks; a Sonnet
-   subagent (`model: sonnet`) makes the smallest change that turns them green; the main session
-   reviews the diff before it goes to the owner.
+3. **Build third, by a subagent.** The main session writes spec and failing checks; a subagent makes
+   the smallest change that turns them green; the main session reviews the diff before it goes to the
+   owner. Firmware and scripts go to a Sonnet subagent (`model: sonnet`). Schematic and layout go to the
+   strongest model available, since board layout depends heavily on the model.
 4. **Review.** One branch and one PR per build on GitHub; the owner reviews and merges (gate 2).
    Anything only a real board can show ships with a checklist in `tests/hardware/` that only the owner
    can tick (gate 3).
@@ -40,7 +41,7 @@ Use the `project-orchestrator` agent in `.claude/agents/` for pre-flight and pos
 
 - A build is one session, one branch and one PR, holding one task or a few that belong together: at
   most three tasks and at most one of them M. An L or XL is a build of its own.
-- One commit per task, so a task can be reverted alone. Each task gets its own Sonnet subagent with
+- One commit per task, so a task can be reverted alone. Each task gets its own subagent with
   its own brief: criteria ids, failing checks, files to read and what the task before it left.
 - When a task outgrows its size or review finds a defect in the approach, ship what is done and move
   the rest to the next build.
@@ -57,6 +58,8 @@ and then only the owner orders:
 3. Every KRITIEK and BELANGRIJK finding is fixed or accepted in writing in `DECISIONS.md`.
 4. All parts are in stock at JLC on the day of the order.
 5. The JLC preview is checked for pin 1 and rotation of each polar part, by a checklist in the PR.
+6. Every manufacturability and sourcing flag is sorted in the PR as a real problem, fixed, or harmless,
+   with the reason.
 
 ## Hardware rules
 
@@ -73,6 +76,13 @@ and then only the owner orders:
 - **Leave the knob.** Anything the real world can move stays adjustable from firmware or a solder jumper:
   current per axis, thresholds, offsets, polarities.
 - **Every power-up of a new board is current-limited first**, from a checklist in `tests/hardware/`.
+- **Route the hard nets first:** motor supply and outputs, then fast buses, then sensitive signals, then
+  the rest. Keep antenna zones free of copper and holes on every layer.
+- **A layout may overturn the pin table.** Pins are provisional until a first layout: swap them where
+  that untangles routing, in the one pin source. When an area stays tangled, delete and reroute it
+  rather than patching it.
+- **Check the board in its housing by code,** with connectors and their mating plugs, and write the
+  assembly steps as part of the design: a bolt, tool or plug that cannot reach is a design error.
 
 ## Firmware rules
 
@@ -94,7 +104,8 @@ criteria or design for an idea until its phase is planned.
 - **Review:** plugin `kicad-happy`, enabled in `.claude/settings.json`.
 - **Routing:** Freerouting 2.4.1, `~/.kicad-mcp/freerouting.jar`, run with
   `/opt/homebrew/opt/openjdk@26/bin/java` directly on a DSN export of the file. Not through the MCP's
-  `autoroute`, which exports its own possibly stale copy from memory.
+  `autoroute`, which exports its own possibly stale copy from memory. When it stalls on dense or
+  sensitive nets, write a small grid router for those nets rather than hand-placing them one by one.
 - **Production:** `hardware/fab/make_jlc.py` fits rotation and centre on the EasyEDA footprint JLC uses
   (template: `RunningScoreboard/hardware/fab/make_jlc.py`). Rerun after every board change.
 - **Firmware:** PlatformIO at `~/.platformio/penv/bin/pio`. Stack still to decide (`specs/PRD.md`, FW-01).
