@@ -8,14 +8,12 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | C1523 | 0402B102K500NT | 0402 | 4 | Economic and Standard | Basic | not read | 1 nF |
 | C1525 | CL05B104KO5NNNC | 0402 | 19 | Economic and Standard | Basic | not read | 100 nF |
-| C1532 | 0402B223K500NT | 0402 | 2 | Economic and Standard | Basic | not read | 22 nF |
-| C1532 | 0402B223K500NT | 0402 | 4 | Economic and Standard | Basic | not read | 22 nF 50 V |
+| C1532 | 0402B223K500NT | 0402 | 6 | Economic and Standard | Basic | not read | 22 nF / 22 nF 50 V |
 | C1542 | 0402B682K500NT | 0402 | 2 | Economic and Standard | Extended | 172 514 | 6.8 nF |
 | C1546 | 0402CG101J500NT | 0402 | 1 | Economic and Standard | Basic | not read | 100 pF |
 | C1549 | 0402CG180J500NT | 0402 | 2 | Economic and Standard | Basic | not read | 18 pF |
 | C1555 | 0402CG220J500NT | 0402 | 1 | Economic and Standard | Basic | not read | 22 pF |
-| C2286 | KT-0603R | 0603 | 1 | Economic and Standard | Basic | not read | LINK |
-| C2286 | KT-0603R | 0603 | 1 | Economic and Standard | Basic | not read | ACT |
+| C2286 | KT-0603R | 0603 | 2 | Economic and Standard | Basic | not read | LINK / ACT |
 | C7519 | USBLC6-2SC6 | SOT-23-6L | 1 | Economic and Standard | Extended | 30 229 | USBLC6-2SC6 |
 | C7662 | SN74LVC139APWR | TSSOP-16 | 1 | Economic and Standard | Extended | 3 929 | SN74LVC139A |
 | C7668 | SN74LVC244APWR | TSSOP-20 | 1 | Economic and Standard | Extended | 97 496 | SN74LVC244A |
@@ -30,8 +28,7 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | C15195 | CL05B103KB5NNNC | 0402 | 2 | Economic and Standard | Basic | not read | 10 nF |
 | C15849 | CL10A105KB8NNNC | 0603 | 4 | Economic and Standard | Basic | not read | 1 µF 50 V |
 | C19666 | CL10A475KO8NNNC | 0603 | 1 | Economic and Standard | Basic | not read | 4.7 µF 16 V |
-| C19702 | CL10A106KP8NNNC | 0603 | 2 | Economic and Standard | Basic | not read | 10 µF 10 V |
-| C19702 | CL10A106KP8NNNC | 0603 | 1 | Economic and Standard | Basic | not read | 10 µF |
+| C19702 | CL10A106KP8NNNC | 0603 | 3 | Economic and Standard | Basic | not read | 10 µF 10 V / 10 µF |
 | C20785 | SMD0603P020TF | 0603 | 3 | Economic and Standard | Extended | 3 687 | 0.2 A PTC |
 | C22787 | 0603WAF1200T5E | 0603 | 2 | Economic and Standard | Basic | not read | 120R |
 | C23733 | CL05A475MP5NRNC | 0402 | 7 | Economic and Standard | Basic | not read | 4.7 µF |
@@ -56,8 +53,7 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | C32843 | W5500 | LQFP-48 7x7 | 1 | Economic and Standard | Extended | 15 662 | W5500 |
 | C37130 | AO3422 | SOT-23 | 3 | Economic and Standard | Extended | 69 626 | AO3422 |
 | C44377 | TPS54360DDAR | SOIC-8-EP | 1 | Economic and Standard | Extended | 53 853 | TPS54360 |
-| C45783 | CL21A226MAQNNNE | 0805 | 2 | Economic and Standard | Basic | not read | 22 µF 25 V |
-| C45783 | CL21A226MAQNNNE | 0805 | 1 | Economic and Standard | Basic | not read | 22 µF |
+| C45783 | CL21A226MAQNNNE | 0805 | 3 | Economic and Standard | Basic | not read | 22 µF 25 V / 22 µF |
 | C52923 | CL05A105KA5NQNC | 0402 | 4 | Economic and Standard | Basic | not read | 1 µF |
 | C60105 | 19-237/R6GHBHC-A01/2T | SMD-4P 1.6x1.6 | 1 | Economic and Standard | Extended | 20 381 | RGB LED |
 | C72975 | 0452007.MRL | 2410 | 1 | Economic and Standard | Extended | 2 803 | 7 A slow |
@@ -91,7 +87,7 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | C7494373 | TMC5240ATJ+T | TQFN-32 | 4 | Economic and Standard | Extended | 3 329 | TMC5240ATJ |
 | C20627095 | ESP32-C6-MINI-1U-H4 | SMD 13.2x12.5 | 1 | Economic and Standard | Extended | 3 549 | ESP32-C6-MINI-1U-H4 |
 
-84 BOM lines: 42 Basic, 42 Extended. All are "Economic and Standard".
+80 BOM lines: 38 Basic, 42 Extended. All are "Economic and Standard".
 
 Tightest stock: the I/O expander PCAL6416APW (296) and the top-entry 4-pin header BM04B-GHS-TBT (1 999).
 The TJA1051T/3 CAN transceiver first chosen had 6 left, so the board uses the SN65HVD230DR instead.

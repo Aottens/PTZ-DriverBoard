@@ -41,7 +41,7 @@ Covers S2-01 to S3-03 below. The research questions and slice 1 stay open: the r
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
-| RA-01 | One Fable 5.2 session delivers one PR with specs, checks, KiCad project, JLC files, bring-up checklist and handled blind review, from `docs/prompts/fable-board-rev-a.md`. | POW, DRV, ENC, CTL, CAM, AUX, BRD | XL | todo |
+| RA-01 | One Fable 5.2 session delivers one PR with specs, checks, KiCad project, JLC files, bring-up checklist and handled blind review, from `docs/prompts/fable-board-rev-a.md`. | POW, DRV, ENC, CTL, CAM, AUX, BRD | XL | done (2026-11-11, #3) |
 
 ## Slice 1 — what the board is
 
@@ -54,20 +54,26 @@ Covers S2-01 to S3-03 below. The research questions and slice 1 stay open: the r
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
-| S2-01 | Module specs have numbered criteria per block, with datasheet revisions noted (gate 1). | POW, DRV, ENC, CTL, CAM, AUX | L | todo |
-| S2-02 | The KiCad project is set up and `check_netlist.py` fails on every expected pin of the approved specs. | POW, DRV, ENC, CTL | M | todo |
-| S2-03 | Power section: its checks are green and ERC is clean. | POW-01..06 | M | todo |
-| S2-04 | Drivers and MCU: their checks are green and ERC is clean. | DRV-01..06, CTL-01 | L | todo |
-| S2-05 | Sensors, ports and I/O: all checks are green and ERC is clean. | ENC, CTL, CAM, AUX | L | todo |
+| S2-01 | Module specs have numbered criteria per block, with datasheet revisions noted (gate 1). | POW, DRV, ENC, CTL, CAM, AUX | L | done (2026-11-11, #3) |
+| S2-02 | The KiCad project is set up and `check_netlist.py` fails on every expected pin of the approved specs. | POW, DRV, ENC, CTL | M | done (2026-11-11, #3) |
+| S2-03 | Power section: its checks are green and ERC is clean. | POW-01..06 | M | done (2026-11-11, #3) |
+| S2-04 | Drivers and MCU: their checks are green and ERC is clean. | DRV-01..06, CTL-01 | L | done (2026-11-11, #3) |
+| S2-05 | Sensors, ports and I/O: all checks are green and ERC is clean. | ENC, CTL, CAM, AUX | L | done (2026-11-11, #3) |
 
 ## Slice 3 — board and order
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
-| S3-01 | Placement and layout are routed, with DRC clean and 0 unconnected. | BRD-01..03, DRV-05 | L | todo |
-| S3-02 | `make_jlc.py` produces BOM and CPL that fit the EasyEDA footprints. | BRD-02 | S | todo |
-| S3-03 | The blind review is written and each finding is fixed or accepted. | CORE-01 | M | todo |
+| S3-01 | Placement and layout are routed, with DRC clean and 0 unconnected. | BRD-01..03, DRV-05 | L | done (2026-11-11, #3) |
+| S3-02 | `make_jlc.py` produces BOM and CPL that fit the EasyEDA footprints. | BRD-02 | S | done (2026-11-11, #3) |
+| S3-03 | The blind review is written and each finding is fixed or accepted. | CORE-01 | M | done (2026-11-11, #3) |
 | S3-04 | The owner orders, after the order gate in `CLAUDE.md`. | BRD-02 | S | todo |
+
+## After Rev A
+
+| Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
+| --- | --- | --- | --- | --- |
+| RB-01 | After bring-up, the owner decides from the checklist run and `hardware/review/HANDLED.md` whether a Rev B is needed, and a list of its changes exists (crystal beside its pins, own enable for the sensor buffer, ESD clamps on cabled ports, a TVS part JLC's library knows). | BRD, ENC, CTL | S | todo |
 
 ## Slice 4 — bring-up and firmware
 

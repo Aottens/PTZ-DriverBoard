@@ -40,3 +40,8 @@ From `hardware/`, with `KP` the KiCad Python from `CLAUDE.md`. Freerouting is no
 7. `$KP tools/board.py finish`, then `$KP check_board.py` and `$KP check_fit.py`.
 
 Done by hand on this board, between steps 6 and 7, and not in any script: the +3V3 via in front of U801's crystal pin and ETH_XI's detour under the chip were taken out and routed again by step 6; each driver's B1 output was moved 0.1 mm away from the VCP capacitor, and the +5V track on inner layer 2 0.1 mm away from a via, so both reach their width. C804/C808 and the small shifts of C201 and the IREF resistors were also made on the routed board; these are in `placement.py`, so a new placement has them from the start.
+
+After the blind review (2026-11-11), also by hand on the routed board: the detours of `ETH_XI` and `ETH_XO` and a `+3V3` track between the crystal's pads were taken out; `ETH_XI` and a `+3V3` via beside C806 were laid by hand, `ETH_XO` by a round of `complete.py`; `$KP tools/complete.py more` added the vias of `placement.MORE_VIAS`; the ground via under R601 moved 0.15 mm. Then steps 6 and 7 again.
+
+24. **A plane tie has no length limit, and that bit.** A round tied a 3.3 V pin to its plane with a 7 mm track between the crystal's pads, because the near spots were taken; it also laid the same track once per open end. A round now removes doubled tracks. Look at every long supply track after routing; a plane tie longer than a few millimetres is a sign that a via spot is missing.
+25. **Review the routing of the two crystal pins by eye before the blind review does.** The router closed them last and worst.

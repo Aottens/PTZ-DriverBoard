@@ -25,3 +25,17 @@ are in `DECISIONS.md` (2026-11-11). `BLIND_REVIEW_2.md` is the second look, afte
 | K13 HASL, X-ray for the module, lowest stock | KLEIN | For the owner at the order: ENIG costs more and is not needed at 0.5 mm pitch; the X-ray charge is JLC's | pull request |
 | K14 green and blue LED dim | KLEIN | Left: a status light; the resistor values can change on a later revision | |
 | K15 fuse F101 breaks 50 A | KLEIN | Left: the board is for a current-limited supply, not a battery (POW-01) | |
+
+## Second look, after the changes (`BLIND_REVIEW_2.md`, 2026-11-11)
+
+Verdict: order. No KRITIEK and no new BELANGRIJK finding; B1 resolved, B2 partly (as accepted in `DECISIONS.md`), B3 to
+B5 unchanged in the design (accepted there too). Its new small findings:
+
+| Finding | Done |
+| --- | --- |
+| Ground via under R601 overlapped the pad by 0.13 mm | Fixed after the review: the via sits where the other three axes have it (0.15 mm further out). DRC and all checks rerun, production files regenerated; not reviewed a third time |
+| New `+3V3` via overlaps C806 pad 1 by 0.06 mm | Left: same net, tented, hole 0.09 mm outside the pad; there is no other spot between the pin row and the capacitor |
+| Two `+3V3` islands on inner layer 2 behind a 0.2 to 0.3 mm neck | Left: they feed only R207, a 10 kΩ pull-up |
+| Three free top-layer stubs under 0.5 mm, overlapping collinear segments | Left: no DRC item, no function |
+| Four part numbers on two BOM lines each | Fixed: `make_jlc.py` writes one line per part number (80 lines) |
+| Ground tracks to the new capacitor vias are 0.2 mm | Left: those vias sit in the top-layer ground pour |

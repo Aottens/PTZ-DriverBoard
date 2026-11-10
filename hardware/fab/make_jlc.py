@@ -111,7 +111,9 @@ def main():
             bad.append(f"{fp.GetReference()} {lcsc}: JLC's footprint ({title}) is {err:.2f} mm off")
         ref = fp.GetReference()
         rows.append((ref, f"{m[0]:.3f}mm", f"{-m[1]:.3f}mm", "Top", r))
-        groups.setdefault((fp.GetValue(), lcsc, fp.GetFPID().GetLibItemName().wx_str()), []).append(ref)
+        g = groups.setdefault(lcsc, ([], fp.GetFPID().GetLibItemName().wx_str(), []))      # one line per part number
+        g[0].append(fp.GetValue()) if fp.GetValue() not in g[0] else None
+        g[2].append(ref)
         print(f"{ref:6} {lcsc:10} rot {r:3.0f}  fit {err:.2f} mm by {how:8}  {title}")
     if bad:
         raise SystemExit("\n".join(bad))
@@ -123,8 +125,8 @@ def main():
     with open(os.path.join(OUT, "ptz-driver_bom.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
-        for (value, lcsc, name), refs in groups.items():
-            w.writerow([value, ",".join(refs), name, lcsc])
+        for lcsc, (values, name, refs) in groups.items():
+            w.writerow([" / ".join(values), ",".join(refs), name, lcsc])
     print(f"{len(rows)} parts, {len(groups)} BOM lines")
 
 
