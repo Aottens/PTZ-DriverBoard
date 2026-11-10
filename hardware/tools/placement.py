@@ -39,7 +39,7 @@ FIXED = {
     "J802": (81.75, 51.4, 90),
     # power
     "C101": (52.6, 27.1, 0), "C102": (66.1, 27.1, 0), "U101": (31.0, 24.6, 0), "L101": (40.6, 26.4, 0),
-    "U204": (42.9, 19.7, 0),
+    "U204": (42.3, 19.7, 0),
     # logic
     "U801": (15.2, 32.0, 0), "U201": (17.2, 49.0, 0), "U202": (30.0, 45.0, 0), "U203": (30.5, 53.5, 0),
     "U701": (41.0, 45.2, 0), "U702": (52.0, 44.5, 0), "U703": (73.5, 46.0, 0), "U802": (71.5, 54.5, 0),
@@ -71,8 +71,11 @@ CELL = {  # ref suffix: (dx, dy, rotation)
     "R04": (5.60, 0.20, 0), "R03": (5.60, 1.30, 0),      # DIAG pull-ups
     "R02": (-3.75, -2.30, 90),   # SLEEPN to VM, at the corner between pin 25 and pin 24
     "C01": (-5.30, -3.30, 180),  # 100 nF on the left-hand VS pin
-    "C03": (-5.85, 4.90, 270),   # 10 uF, low on the left so the SPI pins have room for their vias
+    "C03": (-6.35, 4.90, 270),   # 10 uF, low on the left so the SPI pins have room for their vias
     "R01": (-1.82, 4.20, 270), "C06": (-0.75, 4.20, 270), "C07": (0.32, 4.20, 270),   # under pins 1, 3 and 5
+    # the home input's filter in one column under the corner at pin 32, so the three bus pins above it keep a free
+    # strip on the top layer down to their vias on the bus lines (tools/complete.py)
+    "C12": (-2.90, 4.20, 270), "R06": (-2.90, 6.20, 90),
 }
 for n, x in AXIS_X.items():
     a = n + 2

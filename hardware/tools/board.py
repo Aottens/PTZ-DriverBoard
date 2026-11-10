@@ -11,6 +11,7 @@ a hint in placement.py, or else a pad of a part that shares one of their signal 
 import json
 import math
 import os
+import re
 import sys
 
 import pcbnew
@@ -296,6 +297,7 @@ def build():
     zone(board, nets["GND"], pcbnew.In1_Cu, [(0, 0), (W, 0), (W, H), (0, H)])
     for net, pts in P.PLANES:
         zone(board, nets[net], pcbnew.In2_Cu, pts)
+    keepout(board, [pcbnew.In2_Cu], dict(P.PLANES)["VM"], pour=True, vias=True)    # the motor supply plane stays whole
     for net, pts in P.POURS:
         z = zone(board, nets[net], pcbnew.F_Cu, pts)
         z.SetAssignedPriority(10)
@@ -429,9 +431,11 @@ if __name__ == "__main__":
         board = pcbnew.LoadBoard(PCB)
         assert pcbnew.ExportSpecctraDSN(board, sys.argv[2]), "DSN export failed"
         text = open(sys.argv[2]).read()
-        for name in ("In1.Cu", "In2.Cu"):            # whatever KiCad wrote, the planes are power layers to the router
-            text = text.replace(f"(layer {name}\n      (type signal)", f"(layer {name}\n      (type power)")
-        assert text.count("(type power)") == 2, "inner layers not marked as power layers in the DSN"
+        # the ground plane is a power layer to the router whatever KiCad wrote; inner layer 2 stays open for the
+        # signals that do not fit on the outer layers, outside the keep-out over the VM plane
+        for name, kind in (("In1.Cu", "power"), ("In2.Cu", "signal")):
+            text = re.sub(r"(\(layer %s\n\s+\(type )\w+" % re.escape(name), r"\g<1>" + kind, text)
+        assert text.count("(type power)") == 1 and text.count("(type signal)") == 3, "layer types in the DSN are not as meant"
         text = text.replace("(type route)", "(type protect)")     # what is on the board already (plane vias and their stubs) stays
         open(sys.argv[2], "w").write(text)
     elif cmd == "ses":

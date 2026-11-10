@@ -9,7 +9,8 @@ A round after routing:
   1. run DRC through kicad-cli;
   2. delete the router's mistakes it names: tracks and vias that short or crowd another net, tracks under 0.15 mm,
      vias and tracks that hang loose, anything of another net in a driver's bottom window;
-  3. for every unconnected pair, route a 0.2 mm track on the top or bottom layer with A* on a 0.05 mm grid; for a net
+  3. for every unconnected pair, route a 0.2 mm track with A* on a 0.05 mm grid, on the top or bottom layer, or on
+     inner layer 2 outside the VM plane where those two are full; for a net
      that has a plane (GND, +3V3, VM) instead walk to the nearest free spot over the plane and drop a via;
   4. refill the zones and save.
 It stops when a round changes nothing. Nothing here is trusted: check_board.py runs the DRC again afterwards.
@@ -42,7 +43,8 @@ TRACK, VIA, DRILL = 0.2, 0.6, 0.3
 MARGIN = 0.047                   # grid rounding of a track drawn at any angle (0.036) and a little air
 PAD_VIA = 0.4                    # a via centre stays this far from any pad's edge: no via in or against a pad
 FREE, SHARED = -1, -2
-LAYERS = (pcbnew.F_Cu, pcbnew.B_Cu)
+LAYERS = (pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In2_Cu)   # In2 only outside the VM plane, and only for what fits nowhere else
+IN2_COST = 1.5                   # a step on In2 costs this much more: it cuts into the +3V3 plane
 PLANE_NETS = {"GND": None, "+3V3": "+3V3", "VM": "VM"}    # net -> name of its In2 zone polygon in placement.PLANES
 VIA_KEEP = {(round(x, 3), round(y, 3)) for x, y in P.VM_VIAS}
 
@@ -112,6 +114,10 @@ class Grid:
             xs, ys = [p[0] for p in pts], [p[1] for p in pts]
             dist = lambda x, y, pts=pts: 0 if inside(pts, x, y) else min(dseg(x, y, pts[k], pts[(k + 1) % len(pts)]) for k in range(len(pts)))  # noqa: E731
             self.shape([pcbnew.F_Cu], (min(xs), min(ys), max(xs), max(ys)), dist, 0.0, board.GetNetcodeFromNetname(net))
+        vm = dict(P.PLANES)["VM"]                        # the motor supply plane stays whole: no signal tracks in it
+        xs, ys = [p[0] for p in vm], [p[1] for p in vm]
+        dist = lambda x, y: 0 if inside(vm, x, y) else min(dseg(x, y, vm[k], vm[(k + 1) % len(vm)]) for k in range(len(vm)))  # noqa: E731
+        self.shape([pcbnew.In2_Cu], (min(xs), min(ys), max(xs), max(ys)), dist, 0.3, SHARED, vias=False)
         for r in ((0, 0, P.BOARD_W, 0), (0, P.BOARD_H, P.BOARD_W, P.BOARD_H), (0, 0, 0, P.BOARD_H), (P.BOARD_W, 0, P.BOARD_W, P.BOARD_H)):
             dist = lambda x, y, r=r: math.hypot(max(r[0] - x, 0, x - r[2]), max(r[1] - y, 0, y - r[3]))  # noqa: E731
             self.shape(LAYERS, r, dist, 0.15, SHARED)    # 0.3 mm from the edge with the 0.15 mm gap on top
@@ -154,6 +160,7 @@ class Grid:
         if t.Type() == pcbnew.PCB_VIA_T:
             x, y = xy(t.GetPosition())
             self.shape(LAYERS, (x, y, x, y), lambda px, py: math.hypot(px - x, py - y), t.GetWidth(pcbnew.F_Cu) / 2e6, t.GetNetCode())
+            self.stamp(self.nopad, (x, y, x, y), lambda px, py: math.hypot(px - x, py - y), 0.62)    # no second via in or against it
         elif t.GetLayer() in LAYERS:
             a, b = xy(t.GetStart()), xy(t.GetEnd())
             box = (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
@@ -183,7 +190,7 @@ class Grid:
         return True
 
 
-def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anchors=()):
+def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anchors=(), flat=False):
     """A* from (layer index, i, j). To the goal cell on its layer, or, with plane set, to the nearest spot for a plane
     via or to a via that is already there for this net (anchors).
 
@@ -218,16 +225,17 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anc
         for di, dj, c in ((1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, 1.42), (1, -1, 1.42), (-1, 1, 1.42), (-1, -1, 1.42)):
             n = (li, i + di, j + dj)
             if grid.ok(LAYERS[li], n[1], n[2], net) and (c == 1 or (grid.ok(LAYERS[li], i + di, j, net) and grid.ok(LAYERS[li], i, j + dj, net))):
-                nd = d + c
+                nd = d + (c * IN2_COST if li == 2 else c)
                 if nd < dist.get(n, 1e18):
                     dist[n], prev[n] = nd, cur
                     heapq.heappush(heap, (nd + h(n[1], n[2]), nd, n))
-        if goal is not None and grid.via_ok(i, j, net, gnd):
-            n = (1 - li, i, j)
-            nd = d + 2.5 / STEP
-            if nd < dist.get(n, 1e18):
-                dist[n], prev[n] = nd, cur
-                heapq.heappush(heap, (nd + h(i, j), nd, n))
+        if goal is not None and not flat and grid.via_ok(i, j, net, gnd):
+            for lj in range(len(LAYERS)):
+                n = (lj, i, j)
+                nd = d + 2.5 / STEP
+                if lj != li and nd < dist.get(n, 1e18):
+                    dist[n], prev[n] = nd, cur
+                    heapq.heappush(heap, (nd + h(i, j), nd, n))
     else:
         if not found:
             return None
@@ -244,6 +252,7 @@ def lay(board, grid, net, path, end_via=False):
     code = net.GetNetCode()
     grid.use(code)
     first = (path[0][1], path[0][2])
+    made = []
 
     def via_at(i, j):
         v = pcbnew.PCB_VIA(board)
@@ -272,6 +281,7 @@ def lay(board, grid, net, path, end_via=False):
             t.SetNet(net)
             board.Add(t)
             grid.add(t)
+            made.append(t)
             k += s
 
     run = [(path[0][1], path[0][2])]
@@ -285,6 +295,7 @@ def lay(board, grid, net, path, end_via=False):
             run = [(b[1], b[2])]
     if end_via:
         via_at(path[-1][1], path[-1][2])
+    return made
 
 
 def over_plane(name):
@@ -304,48 +315,134 @@ def plane_vias(board):
     return anchors
 
 
-def fanout():
-    """On the placed, unrouted board: tie every SMD pad of a plane net to its plane with a short track and a via.
+BUS = ("SPI_MISO", "SPI_MOSI", "SPI_SCK")     # the drivers' pins 29, 28, 27: the lowest pin gets the nearest bus line
 
-    Smallest pads first, so fine-pitch pins get out before the capacitors beside them take the room. A pad joins a
-    via that is already there for its net when that is within reach.
+
+def fanout():
+    """On the placed, unrouted board, the hard nets first (CLAUDE.md): the motor outputs; every pair of pads of one
+    net within 3 mm of each other; the bus the four drivers share; then a short track and a via to its plane for
+    every SMD supply pad.
+
+    Smallest supply pads first, so fine-pitch pins get out before the capacitors beside them take the room. A pad
+    joins a via that is already there for its net when that is within reach.
     """
     board = pcbnew.LoadBoard(PCB)
     grid = Grid(board)
     nets = board.GetNetsByName()
-    anchors = plane_vias(board)
-    pads = []
+    drivers = sorted((fp for fp in board.GetFootprints() if fp.GetValue().startswith("TMC5240")), key=lambda fp: fp.GetPosition().x)
+    motor, lost = [], []
+    for fp in drivers:      # each motor output straight from its driver pin to its connector pin, on the top layer
+        for p in fp.Pads():
+            if fnmatch.fnmatchcase(p.GetNetname(), "M?_??"):
+                far = [q for f in board.GetFootprints() if f.GetReference() != fp.GetReference()
+                       for q in f.Pads() if q.GetNetCode() == p.GetNetCode()]
+                path = search(grid, p.GetNetCode(), (0,) + cell(*xy(p.GetPosition())), goal=(0,) + cell(*xy(far[0].GetPosition())), flat=True)
+                if path:
+                    motor += [(t, xy(fp.GetPosition())) for t in lay(board, grid, p.GetNet(), path)]
+                else:
+                    lost.append(p.GetNetname())
+    for t, c in motor:        # keep room beside them where they must be 0.6 mm wide: beyond 5 mm from the driver (BRD-06)
+        a, b = xy(t.GetStart()), xy(t.GetEnd())
+        grid.shape([pcbnew.F_Cu], (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])),
+                   lambda px, py, a=a, b=b, c=c: dseg(px, py, a, b) if math.hypot(px - c[0], py - c[1]) > 4.5 else 9, 0.3, t.GetNetCode())
+    print(f"motor outputs: {len(motor)} segments on the top layer; not routed: {', '.join(lost) or 'none'}")
+
+    by_net = {}             # what belongs together: a capacitor reaches its pin before anything passes between them
     for fp in board.GetFootprints():
         for p in fp.Pads():
-            if p.GetNetname() in PLANE_NETS and not p.GetDrillSize().x and p.IsOnLayer(pcbnew.F_Cu):
-                b = p.GetBoundingBox()
-                r = (b.GetLeft() / 1e6 - OX, b.GetTop() / 1e6 - OY, b.GetRight() / 1e6 - OX, b.GetBottom() / 1e6 - OY)
-                x, y = xy(p.GetPosition())
-                if any(r[0] <= i * STEP <= r[2] and r[1] <= j * STEP <= r[3] for i, j in anchors.get(p.GetNetCode(), ())):
-                    continue                                  # an exposed pad that has its vias already
-                if any(net == p.GetNetname() and inside(pts, x, y) for net, pts in P.POURS):
-                    continue                                  # sits in its own pour on the top layer
-                pads.append(((r[2] - r[0]) * (r[3] - r[1]), fp.GetReference(), p.GetNumber(), p.GetNetname(), x, y))
-    done, far, failed = 0, [], []
-    for _, ref, num, name, x, y in sorted(pads):
-        net = nets[name]
-        code = net.GetNetCode()
-        mine = anchors.setdefault(code, set())
-        path = search(grid, code, (0,) + cell(x, y), plane=over_plane(name), gnd=name == "GND", limit=3000000, anchors=mine)
-        if not path:
-            failed.append(f"{ref}.{num} {name}")
+            name = p.GetNetname()
+            if name and name not in PLANE_NETS and not fnmatch.fnmatchcase(name, "M?_??") and p.IsOnLayer(pcbnew.F_Cu):
+                by_net.setdefault(name, []).append((fp.GetReference() + "." + p.GetNumber(), xy(p.GetPosition())))
+    pairs = sorted((math.dist(a[1], b[1]), name, a, b) for name, pads in by_net.items()
+                   for i, a in enumerate(pads) for b in pads[i + 1:] if math.dist(a[1], b[1]) <= 3.0)
+    group = {}
+
+    def root(k):
+        while group.setdefault(k, k) != k:
+            k = group[k]
+        return k
+
+    local = 0
+    for d, name, a, b in pairs:
+        if root(a[0]) == root(b[0]):
             continue
-        if len(path) * STEP > 6:                         # far from its plane: a job for the router, not for a stub
-            far.append(f"{ref}.{num} {name}")
+        path = search(grid, nets[name].GetNetCode(), (0,) + cell(*a[1]), goal=(0,) + cell(*b[1]), limit=40000, flat=True)
+        if path and len(path) * STEP <= 2 * d + 1:
+            lay(board, grid, nets[name], path)
+            group[root(a[0])] = root(b[0])
+            local += 1
+    print(f"local connections: {local} of {len(pairs)} pad pairs within 3 mm")
+
+    def tie(names):
+        anchors = plane_vias(board)
+        pads = []
+        for fp in board.GetFootprints():
+            for p in fp.Pads():
+                if p.GetNetname() in names and not p.GetDrillSize().x and p.IsOnLayer(pcbnew.F_Cu):
+                    b = p.GetBoundingBox()
+                    r = (b.GetLeft() / 1e6 - OX, b.GetTop() / 1e6 - OY, b.GetRight() / 1e6 - OX, b.GetBottom() / 1e6 - OY)
+                    x, y = xy(p.GetPosition())
+                    if any(r[0] <= i * STEP <= r[2] and r[1] <= j * STEP <= r[3] for i, j in anchors.get(p.GetNetCode(), ())):
+                        continue                                  # an exposed pad that has its vias already
+                    if any(net == p.GetNetname() and inside(pts, x, y) for net, pts in P.POURS):
+                        continue                                  # sits in its own pour on the top layer
+                    pads.append(((r[2] - r[0]) * (r[3] - r[1]), fp.GetReference(), p.GetNumber(), p.GetNetname(), x, y))
+        for _, ref, num, name, x, y in sorted(pads):
+            net = nets[name]
+            code = net.GetNetCode()
+            mine = anchors.setdefault(code, set())
+            path = search(grid, code, (0,) + cell(x, y), plane=over_plane(name), gnd=name == "GND", limit=3000000, anchors=mine)
+            if not path:
+                failed.append(f"{ref}.{num} {name}")
+                continue
+            if len(path) * STEP > 6:                         # far from its plane: a job for the router, not for a stub
+                far.append(f"{ref}.{num} {name}")
+                continue
+            end = (path[-1][1], path[-1][2])
+            lay(board, grid, net, path, end_via=end not in mine)
+            mine.add(end)
+            done.append(ref)
+
+    done, far, failed = [], [], []
+    tie({"VM"})     # the motor supply before the bus, whose tracks would otherwise fence in the 10 uF capacitors
+
+    # the drivers' bus: three straight lines on the bottom layer just below the row of drivers, 0.8 mm apart so a via
+    # fits on each, and from every driver pin a track on the top layer to a via on its line
+    lost, taps = [], {}
+    for fp in drivers:
+        cx = xy(fp.GetPosition())[0]
+        for k, name in enumerate(BUS):
+            yl = P.DRIVER_Y + 3.35 + 0.8 * k
+            pin = [xy(p.GetPosition()) for p in fp.Pads() if p.GetNetname() == name][0]
+            path = search(grid, nets[name].GetNetCode(), (0,) + cell(*pin), limit=400000,
+                          plane=lambda x, y, yl=yl, cx=cx: abs(y - yl) < 0.6 * STEP and cx - 5.2 < x < cx - 2.5)
+            if path:
+                lay(board, grid, nets[name], path, end_via=True)
+                taps.setdefault(name, []).append(path[-1][1:])
+            else:
+                lost.append(f"{name} at {fp.GetReference()}")
+    for name, ends in taps.items():
+        a, b = min(ends), max(ends)
+        code = nets[name].GetNetCode()
+        grid.use(code)
+        if not grid.clear(pcbnew.B_Cu, a, b, code, None):
+            lost.append(f"{name} line")
             continue
-        end = (path[-1][1], path[-1][2])
-        lay(board, grid, net, path, end_via=end not in mine)
-        mine.add(end)
-        done += 1
+        t = pcbnew.PCB_TRACK(board)
+        t.SetStart(pcbnew.VECTOR2I(mm(OX + a[0] * STEP), mm(OY + a[1] * STEP)))
+        t.SetEnd(pcbnew.VECTOR2I(mm(OX + b[0] * STEP), mm(OY + b[1] * STEP)))
+        t.SetWidth(mm(TRACK))
+        t.SetLayer(pcbnew.B_Cu)
+        t.SetNet(nets[name])
+        board.Add(t)
+        grid.add(t)
+    print(f"driver bus: {sum(len(e) for e in taps.values())} pins on {len(taps)} lines; not routed: {', '.join(lost) or 'none'}")
+
+    tie({"GND", "+3V3"})
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(PCB, board)
     project.patch()
-    print(f"fanout: {done} pads tied to their plane, {sum(len(a) for a in anchors.values())} plane vias in all")
+    print(f"fanout: {len(done)} pads tied to their plane, {sum(len(a) for a in plane_vias(board).values())} plane vias in all")
     print("   left to the router, over 6 mm from their plane:", ", ".join(far) or "none")
     print("   no way out:", ", ".join(failed) or "none")
 
@@ -360,7 +457,7 @@ def end_of(item):
     """(net name, layer index or None for both, x, y, description) of a DRC item."""
     d = item["description"]
     net = re.search(r"\[([^\]]+)\]", d)
-    layer = None if d.startswith("Via") or "F.Cu - B.Cu" in d or "PTH" in d else (1 if " on B.Cu" in d else 0)
+    layer = None if d.startswith("Via") or "F.Cu - B.Cu" in d or "PTH" in d else (1 if " on B.Cu" in d else 2 if " on In2.Cu" in d else 0)
     return (net.group(1) if net else None, layer, item["pos"]["x"] - OX, item["pos"]["y"] - OY, d)
 
 
@@ -431,9 +528,7 @@ def one_round(n):
         best = None
         for la in ((a[1],) if a[1] is not None else (0, 1)):
             for lb in ((b[1],) if b[1] is not None else (0, 1)):
-                path = search(grid, code, (la,) + cell(a[2], a[3]), goal=(lb,) + cell(b[2], b[3]))
-                if path and (best is None or len(path) < len(best)):
-                    best = path
+                best = best or search(grid, code, (la,) + cell(a[2], a[3]), goal=(lb,) + cell(b[2], b[3]))
         if best:
             lay(board, grid, net, best)
             done += 1

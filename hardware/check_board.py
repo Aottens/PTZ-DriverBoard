@@ -101,7 +101,11 @@ def brd_03_layers():
           and not [t for t in TRACKS if t.GetLayer() == pcbnew.In1_Cu],
           "BRD-03 inner layer 1 is one ground plane over the whole board, with no tracks in it")
     in2 = sorted({net for layer, net, _ in zones if layer == pcbnew.In2_Cu})
-    check(set(in2) <= {"VM", "+3V3", "+5V"} and "VM" in in2 and "+3V3" in in2, f"BRD-03 inner layer 2 holds supply planes only: {in2}")
+    check(set(in2) <= {"VM", "+3V3", "+5V"} and "VM" in in2 and "+3V3" in in2, f"BRD-03 the planes on inner layer 2 are supply planes: {in2}")
+    vm = [z for z in board.Zones() if not z.GetIsRuleArea() and z.GetLayer() == pcbnew.In2_Cu and z.GetNetname() == "VM"]
+    strangers = [t for t in TRACKS if t.Type() != pcbnew.PCB_VIA_T and t.GetLayer() == pcbnew.In2_Cu and t.GetNetname() != "VM"
+                 and vm and (vm[0].Outline().Contains(t.GetStart()) or vm[0].Outline().Contains(t.GetEnd()))]
+    check(not strangers, f"BRD-03 no track of another net lies in the VM plane ({len(strangers)} do)")
 
 
 def brd_05_design_rules():
