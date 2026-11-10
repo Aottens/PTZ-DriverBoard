@@ -351,8 +351,12 @@ def _d_seg_rect(a, b, r):
 
 
 def widen(board):
-    """Give motor outputs and supply stubs all the width their surroundings allow (BRD-06)."""
-    target = {"Motor": 0.8, "Supply": 0.6}
+    """Give every track the width of its net class where its surroundings allow, motor outputs up to 0.8 mm (BRD-06).
+
+    The router necks tracks down at fine-pitch pins and leaves them narrow; this widens each segment as far as the
+    0.2 mm gap to other nets' tracks, vias and pads lets it.
+    """
+    target = {"Motor": 0.8, "Supply": 0.6, "Power": 0.5, "Default": 0.2}
     tracks = [t for t in board.GetTracks() if t.Type() != pcbnew.PCB_VIA_T]
     vias = [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_VIA_T]
     pads = [(p, p.GetBoundingBox()) for fp in board.GetFootprints() for p in fp.Pads()]
@@ -373,11 +377,12 @@ def widen(board):
         for p, r in pads:
             if p.GetNetCode() != net and (p.IsOnLayer(layer) or p.GetDrillSize().x):
                 room = min(room, _d_seg_rect(a, b, r) - 0.2)
-        width = min(want, math.floor(2 * (room - 0.01) / 0.05) * 0.05)
+        width = min(want, math.floor(2 * (room - 0.01) / 0.05 + 1e-6) * 0.05)
         if width > t.GetWidth() / 1e6 + 1e-6:
             t.SetWidth(mm(width))
             changed += 1
-    print(f"widened {changed} track segments")
+    thin = sorted({t.GetNetname() for t in tracks if t.GetWidth() / 1e6 < 0.15 - 1e-6})
+    print(f"widened {changed} track segments" + (f"; still under 0.15 mm: {thin}" if thin else ""))
 
 
 def finish():

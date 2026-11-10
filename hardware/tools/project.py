@@ -28,6 +28,7 @@ PATTERNS += [("Motor", "M?_??")] + [("Supply", n) for n in ("VM", "VIN", "VIN_RA
 # DRC checks switched off, each with its reason. Everything else stays at KiCad's default and must come out at zero.
 DRC_OFF = {
     "silk_edge_clearance": "outlines of edge connectors run off the board on purpose; the fab clips them",
+    "starved_thermal": "ground pads sit in the outer pours with thermal spokes where they fit; each also has its own track or via to the plane",
     "silk_overlap": "outlines of neighbouring footprints touch at this density; no text is involved (tools/silk.py keeps texts apart)",
 }
 ERC = dict(lib_symbol_issues="warning", lib_symbol_mismatch="warning", footprint_link_issues="warning")
