@@ -4,6 +4,7 @@
 Run with KiCad's Python, from hardware/:
   .../python3 tools/complete.py fanout     before routing, on the placed board: a via to its plane for every supply pad
   .../python3 tools/complete.py [rounds]   after `board.py ses` and `board.py finish`: close what the router left open
+  .../python3 tools/complete.py prune      last: remove the escape stubs and other loose ends that nothing uses
 
 A round after routing:
   1. run DRC through kicad-cli;
@@ -50,6 +51,7 @@ PUSH_COST = 6                    # a step through a track that must then move co
 GREED = 2.5                      # weight of the distance still to go: finds a way sooner, not the shortest one
 IN2_COST = 1.2                   # a step on In2 costs this much more: it cuts into the +3V3 plane
 PLANE_NETS = {"GND": None, "+3V3": "+3V3", "VM": "VM"}    # net -> name of its In2 zone polygon in placement.PLANES
+GRAVE = []                       # items taken off the board, kept so Python does not delete them under KiCad
 PUSHED = os.path.join(HW, "route", "pushed.json")     # nets laid by pushing others out: these stay, so the pushing ends
 VIA_KEEP = {(round(x, 3), round(y, 3)) for x, y in P.VM_VIAS}
 
@@ -64,13 +66,19 @@ def key(t):
     return (t.GetLayer(), min(a, b), max(a, b))
 
 
+PRE_VIAS = set()
+
+
 def preroutes():
     """The tracks laid before routing (motor outputs, bus, local connections, plane and escape stubs), read from the
     board the DSN was made of. They stay: pushing one out would cut a fine-pitch pin off behind its neighbours' vias."""
     path = os.path.join(HW, "route", "rev-a_input.kicad_pcb")
     if not os.path.exists(path):
         return set()
-    return {key(t) for t in pcbnew.LoadBoard(path).GetTracks() if t.Type() != pcbnew.PCB_VIA_T}
+    global _PRE_BOARD
+    _PRE_BOARD = pcbnew.LoadBoard(path)          # kept alive: freeing a second board under KiCad's Python is not safe
+    PRE_VIAS.update((t.GetPosition().x, t.GetPosition().y) for t in _PRE_BOARD.GetTracks() if t.Type() == pcbnew.PCB_VIA_T)
+    return {key(t) for t in _PRE_BOARD.GetTracks() if t.Type() != pcbnew.PCB_VIA_T}
 
 
 def xy(v):
@@ -283,7 +291,7 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=2000000, an
 
 def lay(board, grid, net, path, end_via=False, push=False):
     """Turn a cell path into straight tracks and vias, on the board and in the grid."""
-    code = net.GetNetCode()
+    code = net if isinstance(net, int) else net.GetNetCode()     # set by code below: a net object looked up twice came back broken
     grid.use(code)
     first = (path[0][1], path[0][2])
     made = []
@@ -294,7 +302,7 @@ def lay(board, grid, net, path, end_via=False, push=False):
         v.SetDrill(mm(DRILL))
         v.SetWidth(pcbnew.F_Cu, mm(VIA))
         v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
-        v.SetNet(net)
+        v.SetNetCode(code)
         board.Add(v)
         grid.add(v)
         made.append(v)
@@ -313,7 +321,7 @@ def lay(board, grid, net, path, end_via=False, push=False):
             t.SetEnd(pcbnew.VECTOR2I(mm(OX + q[0] * STEP), mm(OY + q[1] * STEP)))
             t.SetWidth(mm(TRACK))
             t.SetLayer(LAYERS[li])
-            t.SetNet(net)
+            t.SetNetCode(code)
             board.Add(t)
             grid.add(t)
             made.append(t)
@@ -387,6 +395,7 @@ def rip(board, grid, made):
     names = {by_id[u].GetNetname() for u in gone}
     for u in gone:
         board.Remove(by_id[u])
+        GRAVE.append(by_id[u])      # never freed while we run: deleting a removed track broke the board's net list
     return names
 
 
@@ -527,8 +536,10 @@ def fanout():
     for d, name, a, b in pairs:
         if root(a[0]) == root(b[0]):
             continue
-        if a[0].split(".")[0] == b[0].split(".")[0] and a[0].split(".")[0] in ics:
-            continue        # two pins of one IC: a track along the row of pins would fence in the pins between them
+        ra, rb = a[0].split(".")[0], b[0].split(".")[0]
+        if ra == rb or (ra in ics) == (rb in ics):
+            continue        # only an IC pin to the part that belongs to it: two pins of one IC, or two capacitors on
+                            # one net, joined along a row of pins fence in the pins between them
         path = search(grid, nets[name].GetNetCode(), (0,) + cell(*a[1]), goal=(0,) + cell(*b[1]), limit=40000, flat=True)
         if path and len(path) * STEP <= 2 * d + 1:
             lay(board, grid, nets[name], path)
@@ -551,7 +562,7 @@ def fanout():
                 continue
             for p in small:
                 name, key = p.GetNetname(), fp.GetReference() + "." + p.GetNumber()
-                if (name and name not in PLANE_NETS and name not in BUS and not fnmatch.fnmatchcase(name, "M?_??")
+                if (name and name not in PLANE_NETS and not (name in BUS and is_driver(fp)) and not fnmatch.fnmatchcase(name, "M?_??")
                         and (key not in touched if bare else len({root(k) for k, _ in by_net.get(name, ())}) > 1)
                         and len(by_net.get(name, ())) > 1 and not p.GetDrillSize().x and want(fp, p)):
                     pins.append((not fp.GetValue().startswith("TMC5240"), min(p.GetSize().x, p.GetSize().y), fp.GetReference(),
@@ -596,7 +607,7 @@ def fanout():
     # drivers, so their vias land where inner layer 2 is free to carry them south, over the +3V3 plane
     tie({"GND", "+3V3"})        # supply pads before signal escapes: a supply pad must reach its plane, a signal has other ways
     first = escape(lambda fp, p: fp.GetValue().startswith("TMC5240"), where=over_plane("+3V3"), reach=9.0, bare=False)
-    rest = escape(lambda fp, p: True)
+    rest = escape(lambda fp, p: True, reach=1.6)      # short: a longer stub runs along the pins and shuts the others in
     print(f"escape vias: {first} driver pins, {rest} other fine-pitch signal pins")
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(PCB, board)
@@ -620,7 +631,8 @@ def end_of(item):
     return (net.group(1) if net else None, layer, item["pos"]["x"] - OX, item["pos"]["y"] - OY, d)
 
 
-def one_round(n):
+def one_round(n, prune=False):
+    """One round of cleaning and routing. With prune, only cleaning, and the escape stubs nobody used go too."""
     board = pcbnew.LoadBoard(PCB)
     report = drc(PCB)
     by_uuid = {t.m_Uuid.AsString(): t for t in board.GetTracks()}
@@ -638,6 +650,9 @@ def one_round(n):
         if v["type"] in ("shorting_items", "clearance", "track_width", "via_dangling", "track_dangling", "items_not_allowed",
                          "tracks_crossing", "annular_width", "hole_clearance", "copper_edge_clearance"):
             items = [by_uuid[i["uuid"]] for i in v["items"] if i.get("uuid") in by_uuid]
+            if v["type"] in ("via_dangling", "track_dangling") and not prune:     # a pin's way out, not used yet: it stays
+                items = [t for t in items if not ((t.GetPosition().x, t.GetPosition().y) in PRE_VIAS
+                                                  if t.Type() == pcbnew.PCB_VIA_T else key(t) in pre)]
             if v["type"] in ("shorting_items", "clearance", "tracks_crossing") and len(items) > 1:
                 # drop one offender: a movable track before a fixed one, a track before a via, the shorter first
                 items = sorted(items, key=lambda t: (firm(t), t.Type() == pcbnew.PCB_VIA_T, t.GetLength()))[:1]
@@ -659,12 +674,15 @@ def one_round(n):
                         doomed.add(t.m_Uuid.AsString())
     for u in doomed:
         board.Remove(by_uuid[u])
+        GRAVE.append(by_uuid[u])
     if doomed:                                             # the picture changed: look again before routing
         pcbnew.ZONE_FILLER(board).Fill(board.Zones())
         pcbnew.SaveBoard(PCB, board)
         project.patch()
-        report = drc(PCB)
-        board = pcbnew.LoadBoard(PCB)
+        report = drc(PCB)        # the board in memory is what was just saved: no second load, KiCad's Python does not take it well
+    if prune:
+        print(f"prune: removed {len(doomed)} loose tracks and vias", flush=True)
+        return len(doomed)
     grid = Grid(board, fixed, pre)
     nets = board.GetNetsByName()
     pushed = 0
@@ -675,10 +693,10 @@ def one_round(n):
     for u in report["unconnected_items"]:
         a, b = end_of(u["items"][0]), end_of(u["items"][1])
         name = a[0]
-        if name is None or name not in nets:
+        code = board.GetNetcodeFromNetname(name) if name else 0
+        if code <= 0:
             continue
-        net = nets[name]
-        code = net.GetNetCode()
+        net = code
         if name in PLANE_NETS:
             mine = anchors.setdefault(code, set())
             for e in (a, b):
@@ -740,6 +758,10 @@ def one_round(n):
 if __name__ == "__main__":
     if sys.argv[1:] == ["fanout"]:
         fanout()
+        sys.exit()
+    if sys.argv[1:] == ["prune"]:               # at the very end: take out what hangs loose, until nothing does
+        while one_round(0, prune=True):
+            pass
         sys.exit()
     for n in range(1, (int(sys.argv[1]) if len(sys.argv) > 1 else 6) + 1):
         if not one_round(n):
