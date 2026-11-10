@@ -134,7 +134,8 @@ PCAL = own("PCAL6416APW", [(2, "VDD(I2C)", W), (24, "VDD(P)", W), (22, "SCL", I)
 TMP1075 = own("TMP1075DGK", [(8, "V+", W), (2, "SCL", I), (1, "SDA", B), (4, "GND", W)], [(3, "ALERT", OC), (7, "A0", I), (6, "A1", I), (5, "A2", I)])
 USBLC6 = own("USBLC6-2SC6", [(1, "IO1", P), (3, "IO2", P), (2, "GND", W)], [(6, "IO1", P), (4, "IO2", P), (5, "VBUS", P)])
 SP3485 = own("SP3485EN", [(8, "VCC", W), (4, "DI", I), (3, "DE", I), (2, "RE", I), (1, "RO", T), (5, "GND", W)], [(6, "A", B), (7, "B", B)])
-TJA1051 = own("TJA1051T-3", [(3, "VCC", W), (5, "VIO", W), (1, "TXD", I), (4, "RXD", O), (8, "S", I), (2, "GND", W)], [(7, "CANH", B), (6, "CANL", B)])
+# SN65HVD230D: TI SLOS346O, pin functions table
+HVD230 = own("SN65HVD230D", [(3, "VCC", W), (1, "D", I), (4, "R", O), (8, "RS", I), (2, "GND", W)], [(7, "CANH", B), (6, "CANL", B), (5, "VREF", P)])
 PFET = own("AOD4185", [(1, "G", I)], [(2, "D", P), (3, "S", P)], "Q")
 NFET = own("AO3422", [(1, "G", I)], [(3, "D", P), (2, "S", P)], "Q")
 BAT54S = own("BAT54S", [(1, "A", P), (2, "K", P)], [(3, "COM", P)], "D")
@@ -378,10 +379,9 @@ add("D801", "SM712", SM712, FP["SOT23"], sh, "C521963", "SM712", IO1="RS485_A", 
 res("R814", "120R", "RS485_A", "RS485_TERM", sh)
 two("JP801", "open", "JPO", FP["JPO"], "RS485_TERM", "RS485_B", sh, "").bom = False
 add("J802", "SM04B-GHS-TB", J_GH4, FP["GH4"], sh, "C189895", "SM04B-GHS-TB(LF)(SN)", nets=("RS485_A", "RS485_B", "GND", "GND"), MP="GND")
-add("U803", "TJA1051T/3", TJA1051, FP["SOIC8"], sh, "C2671195", "TJA1051T/3/CM,118", VCC="+5V", VIO="+3V3", GND="GND", S="GND", TXD="CAN_TX",
-    RXD="CAN_RX", CANH="CAN_H", CANL="CAN_L")
-cap("C817", "100 nF", "+5V", "GND", sh)
-cap("C818", "100 nF", "+3V3", "GND", sh)
+add("U803", "SN65HVD230", HVD230, FP["SOIC8"], sh, "C12084", "SN65HVD230DR", VCC="+3V3", GND="GND", RS="GND", D="CAN_TX",
+    R="CAN_RX", CANH="CAN_H", CANL="CAN_L").nc("VREF")
+cap("C817", "100 nF", "+3V3", "GND", sh)
 res("R815", "120R", "CAN_H", "CAN_TERM", sh)
 two("JP802", "bridged", "JPB", FP["JPB"], "CAN_TERM", "CAN_L", sh, "").bom = False
 add("J803", "BM04B-GHS-TBT", J_GH4, FP["GH4V"], sh, "C161692", "BM04B-GHS-TBT(LF)(SN)", nets=("CAN_H", "CAN_L", "GND", "GND"), MP="GND")

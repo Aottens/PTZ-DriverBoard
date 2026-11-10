@@ -20,7 +20,7 @@ Grows out of CTL-01..07 in `specs/PRD.md`. **Which MCU pin carries which net is 
 | Y801 | 25 MHz crystal, 3225, 4 pads | C9006 | X322525MOB4SI |
 | U802 | SP3485EN, 3.3 V RS-485 transceiver, SOIC-8 | C8963 | MaxLinear SP3485 |
 | D801 | SM712, RS-485 TVS, SOT-23 | C521963 | Pins 1 and 2 the lines, pin 3 ground |
-| U803 | TJA1051T/3, CAN transceiver with 3.3 V I/O, SOIC-8 | C2671195 | NXP Rev 9, 28 November 2017 |
+| U803 | SN65HVD230DR, 3.3 V CAN transceiver, SOIC-8 | C12084 | TI SLOS346O, April 2018. Chosen over the TJA1051T/3, of which JLC had 6 left on 2026-11-10 |
 | J802 | JST SM04B-GHS-TB, 4 pins, side entry | C189895 | JST GH series |
 | J803 | JST BM04B-GHS-TBT, 4 pins, top entry | C161692 | JST GH series |
 | SW201 | Tactile switch, 5.1 mm, SMD | C318884 | TS-1187A-B-A-B |
@@ -33,7 +33,7 @@ Grows out of CTL-01..07 in `specs/PRD.md`. **Which MCU pin carries which net is 
 - **CTL-02** WiFi and ESP-NOW come from the module; the antenna plugs into the module's own connector, which must stay reachable (BRD-07).
 - **CTL-03** Ethernet: U801 on the shared SPI bus with its own chip select `ETH_CS_N` on a direct pin, wired as WIZnet's reference schematic for a jack with magnetics. **The jack itself is off the board** (BRD-04: it did not fit): J801 is a 7-pin header that carries the six signals of such a jack and `GND`, for a short lead to a jack with magnetics such as the HR911105A. J801: 1 = TCT, 2 = `GND`, 3 = TD+, 4 = TD-, 5 = RD+, 6 = RD-, 7 = RCT. Link and activity show on two LEDs on the board. Interrupt and reset are on the expander. The PHY mode pins are tied high: all modes, auto-negotiation.
 - **CTL-04** RS-485: U802, half duplex. DE and the inverted RE are tied together to `RS485_DE`, pulled down so the board listens at reset. The bus has D801 as protection and a 120 Ω terminator behind solder jumper JP801, open as delivered. J802: 1 = A, 2 = B, 3 and 4 = `GND`.
-- **CTL-06** CAN: U803 with its S pin at `GND` (normal mode). A 120 Ω terminator behind solder jumper JP802, closed as delivered. J803: 1 = CANH, 2 = CANL, 3 and 4 = `GND`. The transceiver's 5 V supply is only there with motor power.
+- **CTL-06** CAN: U803 on 3.3 V, with its RS pin at `GND` (high-speed mode) and Vref unused. A 120 Ω terminator behind solder jumper JP802, closed as delivered. J803: 1 = CANH, 2 = CANL, 3 and 4 = `GND`.
 - **CTL-07** USB-C J201 for flashing and logs, through the chip's own USB serial/JTAG. Both CC pins have 5.1 kΩ to `GND`; D+ and D- go straight to the module with U205 as ESD protection; the shield is at `GND`. It must be reachable from outside (BRD-07).
 - **CTL-08 Chip selects.** U202 gives four driver selects `CS_DRV1..4` and four sensor selects `CS_SNS1..4` from two address lines and two strobes. Both strobes and `ETH_CS_N` have 10 kΩ pull-ups, so nothing is selected while the MCU is in reset. Address 0 selects axis 1.
 - **CTL-09 I/O expander.** U203 at I2C address 0x20 carries the slow signals listed in `pins.h`. Its interrupt `XINT_N` is on a direct MCU pin with a 10 kΩ pull-up; its reset follows the MCU's EN.
@@ -121,9 +121,8 @@ J801 has the same 7-pin plug as the sensor ports. Its pin order is chosen so tha
 | R814 | 120R | `RS485_A`, `RS485_TERM` |
 | JP801 | solder jumper, open | `RS485_TERM`, `RS485_B` |
 | J802 | SM04B-GHS-TB | 1 = `RS485_A`, 2 = `RS485_B`, 3 = `GND`, 4 = `GND`; mounting pads = `GND` |
-| U803 | TJA1051T/3 | VCC = `+5V`; VIO = `+3V3`; GND and S = `GND`; TXD = `CAN_TX`; RXD = `CAN_RX`; CANH = `CAN_H`; CANL = `CAN_L` |
-| C817 | 100 nF | `+5V`, `GND` |
-| C818 | 100 nF | `+3V3`, `GND` |
+| U803 | SN65HVD230 | VCC = `+3V3`; GND and RS = `GND`; D = `CAN_TX`; R = `CAN_RX`; CANH = `CAN_H`; CANL = `CAN_L`; Vref = not connected |
+| C817 | 100 nF | `+3V3`, `GND` |
 | R815 | 120R | `CAN_H`, `CAN_TERM` |
 | JP802 | solder jumper, bridged | `CAN_TERM`, `CAN_L` |
 | J803 | BM04B-GHS-TBT | 1 = `CAN_H`, 2 = `CAN_L`, 3 = `GND`, 4 = `GND`; mounting pads = `GND` |

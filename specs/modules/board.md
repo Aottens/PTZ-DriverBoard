@@ -20,14 +20,14 @@ From the owner's brief. `hardware/check_fit.py` holds the same numbers.
 - **BRD-03** Four layers on JLC's standard 1.6 mm stack-up JLC04161H-7628, 1 oz outer and 0.5 oz inner copper: top = parts and signals, inner 1 = an unbroken `GND` plane, inner 2 = supply planes (`VM`, `+3V3`, `+5V`), bottom = signals and `GND`.
 - **BRD-04** At most 85 × 65 mm. A feature that does not fit goes in the order CTL-03 gives, and is reported.
 - **BRD-05 Design rules** inside JLC's Economic limits: tracks and gaps at least 0.15 mm; vias at least 0.3 mm drill and 0.6 mm pad; copper at least 0.3 mm from the board edge; smallest package 0402; smallest IC pitch 0.5 mm.
-- **BRD-06 Current paths.** `VIN_RAW`, `VIN` and `VM` are planes or pours, and where they neck down the copper is at least 3.0 mm wide in total (7 A, the fuse rating, at about 10 K rise on 1 oz outer copper by IPC-2221). Motor outputs are at least 0.6 mm wide. `+5V`, `VSYS` and `+3V3` feeds are at least 0.4 mm or a plane.
+- **BRD-06 Current paths.** The input current runs in copper pours on the top layer, each as wide as the pads it joins: connector to FET (`VIN_RAW`), FET to fuse (`VIN`), fuse to TVS (`VM`). From there `VM` goes down to its plane through at least six vias of 0.4 mm drill (about 2 A each) and reaches the drivers in the plane. Motor outputs are at least 0.6 mm wide, except within 5 mm of the driver's centre, where they leave its 0.25 mm pads. `+5V`, `VSYS`, `VIN_L`, `+5V_EXT` and `+3V3_SNS` tracks are at least 0.4 mm; `+3V3` and `GND` are planes.
 - **BRD-07 Fit, checked by code** in `hardware/check_fit.py` with each connector and its mating plug and cable bend as a box:
   - the board and every box stay inside the cylinder and clear of the motor;
   - nothing is higher than 25 mm above the board;
   - the USB-C socket and the antenna connector have a free straight path: USB-C outward to the wall along its plug axis, the antenna connector upward and then sideways to the wall;
   - no two plugs' boxes overlap.
 - **BRD-08 Assembly** is written out in `hardware/ASSEMBLY.md`: the order of mounting and plugging, and which tool reaches which bolt. A bolt, tool or plug that cannot reach is a design error.
-- **BRD-09 Silkscreen:** board name, revision and date; at every connector its name, pin 1 and the voltage or signal names; polarity at every polarised part that is soldered or plugged by hand; a label at every solder jumper and test point.
+- **BRD-09 Silkscreen.** Top: a name at every connector, with its pin 1 mark; plus and minus and the voltage at the supply input; a name at every solder jumper, LED, button and test point. Bottom: board name, revision and date, and the pin order of every port, because the top has no room for it. No text smaller than 0.8 mm high with a 0.15 mm stroke.
 - **BRD-10** ERC is clean; DRC is clean with 0 unconnected items and schematic parity, both through `kicad-cli`.
 - **BRD-11** Each TMC5240's exposed pad has at least 9 vias to the ground planes. On the bottom, under each driver, there is a bare `GND` copper window of at least 5.5 × 5.5 mm that holds those vias and nothing of another net. The four windows lie in one row, so one flat metal bar with a thermal pad can be pressed against them as a heat spreader (DRV-05).
 

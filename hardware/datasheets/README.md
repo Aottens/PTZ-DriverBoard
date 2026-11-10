@@ -18,7 +18,7 @@ limits were taken from that revision.
 | SN74AHCT244 | SCLS228O, July 2024 | https://www.ti.com/lit/ds/symlink/sn74ahct244.pdf | curl |
 | TMP1075 | SBOS854F, June 2024 | https://www.ti.com/lit/ds/symlink/tmp1075.pdf | curl |
 | PCAL6416A | Rev 7.1, 30 August 2022 | https://www.nxp.com/docs/en/data-sheet/PCAL6416A.pdf | curl |
-| TJA1051 | Rev 9, 28 November 2017 | https://www.nxp.com/docs/en/data-sheet/TJA1051.pdf | curl |
+| SN65HVD230 | SLOS346O, April 2018 | https://www.ti.com/lit/ds/symlink/sn65hvd230.pdf | curl |
 | SP3485 | MaxLinear, undated in the text | https://www.maxlinear.com/ds/sp3485.pdf | curl |
 | AOD4185 | Rev 4.2, June 2024 | https://aosmd.com/res/data_sheets/AOD4185.pdf | curl |
 | AO3422 | Rev 2.1, March 2024 | https://aosmd.com/res/data_sheets/AO3422.pdf | curl |

@@ -560,12 +560,12 @@ def ctl_04_rs485():
 
 
 def ctl_06_can():
-    """CTL-06. U803 TJA1051T/3 SO8 (NXP Rev 9 p4): 1 TXD, 2 GND, 3 VCC, 4 RXD, 5 VIO, 6 CANL, 7 CANH, 8 S.
-    JP802 is bridged as delivered, so its two pads may also show up as one net (CAN_TERM or CAN_L)."""
+    """CTL-06. U803 SN65HVD230 SOIC-8 (TI SLOS346O, pin functions table, D package): 1 D, 2 GND, 3 VCC, 4 R, 5 Vref,
+    6 CANL, 7 CANH, 8 RS. RS at GND = high-speed mode, Vref unused. JP802 is bridged as delivered, so its two pads may
+    also show up as one net (CAN_TERM or CAN_L)."""
     d = {}
-    setp(d, "U803", {1: "CAN_TX", 2: "GND", 3: "+5V", 4: "CAN_RX", 5: "+3V3", 6: "CAN_L", 7: "CAN_H", 8: "GND"})
-    two(d, "C817", "+5V", "GND", "100 nF")
-    two(d, "C818", "+3V3", "GND", "100 nF")
+    setp(d, "U803", {1: "CAN_TX", 2: "GND", 3: "+3V3", 4: "CAN_RX", 5: None, 6: "CAN_L", 7: "CAN_H", 8: "GND"})
+    two(d, "C817", "+3V3", "GND", "100 nF")
     two(d, "R815", "CAN_H", "CAN_TERM", "120R")
     two(d, "JP802", "CAN_TERM", "CAN_L")
     setp(d, "J803", {1: "CAN_H", 2: "CAN_L", 3: "GND", 4: "GND", "MP": "GND"})

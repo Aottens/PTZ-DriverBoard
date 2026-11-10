@@ -75,7 +75,7 @@ assert abs(v33 - 3.3) < 0.1
 print("\n== 7. Current budget (POW-09)")
 LOADS_3V3 = {"ESP32-C6 peak, 802.11b transmit (datasheet p27)": 0.382, "W5500, 100M transmit (datasheet p60)": 0.132,
              "four sensors at 20 mA": 0.080, "spare I2C port": 0.100, "RS-485 driving two terminators": 0.055,
-             "logic, LEDs, pull-ups": 0.030}
+             "CAN transceiver dominant, logic, LEDs, pull-ups": 0.045}
 i33 = sum(LOADS_3V3.values())
 for k, v in LOADS_3V3.items():
     print(f"  {v * 1000:4.0f} mA  {k}")
@@ -83,8 +83,8 @@ VSYS = 5.0 - 0.45                # after D104 or D105
 i_vsys = i33 * v33 / (0.90 * VSYS)
 print(f"+3V3 peak {i33:.2f} A (budget 0.8 A); from VSYS at {VSYS:.2f} V and 90 % efficiency: {i_vsys:.2f} A through D104 or D105 (1 A parts)")
 assert i33 <= 0.8 and i_vsys < 1.0
-i5 = i_vsys + 0.070 + 0.200 + 0.200   # CAN transceiver dominant, external driver ports (PTC), fan on 5 V
-print(f"+5V peak {i5:.2f} A of 1.5 A: VSYS, CAN 70 mA, external ports 0.2 A, fan 0.2 A")
+i5 = i_vsys + 0.200 + 0.200   # external driver ports (PTC), fan on 5 V
+print(f"+5V peak {i5:.2f} A of 1.5 A: VSYS, external ports 0.2 A, fan 0.2 A")
 assert i5 < 1.5
 print(f"on USB alone: {i_vsys:.2f} A peak, above the 0.5 A a plain port gives; average is about {0.3 * v33 / (0.9 * VSYS):.2f} A. Firmware should hold radio power down on USB.")
 R_MOTOR, I_MOTOR = 2.3, 1.5      # ohm per phase and A RMS, 17HE15-1504S

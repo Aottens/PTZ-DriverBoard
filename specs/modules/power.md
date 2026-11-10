@@ -7,7 +7,7 @@ Grows out of POW-01..06 in `specs/PRD.md`. Nets and references here are the cont
 
 ```
 J101 ─ VIN_RAW ─ Q101 (reverse polarity) ─ VIN ─┬─ F101 7 A ─ VM ── drivers, bulk capacitors, TVS, VM_SENSE
-                                               └─ F102 1.5 A ─ VIN_L ─ U101 buck ─ +5V ─┬─ CAN, external driver ports, fan
+                                               └─ F102 1.5 A ─ VIN_L ─ U101 buck ─ +5V ─┬─ external driver ports, fan
                                                                                        └─ D104 ─┐
                                                               USB-C VBUS ─────────────── D105 ─┴─ VSYS ─ U102 buck ─ +3V3
 ```
@@ -103,7 +103,7 @@ The values around U101 (R102 to R107, R112, C107, C108, L101) come from the data
 | `+5V_EXT` on J303 to J603 | `+5V` through F702, 0.2 A PTC | The PTC trips |
 | `FAN_V` on J902 | `+5V` or `VM` through F901, 0.5 A 30 V PTC | The PTC trips |
 | Signal outputs to sensor and external driver ports | 74LVC244, 74AHCT244 through 33 Ω and 220 Ω | The series resistor limits the current to below the buffer's rating |
-| RS-485 and CAN lines | Transceivers | Their own short-circuit limit (SP3485, TJA1051 datasheets) |
+| RS-485 and CAN lines | Transceivers | Their own short-circuit limit (SP3485, SN65HVD230 datasheets) |
 | Tally, record, fan switch | Open drain | No current: these only sink |
 
 ## Not verified in this build
