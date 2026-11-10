@@ -127,13 +127,15 @@ class Grid:
         self.nopad = bytearray(NX * NY)          # 1 where a via would sit in or against a pad
         self.novia = bytearray(NX * NY)          # 1 where only a GND via may go (under a driver)
         self.k = 0
+        self.at_via = {}                         # cell -> net of the via standing there
         for fp in board.GetFootprints():
             for p in fp.Pads():
                 b = p.GetBoundingBox()
                 r = (b.GetLeft() / 1e6 - OX, b.GetTop() / 1e6 - OY, b.GetRight() / 1e6 - OX, b.GetBottom() / 1e6 - OY)
                 dist = lambda x, y, r=r: math.hypot(max(r[0] - x, 0, x - r[2]), max(r[1] - y, 0, y - r[3]))  # noqa: E731
                 both = bool(p.GetDrillSize().x)
-                self.shape([l for l in LAYERS if both or p.IsOnLayer(l)], r, dist, 0.0, p.GetNetCode() if p.GetNetCode() > 0 else SHARED)
+                bare = both and p.GetSizeX() <= p.GetDrillSize().x      # an unplated hole: 0.25 mm to copper, not 0.15
+                self.shape([l for l in LAYERS if both or p.IsOnLayer(l)], r, dist, 0.1 if bare else 0.0, p.GetNetCode() if p.GetNetCode() > 0 else SHARED)
                 self.stamp(self.nopad, r, dist, PAD_VIA)
             if fp.GetValue().startswith("TMC5240"):      # the bare window under a driver: ground only (BRD-11)
                 x, y = xy(fp.GetPosition())
@@ -198,6 +200,7 @@ class Grid:
     def add(self, t):
         if t.Type() == pcbnew.PCB_VIA_T:
             x, y = xy(t.GetPosition())
+            self.at_via[cell(x, y)] = t.GetNetCode()
             self.shape(LAYERS, (x, y, x, y), lambda px, py: math.hypot(px - x, py - y), t.GetWidth(pcbnew.F_Cu) / 2e6, t.GetNetCode())
             self.stamp(self.nopad, (x, y, x, y), lambda px, py: math.hypot(px - x, py - y), 0.62)    # no second via in or against it
         elif t.GetLayer() in LAYERS:
@@ -216,6 +219,8 @@ class Grid:
         return o == FREE or o == net
 
     def via_ok(self, i, j, net, gnd, push=False):
+        if self.at_via.get((i, j)) == net:       # its own via: change layer here, no new one needed
+            return True
         k = j * NX + i
         o = (self.vsolid if push else self.vias)[self.k][k]
         return (o == FREE or o == net) and not self.nopad[k] and (gnd or not self.novia[k])
@@ -230,9 +235,12 @@ class Grid:
         return True
 
 
-def search(grid, net, start, goal=None, plane=None, gnd=False, limit=2000000, anchors=(), flat=False, push=False):
+def search(grid, net, start, goal=None, plane=None, gnd=False, limit=2000000, anchors=(), flat=False, push=False,
+           starts=None, goals=None):
     """A* from (layer index, i, j). To the goal cell on its layer, or, with plane set, to the nearest spot for a plane
     via or to a via that is already there for this net (anchors).
+
+    With starts and goals (sets of cells), from any cell of the one to any cell of the other; goal then only steers.
 
     Returns the path as [(layer index, i, j)], with a layer change marking a via.
     """
@@ -240,8 +248,9 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=2000000, an
         return 0 if goal is None else GREED * math.hypot(i - goal[1], j - goal[2])
 
     grid.use(net)
-    dist, prev = {start: 0.0}, {}
-    heap = [(h(start[1], start[2]), 0.0, start)]
+    dist, prev = {c: 0.0 for c in (starts or (start,))}, {}
+    heap = [(h(c[1], c[2]), 0.0, c) for c in dist]
+    heapq.heapify(heap)
     seen, found = 0, None
     while heap:
         _, d, cur = heapq.heappop(heap)
@@ -251,7 +260,11 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=2000000, an
         seen += 1
         if seen > limit:
             return None
-        if goal is not None and cur == goal:
+        if goals is not None:
+            if cur in goals:
+                goal = cur
+                break
+        elif goal is not None and cur == goal:
             break
         if goal is None:                     # plane search: a via already there for this net beats a new one within 1.2 mm
             if found and d >= found[0]:
@@ -283,7 +296,7 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=2000000, an
             return None
         goal = found[1]
     path, cur = [goal], goal
-    while cur != start:
+    while cur in prev:
         cur = prev[cur]
         path.append(cur)
     return path[::-1]
@@ -297,6 +310,8 @@ def lay(board, grid, net, path, end_via=False, push=False):
     made = []
 
     def via_at(i, j):
+        if grid.at_via.get((i, j)) == code:
+            return
         v = pcbnew.PCB_VIA(board)
         v.SetPosition(pcbnew.VECTOR2I(mm(OX + i * STEP), mm(OY + j * STEP)))
         v.SetDrill(mm(DRILL))
@@ -397,6 +412,61 @@ def rip(board, grid, made):
         board.Remove(by_id[u])
         GRAVE.append(by_id[u])      # never freed while we run: deleting a removed track broke the board's net list
     return names
+
+
+def pieces(board, code, pads):
+    """The connected pieces of a signal net: {uuid of pad, track or via: set of cells on that piece's copper}."""
+    items = []                               # (kind, layer indices or None for all, geometry, uuid)
+    for p in pads.get(code, ()):
+        b = p.GetBoundingBox()
+        r = (b.GetLeft() / 1e6 - OX, b.GetTop() / 1e6 - OY, b.GetRight() / 1e6 - OX, b.GetBottom() / 1e6 - OY)
+        items.append(("pad", None if p.GetDrillSize().x else {0}, r, p.m_Uuid.AsString()))
+    for t in board.GetTracks():
+        if t.GetNetCode() != code:
+            continue
+        if t.Type() == pcbnew.PCB_VIA_T:
+            items.append(("via", None, xy(t.GetPosition()), t.m_Uuid.AsString()))
+        elif t.GetLayer() in LAYERS:
+            items.append(("trk", {LAYERS.index(t.GetLayer())}, (xy(t.GetStart()), xy(t.GetEnd()), t.GetWidth() / 2e6), t.m_Uuid.AsString()))
+
+    def near(kind, g, pt):                   # how far is a point from this item's copper
+        if kind == "pad":
+            return math.hypot(max(g[0] - pt[0], 0, pt[0] - g[2]), max(g[1] - pt[1], 0, pt[1] - g[3]))
+        if kind == "via":
+            return max(0, math.hypot(pt[0] - g[0], pt[1] - g[1]) - VIA / 2)
+        return max(0, dseg(pt[0], pt[1], g[0], g[1]) - g[2])
+
+    def points(kind, g):                     # the points an item connects with
+        if kind == "pad":
+            return ()
+        return (g,) if kind == "via" else (g[0], g[1])
+
+    parent = list(range(len(items)))
+
+    def root(k):
+        while parent[k] != k:
+            parent[k] = parent[parent[k]]
+            k = parent[k]
+        return k
+
+    for m, (ka, la, ga, _) in enumerate(items):
+        for n in range(m + 1, len(items)):
+            kb, lb, gb, _ = items[n]
+            if la is not None and lb is not None and not la & lb:
+                continue
+            if any(near(kb, gb, pt) < 0.01 for pt in points(ka, ga)) or any(near(ka, ga, pt) < 0.01 for pt in points(kb, gb)):
+                parent[root(m)] = root(n)
+    cells = {}
+    for m, (kind, layers, g, _) in enumerate(items):
+        mine = cells.setdefault(root(m), set())
+        if kind == "trk":
+            (ax, ay), (bx, by), _ = g
+            n = int(math.hypot(bx - ax, by - ay) / STEP) + 1
+            mine.update((li,) + cell(ax + (bx - ax) * k / n, ay + (by - ay) * k / n) for li in layers for k in range(n + 1))
+        else:
+            c = cell(*g) if kind == "via" else cell((g[0] + g[2]) / 2, (g[1] + g[3]) / 2)
+            mine.update((li,) + c for li in (layers if layers is not None else range(len(LAYERS))))
+    return {items[m][3]: cells[root(m)] for m in range(len(items))}
 
 
 def over_plane(name):
@@ -690,7 +760,12 @@ def one_round(n, prune=False):
     anchors = plane_vias(board, lambda name: tests[name])
     done = failed = 0
     notes = []
-    for u in report["unconnected_items"]:
+    pads = {}
+    for fp in board.GetFootprints():
+        for p in fp.Pads():
+            pads.setdefault(p.GetNetCode(), []).append(p)
+    # signals first: a plane via finds a spot anywhere, a signal between fine-pitch pins does not
+    for u in sorted(report["unconnected_items"], key=lambda u: end_of(u["items"][0])[0] in PLANE_NETS):
         a, b = end_of(u["items"][0]), end_of(u["items"][1])
         name = a[0]
         code = board.GetNetcodeFromNetname(name) if name else 0
@@ -724,17 +799,19 @@ def one_round(n, prune=False):
             continue
         if a[4].startswith("Zone") or b[4].startswith("Zone"):
             continue
-        best = None
-        for la in ((a[1],) if a[1] is not None else (0, 1)):
-            for lb in ((b[1],) if b[1] is not None else (0, 1)):
-                best = best or search(grid, code, (la,) + cell(a[2], a[3]), goal=(lb,) + cell(b[2], b[3]))
+        part = pieces(board, code, pads)
+        A, B = part.get(u["items"][0].get("uuid")), part.get(u["items"][1].get("uuid"))
+        if A is None or B is None:
+            A, B = {(l,) + cell(a[2], a[3]) for l in (0, 1)}, {(l,) + cell(b[2], b[3]) for l in (0, 1)}
+        if A is B:
+            continue                                     # joined earlier in this round
+        steer = (b[1] or 0,) + cell(b[2], b[3])
+        best = search(grid, code, None, goal=steer, starts=A, goals=B)
         if best:
             lay(board, grid, net, best)
             done += 1
             continue
-        for la in ((a[1],) if a[1] is not None else (0, 1)):          # no free way: push other tracks out of it
-            for lb in ((b[1],) if b[1] is not None else (0, 1)):
-                best = best or search(grid, code, (la,) + cell(a[2], a[3]), goal=(lb,) + cell(b[2], b[3]), push=True)
+        best = search(grid, code, None, goal=steer, starts=A, goals=B, push=True)   # no free way: push other tracks out
         if best:
             fixed.add(name)
             grid.firm.add(code)          # before its tracks go into the grid: nothing later in this round may cross them
@@ -742,6 +819,19 @@ def one_round(n, prune=False):
             done += 1
             pushed += 1
             notes.append(f"{name}: laid by pushing out {', '.join(sorted(out)) or 'nothing'}")
+            continue
+        hard = Grid(board)               # last try: pushed nets and pre-routed stubs may move too; supplies, bus and motors stay
+        best = search(hard, code, None, goal=steer, starts=A, goals=B, push=True)
+        if best:
+            fixed.add(name)
+            grid.firm.add(code)
+            made = lay(board, hard, net, best, push=True)
+            out = rip(board, hard, made)
+            for t in made:
+                grid.add(t)
+            done += 1
+            pushed += 1
+            notes.append(f"{name}: laid by pushing out, pre-routes included, {', '.join(sorted(out)) or 'nothing'}")
         else:
             failed += 1
             notes.append(f"{name}: no path from ({a[2]:.1f}, {a[3]:.1f}) to ({b[2]:.1f}, {b[3]:.1f})")

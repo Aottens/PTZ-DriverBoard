@@ -13,3 +13,9 @@ hardware/~*.lck
 hardware/datasheets/*.pdf
 hardware/datasheets/*.txt
 __pycache__/
+
+# Routing by-products: the router log and the boards saved between steps
+hardware/route/en/
+hardware/route/rev-a_*.kicad_pcb
+!hardware/route/rev-a_input.kicad_pcb
+hardware/route/pushed.json

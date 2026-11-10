@@ -285,6 +285,16 @@ def build():
         x, y, rot = it.pos or (W + 10 + 4 * (lost.index(it) % 8), 4 * (lost.index(it) // 8), 0)
         fp.SetPosition(vec(x, y))
         fp.SetOrientationDegrees(rot)
+    for ref, (dx, dy) in P.SHIFT.items():
+        fp = items[ref].fp
+        fp.SetPosition(fp.GetPosition() + pcbnew.VECTOR2I(mm(dx), mm(dy)))
+    for ra, rb in P.SWAP:
+        fa, fb = items[ra].fp, items[rb].fp
+        pa, oa = fa.GetPosition(), fa.GetOrientationDegrees()
+        fa.SetPosition(fb.GetPosition())
+        fa.SetOrientationDegrees(fb.GetOrientationDegrees())
+        fb.SetPosition(pa)
+        fb.SetOrientationDegrees(oa)
     pts = [(0, 0), (W, 0), (W, H), (0, H)]
     for i in range(4):
         seg = pcbnew.PCB_SHAPE(board, pcbnew.SHAPE_T_SEGMENT)
@@ -366,28 +376,47 @@ def widen(board):
     vias = [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_VIA_T]
     pads = [(p, p.GetBoundingBox()) for fp in board.GetFootprints() for p in fp.Pads()]
     pads = [(p, (bb.GetLeft() / 1e6 - OX, bb.GetTop() / 1e6 - OY, bb.GetRight() / 1e6 - OX, bb.GetBottom() / 1e6 - OY)) for p, bb in pads]
+    for t in list(tracks):                   # a long narrow segment is cut up first, so each piece gets the width its own spot allows
+        want = target.get(t.GetNetClassName(), 0.2)
+        a, b = _pt(t.GetStart()), _pt(t.GetEnd())
+        n = math.ceil(math.hypot(b[0] - a[0], b[1] - a[1]) / 0.5)
+        if want > 0.2 and t.GetWidth() / 1e6 < want and n > 1:
+            for k in range(1, n):
+                piece = pcbnew.PCB_TRACK(board)
+                piece.SetStart(vec(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n))
+                piece.SetEnd(vec(a[0] + (b[0] - a[0]) * (k + 1) / n, a[1] + (b[1] - a[1]) * (k + 1) / n))
+                piece.SetWidth(t.GetWidth())
+                piece.SetLayer(t.GetLayer())
+                piece.SetNetCode(t.GetNetCode())
+                board.Add(piece)
+                tracks.append(piece)
+            t.SetEnd(vec(a[0] + (b[0] - a[0]) / n, a[1] + (b[1] - a[1]) / n))
     changed = 0
-    for t in tracks:
-        want = target.get(t.GetNetClassName())
-        if not want or t.GetWidth() / 1e6 >= want:
-            continue
-        a, b, layer, net = _pt(t.GetStart()), _pt(t.GetEnd()), t.GetLayer(), t.GetNetCode()
-        room = min(a[0], a[1], b[0], b[1], W - a[0], W - b[0], H - a[1], H - b[1]) - 0.3
-        for o in tracks:
-            if o.GetLayer() == layer and o.GetNetCode() != net:
-                room = min(room, _d_seg_seg(a, b, _pt(o.GetStart()), _pt(o.GetEnd())) - o.GetWidth() / 2e6 - 0.2)
-        for v in vias:
-            if v.GetNetCode() != net:
-                room = min(room, _d_point_seg(_pt(v.GetPosition()), a, b) - v.GetWidth(pcbnew.F_Cu) / 2e6 - 0.2)
-        for p, r in pads:
-            if p.GetNetCode() != net and (p.IsOnLayer(layer) or p.GetDrillSize().x):
-                room = min(room, _d_seg_rect(a, b, r) - 0.2)
-        width = min(want, math.floor(2 * (room - 0.01) / 0.05 + 1e-6) * 0.05)
-        if width > t.GetWidth() / 1e6 + 1e-6:
-            t.SetWidth(mm(width))
-            changed += 1
+    for cap in (0.6, 9.9):                   # first every track to 0.6 mm, then what is left to the widest: neighbours share the room
+        for t in tracks:
+            want = min(cap, target.get(t.GetNetClassName(), 0))
+            if not want or t.GetWidth() / 1e6 >= want:
+                continue
+            a, b, layer, net = _pt(t.GetStart()), _pt(t.GetEnd()), t.GetLayer(), t.GetNetCode()
+            room = min(a[0], a[1], b[0], b[1], W - a[0], W - b[0], H - a[1], H - b[1]) - 0.3
+            for o in tracks:
+                if o.GetLayer() == layer and o.GetNetCode() != net:
+                    room = min(room, _d_seg_seg(a, b, _pt(o.GetStart()), _pt(o.GetEnd())) - o.GetWidth() / 2e6 - 0.2)
+            for v in vias:
+                if v.GetNetCode() != net:
+                    room = min(room, _d_point_seg(_pt(v.GetPosition()), a, b) - v.GetWidth(pcbnew.F_Cu) / 2e6 - 0.2)
+            for p, r in pads:
+                if p.GetNetCode() != net and (p.IsOnLayer(layer) or p.GetDrillSize().x):
+                    room = min(room, _d_seg_rect(a, b, r) - (0.3 if p.GetDrillSize().x >= p.GetSizeX() > 0 else 0.2))   # unplated hole: 0.25 mm
+            width = min(want, math.floor(2 * (room - 0.01) / 0.05 + 1e-6) * 0.05)
+            if width > t.GetWidth() / 1e6 + 1e-6:
+                t.SetWidth(mm(width))
+                changed += 1
     thin = sorted({t.GetNetname() for t in tracks if t.GetWidth() / 1e6 < 0.15 - 1e-6})
     print(f"widened {changed} track segments" + (f"; still under 0.15 mm: {thin}" if thin else ""))
+
+
+KEEP = []
 
 
 def finish():
@@ -398,6 +427,7 @@ def finish():
     for z in list(board.Zones()):      # a rerun replaces the outer ground pours
         if not z.GetIsRuleArea() and z.GetNetname() == "GND" and z.GetLayer() in (pcbnew.F_Cu, pcbnew.B_Cu):
             board.Remove(z)
+            KEEP.append(z)             # not freed while we run: KiCad's Python breaks the board when it deletes a removed item
     for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
         z = zone(board, gnd, layer, [(0, 0), (W, 0), (W, H), (0, H)], clearance=0.25)
         z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
@@ -407,6 +437,7 @@ def finish():
     for d in list(board.GetDrawings()):  # a rerun replaces what this function drew
         if d.GetLayer() in (pcbnew.B_Mask, pcbnew.F_SilkS, pcbnew.B_SilkS):
             board.Remove(d)
+            KEEP.append(d)
     for fp in board.GetFootprints():
         if fp.GetValue().startswith("TMC5240"):     # bare window under each driver for a heat spreader (BRD-11)
             x, y = _pt(fp.GetPosition())

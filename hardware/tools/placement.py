@@ -66,6 +66,12 @@ NEAR = {
     "TP901": ("F102", "1"), "TP902": ("D102", "1"), "TP903": ("L101", "2"), "TP904": ("U102", "4"), "TP905": ("U201", "3"),
     "TP906": ("SW201", "2"), "TP907": ("C102", "2"), "Q901": ("U203", "18"), "Q902": ("U203", "19"), "U205": ("J201", "A6"),
 }
+# Pairs of equal footprints that change places after the automatic placement. Found in routing: U801's pins 20, 21 and 22
+# go to C808, C804 and C809, and only in this order do the three reach their capacitor on the top layer without crossing.
+SWAP = [("C804", "C808")]
+# Parts moved a little after the automatic placement, so a neighbour's pin 1 mark on the silkscreen is not on their pad.
+SHIFT = {"C201": (-0.4, 0.0), "R301": (0.0, 0.25), "R401": (0.0, 0.25), "R501": (0.0, 0.25), "R601": (0.0, 0.25)}
+
 # One driver cell, relative to the driver's centre. The chip is turned so its motor side faces the connector above it:
 # top = VS and the four outputs, right = charge pump, DIAG, enable, left = SLEEPN, SPI, REFL, bottom = IREF, 1V8, VCC_IO.
 CELL = {  # ref suffix: (dx, dy, rotation)
