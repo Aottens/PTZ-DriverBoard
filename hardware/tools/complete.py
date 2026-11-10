@@ -307,10 +307,22 @@ def over_plane(name):
     return lambda x, y: inside(pts, x, y) and all(inside(pts, x + dx, y + dy) for dx, dy in ((0.6, 0), (-0.6, 0), (0, 0.6), (0, -0.6)))
 
 
-def plane_vias(board):
+def filled_plane(board, name):
+    """The same test on the routed board: is this spot over the largest piece of the net's filled plane? Tracks on
+    inner layer 2 cut pieces off the +3V3 plane; a via on such a piece reaches nothing."""
+    if PLANE_NETS[name] is None:
+        return lambda x, y: True
+    zone = [z for z in board.Zones() if not z.GetIsRuleArea() and z.GetLayer() == pcbnew.In2_Cu and z.GetNetname() == name][0]
+    fill = zone.GetFilledPolysList(pcbnew.In2_Cu)
+    main = max(range(fill.OutlineCount()), key=lambda k: fill.Outline(k).Area())
+    return lambda x, y: all(fill.Contains(pcbnew.VECTOR2I(mm(OX + x + dx), mm(OY + y + dy)), main)
+                            for dx, dy in ((0, 0), (0.6, 0), (-0.6, 0), (0, 0.6), (0, -0.6)))
+
+
+def plane_vias(board, test=over_plane):
     anchors = {}
     for t in board.GetTracks():
-        if t.Type() == pcbnew.PCB_VIA_T and t.GetNetname() in PLANE_NETS and over_plane(t.GetNetname())(*xy(t.GetPosition())):
+        if t.Type() == pcbnew.PCB_VIA_T and t.GetNetname() in PLANE_NETS and test(t.GetNetname())(*xy(t.GetPosition())):
             anchors.setdefault(t.GetNetCode(), set()).add(cell(*xy(t.GetPosition())))
     return anchors
 
@@ -362,7 +374,7 @@ def fanout():
             k = group[k]
         return k
 
-    local = 0
+    local, wired = 0, set()
     for d, name, a, b in pairs:
         if root(a[0]) == root(b[0]):
             continue
@@ -370,7 +382,9 @@ def fanout():
         if path and len(path) * STEP <= 2 * d + 1:
             lay(board, grid, nets[name], path)
             group[root(a[0])] = root(b[0])
+            wired.update((a[0], b[0]))
             local += 1
+
     print(f"local connections: {local} of {len(pairs)} pad pairs within 3 mm")
 
     def tie(names):
@@ -403,9 +417,35 @@ def fanout():
             mine.add(end)
             done.append(ref)
 
+    touched = set(wired)                        # pads that have a track already
+
+    def escape(want):
+        """A short track on the top layer and a via for IC pins that have no track yet, so the router finds them
+        from the bottom layer or inner layer 2 instead of having to dig them out."""
+        pins = []
+        for fp in board.GetFootprints():
+            small = [p for p in fp.Pads() if min(p.GetSize().x, p.GetSize().y) <= 450000]
+            if len(small) < 8:
+                continue
+            for p in small:
+                name, key = p.GetNetname(), fp.GetReference() + "." + p.GetNumber()
+                if (name and name not in PLANE_NETS and not fnmatch.fnmatchcase(name, "M?_??") and key not in touched
+                        and len(by_net.get(name, ())) > 1 and not p.GetDrillSize().x and want(fp, p)):
+                    pins.append((not fp.GetValue().startswith("TMC5240"), min(p.GetSize().x, p.GetSize().y), fp.GetReference(),
+                                 int(p.GetNumber()) if p.GetNumber().isdigit() else 0, p))
+        made = 0
+        for _, _, ref, num, p in sorted(pins, key=lambda t: t[:4]):
+            path = search(grid, p.GetNetCode(), (0,) + cell(*xy(p.GetPosition())), plane=lambda x, y: True, limit=200000)
+            if path and len(path) * STEP <= 4:
+                lay(board, grid, p.GetNet(), path, end_via=True)
+                touched.add(f"{ref}.{num}")
+                made += 1
+        return made
+
     done, far, failed = [], [], []
     tie({"VM"})     # the motor supply before the bus, whose tracks would otherwise fence in the 10 uF capacitors
 
+    first = escape(lambda fp, p: fp.GetValue().startswith("TMC5240") and p.GetNumber() == "26")   # chip select, above the bus pins
     # the drivers' bus: three straight lines on the bottom layer just below the row of drivers, 0.8 mm apart so a via
     # fits on each, and from every driver pin a track on the top layer to a via on its line
     lost, taps = [], {}
@@ -419,6 +459,7 @@ def fanout():
             if path:
                 lay(board, grid, nets[name], path, end_via=True)
                 taps.setdefault(name, []).append(path[-1][1:])
+                touched.add(fp.GetReference() + "." + [p.GetNumber() for p in fp.Pads() if p.GetNetname() == name][0])
             else:
                 lost.append(f"{name} at {fp.GetReference()}")
     for name, ends in taps.items():
@@ -438,6 +479,8 @@ def fanout():
         grid.add(t)
     print(f"driver bus: {sum(len(e) for e in taps.values())} pins on {len(taps)} lines; not routed: {', '.join(lost) or 'none'}")
 
+    rest = escape(lambda fp, p: True)
+    print(f"escape vias: {first + rest} fine-pitch signal pins")
     tie({"GND", "+3V3"})
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(PCB, board)
@@ -498,7 +541,8 @@ def one_round(n):
         board = pcbnew.LoadBoard(PCB)
     grid = Grid(board)
     nets = board.GetNetsByName()
-    anchors = plane_vias(board)
+    tests = {name: filled_plane(board, name) for name in PLANE_NETS}
+    anchors = plane_vias(board, lambda name: tests[name])
     done = failed = 0
     notes = []
     for u in report["unconnected_items"]:
@@ -513,11 +557,12 @@ def one_round(n):
             for e in (a, b):
                 if e[4].startswith("Zone") or e[4].startswith("Via"):
                     continue
-                path = search(grid, code, (e[1] or 0,) + cell(e[2], e[3]), plane=over_plane(name), gnd=name == "GND", anchors=mine)
+                path = search(grid, code, (e[1] or 0,) + cell(e[2], e[3]), plane=tests[name], gnd=name == "GND", anchors=mine)
+                if path and (path[-1][1], path[-1][2]) in mine:
+                    continue                             # this end has its via on the plane already; the other end is the loose one
                 if path:
-                    end = (path[-1][1], path[-1][2])
-                    lay(board, grid, net, path, end_via=end not in mine)
-                    mine.add(end)
+                    lay(board, grid, net, path, end_via=True)
+                    mine.add((path[-1][1], path[-1][2]))
                     done += 1
                 else:
                     failed += 1
