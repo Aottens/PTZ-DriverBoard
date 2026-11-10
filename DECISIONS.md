@@ -4,6 +4,18 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-10 — Rev A: the board grows to 100 × 80 mm
+
+**Decision (owner, in chat):** The board may be 100 × 80 mm instead of 85 × 65 mm. It lies in the base, not in the head, where the first size came from. The RJ45 jack and the supply inlet sit in the base wall. The four M3 holes stay 4 mm from the edges in each corner.
+
+**Alternatives considered:** staying at 85 × 65 mm with a router that pushes tracks aside and a redesigned driver cell (tried: 39 to 62 connections stayed open in six routing runs); six layers on the old size; dropping CAN (about 2 % of the area, and not where the congestion was).
+
+**Why:** On 85 × 65 mm the parts' courtyards filled 73 % of the board, top side only, with two signal layers. On 100 × 80 mm they fill 50 %. The calculation from the brief's envelope (base 160 mm inside, motor 42 × 42 mm at 55.7 mm, board 1 mm from the motor) leaves 19.7 mm from the corners beside the motor to the wall and 11.9 mm from the far corners; the middle of each free edge has about 30 mm.
+
+**Reversal trigger:** something along the base wall (screw bosses, the bearing seat, the jacks in the wall) needs more than the room the corners leave; then the far corners are cut off at an angle before the board shrinks.
+
+---
+
 ## 2026-11-10 — Rev A: the Ethernet jack is off the board
 
 **Decision:** The W5500 and all of its circuit stay on the board, but the RJ45 jack does not: J801 is a 7-pin header for a short lead to a jack with magnetics in the housing wall. The CAN connector stays.

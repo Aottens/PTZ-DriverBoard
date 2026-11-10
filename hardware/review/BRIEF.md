@@ -28,9 +28,9 @@ smallest package 0402, smallest IC pitch 0.4 mm). An order costs money and weeks
 - **Camera:** two open-drain outputs on one connector, for tally and record trigger.
 - **Other:** a spare I2C port, a status RGB LED that can be dark, a user button, one switched PWM output for a fan,
   board temperature readable by firmware, a test point on every rail and bus.
-- **Physical:** at most 85 x 65 mm, four M3 holes. It lies flat in a round base of 160 mm inner diameter beside a
+- **Physical:** at most 100 x 80 mm, four M3 holes. It lies flat in a round base of 160 mm inner diameter beside a
   42 x 42 mm motor: one long edge (the one without connectors) 1 mm from the motor, the other three edges at least
-  28 mm from the wall, parts and mating plugs within 25 mm above the board. Cables arrive from above the middle of
+  10 mm from the wall, parts and mating plugs within 25 mm above the board. Cables arrive from above the middle of
   the board. USB-C and the antenna connector must be reachable from outside.
 
 ## What to review

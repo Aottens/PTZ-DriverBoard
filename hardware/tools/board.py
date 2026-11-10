@@ -433,9 +433,11 @@ if __name__ == "__main__":
         text = open(sys.argv[2]).read()
         # the ground plane is a power layer to the router whatever KiCad wrote; inner layer 2 stays open for the
         # signals that do not fit on the outer layers, outside the keep-out over the VM plane
-        for name, kind in (("In1.Cu", "power"), ("In2.Cu", "signal")):
-            text = re.sub(r"(\(layer %s\n\s+\(type )\w+" % re.escape(name), r"\g<1>" + kind, text)
-        assert text.count("(type power)") == 1 and text.count("(type signal)") == 3, "layer types in the DSN are not as meant"
+        # both inner layers are power layers to Freerouting: given inner layer 2 it cut the +3V3 plane into some twenty
+        # pieces. tools/complete.py uses that layer afterwards, sparingly, for what the outer layers cannot hold.
+        for name in ("In1.Cu", "In2.Cu"):
+            text = re.sub(r"(\(layer %s\n\s+\(type )\w+" % re.escape(name), r"\g<1>power", text)
+        assert text.count("(type power)") == 2 and text.count("(type signal)") == 2, "layer types in the DSN are not as meant"
         text = text.replace("(type route)", "(type protect)")     # what is on the board already (plane vias and their stubs) stays
         open(sys.argv[2], "w").write(text)
     elif cmd == "ses":

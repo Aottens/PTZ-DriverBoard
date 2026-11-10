@@ -9,7 +9,9 @@ A round after routing:
   1. run DRC through kicad-cli;
   2. delete the router's mistakes it names: tracks and vias that short or crowd another net, tracks under 0.15 mm,
      vias and tracks that hang loose, anything of another net in a driver's bottom window;
-  3. for every unconnected pair, route a 0.2 mm track with A* on a 0.05 mm grid, on the top or bottom layer, or on
+  3. for every unconnected pair, route a 0.2 mm track with A* on a 0.05 mm grid; where no free way exists, lay it
+     through other signal tracks, take those out up to their next pad, via or branch, and let a later round lay them
+     again (a net laid this way is fixed afterwards, so the pushing ends). The track runs on the top or bottom layer, or on
      inner layer 2 outside the VM plane where those two are full; for a net
      that has a plane (GND, +3V3, VM) instead walk to the nearest free spot over the plane and drop a via;
   4. refill the zones and save.
@@ -44,8 +46,10 @@ MARGIN = 0.047                   # grid rounding of a track drawn at any angle (
 PAD_VIA = 0.4                    # a via centre stays this far from any pad's edge: no via in or against a pad
 FREE, SHARED = -1, -2
 LAYERS = (pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In2_Cu)   # In2 only outside the VM plane, and only for what fits nowhere else
+PUSH_COST = 6                    # a step through a track that must then move costs this much more
 IN2_COST = 1.5                   # a step on In2 costs this much more: it cuts into the +3V3 plane
 PLANE_NETS = {"GND": None, "+3V3": "+3V3", "VM": "VM"}    # net -> name of its In2 zone polygon in placement.PLANES
+PUSHED = os.path.join(HW, "route", "pushed.json")     # nets laid by pushing others out: these stay, so the pushing ends
 VIA_KEEP = {(round(x, 3), round(y, 3)) for x, y in P.VM_VIAS}
 
 
@@ -83,12 +87,18 @@ class Grid:
     and once more at via size, where both layers count.
     """
 
-    def __init__(self, board):
+    def __init__(self, board, fixed=()):
+        # nets whose tracks stay where they are: supplies, motor outputs, the drivers' bus, and whatever was laid by
+        # pushing another track out earlier (fixed). Every other track may be pushed out and routed again.
+        self.firm = {n.GetNetCode() for name, n in board.GetNetsByName().items()
+                     if str(name) in PLANE_NETS or str(name) in BUS or str(name) in fixed or fnmatch.fnmatchcase(str(name), "M?_??")}
         self.wide = {n.GetNetCode() for name, n in board.GetNetsByName().items()
                      if any(fnmatch.fnmatchcase(str(name), pat) for cls, pat in project.PATTERNS)}
         new = lambda: array("i", [FREE]) * (NX * NY)  # noqa: E731
         self.tracks = [{layer: new() for layer in LAYERS} for _ in range(2)]     # [0]: 0.15 mm nets, [1]: 0.2 mm nets
         self.vias = [new(), new()]
+        self.solid = [{layer: new() for layer in LAYERS} for _ in range(2)]      # the same, without the tracks that may move
+        self.vsolid = [new(), new()]
         self.nopad = bytearray(NX * NY)          # 1 where a via would sit in or against a pad
         self.novia = bytearray(NX * NY)          # 1 where only a GND via may go (under a driver)
         self.k = 0
@@ -130,8 +140,8 @@ class Grid:
         elif cur != net:
             a[k] = SHARED
 
-    def shape(self, layers, box, dist, half, net, vias=True):
-        """Copper of `net` on `layers`: every point within `half` of dist() == 0, inside `box`."""
+    def shape(self, layers, box, dist, half, net, vias=True, soft=False):
+        """Copper of `net` on `layers`: every point within `half` of dist() == 0, inside `box`. soft: may be pushed out."""
         gap = [0.2 if net in self.wide else 0.15, 0.2]
         rt = [half + g + TRACK / 2 + MARGIN for g in gap]
         rv = [half + g + VIA / 2 + MARGIN for g in gap]
@@ -145,9 +155,13 @@ class Grid:
                 for n in (0, 1):
                     if vias and d <= rv[n]:
                         self._put(self.vias[n], k, net)
+                        if not soft:
+                            self._put(self.vsolid[n], k, net)
                     if d <= rt[n]:
                         for layer in layers:
                             self._put(self.tracks[n][layer], k, net)
+                            if not soft:
+                                self._put(self.solid[n][layer], k, net)
 
     @staticmethod
     def stamp(bits, box, dist, reach):
@@ -164,33 +178,34 @@ class Grid:
         elif t.GetLayer() in LAYERS:
             a, b = xy(t.GetStart()), xy(t.GetEnd())
             box = (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
-            self.shape([t.GetLayer()], box, lambda px, py: dseg(px, py, a, b), t.GetWidth() / 2e6, t.GetNetCode())
+            self.shape([t.GetLayer()], box, lambda px, py: dseg(px, py, a, b), t.GetWidth() / 2e6, t.GetNetCode(),
+                       soft=t.GetNetCode() not in self.firm)
 
     def use(self, net):
         self.k = 1 if net in self.wide else 0
 
-    def ok(self, layer, i, j, net):
+    def ok(self, layer, i, j, net, push=False):
         if not (0 <= i < NX and 0 <= j < NY):
             return False
-        o = self.tracks[self.k][layer][j * NX + i]
+        o = (self.solid if push else self.tracks)[self.k][layer][j * NX + i]
         return o == FREE or o == net
 
-    def via_ok(self, i, j, net, gnd):
+    def via_ok(self, i, j, net, gnd, push=False):
         k = j * NX + i
-        o = self.vias[self.k][k]
+        o = (self.vsolid if push else self.vias)[self.k][k]
         return (o == FREE or o == net) and not self.nopad[k] and (gnd or not self.novia[k])
 
-    def clear(self, layer, a, b, net, first):
+    def clear(self, layer, a, b, net, first, push=False):
         """Is the straight line between two cells free for this net? `first` is the cell in the starting pad."""
         n = int(max(abs(b[0] - a[0]), abs(b[1] - a[1])) * 2) + 1
         for s in range(n + 1):
             c = (int(round(a[0] + (b[0] - a[0]) * s / n)), int(round(a[1] + (b[1] - a[1]) * s / n)))
-            if c != first and not self.ok(layer, c[0], c[1], net):
+            if c != first and not self.ok(layer, c[0], c[1], net, push):
                 return False
         return True
 
 
-def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anchors=(), flat=False):
+def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anchors=(), flat=False, push=False):
     """A* from (layer index, i, j). To the goal cell on its layer, or, with plane set, to the nearest spot for a plane
     via or to a via that is already there for this net (anchors).
 
@@ -224,15 +239,17 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anc
                 found = (d + 1.2 / STEP, cur)
         for di, dj, c in ((1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, 1.42), (1, -1, 1.42), (-1, 1, 1.42), (-1, -1, 1.42)):
             n = (li, i + di, j + dj)
-            if grid.ok(LAYERS[li], n[1], n[2], net) and (c == 1 or (grid.ok(LAYERS[li], i + di, j, net) and grid.ok(LAYERS[li], i, j + dj, net))):
+            if grid.ok(LAYERS[li], n[1], n[2], net, push) and (c == 1 or (grid.ok(LAYERS[li], i + di, j, net, push) and grid.ok(LAYERS[li], i, j + dj, net, push))):
+                if push and not grid.ok(LAYERS[li], n[1], n[2], net):
+                    c *= PUSH_COST               # through a track that will have to move
                 nd = d + (c * IN2_COST if li == 2 else c)
                 if nd < dist.get(n, 1e18):
                     dist[n], prev[n] = nd, cur
                     heapq.heappush(heap, (nd + h(n[1], n[2]), nd, n))
-        if goal is not None and not flat and grid.via_ok(i, j, net, gnd):
+        if not flat and grid.via_ok(i, j, net, gnd, push):
             for lj in range(len(LAYERS)):
                 n = (lj, i, j)
-                nd = d + 2.5 / STEP
+                nd = d + (2.5 if grid.via_ok(i, j, net, gnd) else 2.5 * PUSH_COST) / STEP
                 if lj != li and nd < dist.get(n, 1e18):
                     dist[n], prev[n] = nd, cur
                     heapq.heappush(heap, (nd + h(i, j), nd, n))
@@ -247,7 +264,7 @@ def search(grid, net, start, goal=None, plane=None, gnd=False, limit=600000, anc
     return path[::-1]
 
 
-def lay(board, grid, net, path, end_via=False):
+def lay(board, grid, net, path, end_via=False, push=False):
     """Turn a cell path into straight tracks and vias, on the board and in the grid."""
     code = net.GetNetCode()
     grid.use(code)
@@ -263,14 +280,15 @@ def lay(board, grid, net, path, end_via=False):
         v.SetNet(net)
         board.Add(v)
         grid.add(v)
+        made.append(v)
 
     def tracks(li, run):
         k = 0
         while k < len(run) - 1:                 # pull the staircase straight: jump as far as a clear line allows
             s = 1
-            while k + 2 * s < len(run) and grid.clear(LAYERS[li], run[k], run[k + 2 * s], code, first):
+            while k + 2 * s < len(run) and grid.clear(LAYERS[li], run[k], run[k + 2 * s], code, first, push):
                 s *= 2
-            if grid.clear(LAYERS[li], run[k], run[-1], code, first):
+            if grid.clear(LAYERS[li], run[k], run[-1], code, first, push):
                 s = len(run) - 1 - k
             p, q = run[k], run[k + s]
             t = pcbnew.PCB_TRACK(board)
@@ -296,6 +314,63 @@ def lay(board, grid, net, path, end_via=False):
     if end_via:
         via_at(path[-1][1], path[-1][2])
     return made
+
+
+def segdist(a, b, c, d):
+    def side(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+    if side(a, b, c) * side(a, b, d) < 0 and side(c, d, a) * side(c, d, b) < 0:
+        return 0.0
+    return min(dseg(a[0], a[1], c, d), dseg(b[0], b[1], c, d), dseg(c[0], c[1], a, b), dseg(d[0], d[1], a, b))
+
+
+def rip(board, grid, made):
+    """Remove the movable tracks of other nets that the new tracks and vias in `made` run into, each with the whole
+    stretch it belongs to, up to the next pad, via or branch. Returns the names of the nets that lost a stretch."""
+    tracks = [t for t in board.GetTracks() if t.Type() != pcbnew.PCB_VIA_T]
+    hit = set()
+    for n in made:
+        for t in tracks:
+            if t.GetNetCode() == n.GetNetCode() or t.GetNetCode() in grid.firm:
+                continue
+            a, b = xy(t.GetStart()), xy(t.GetEnd())
+            if n.Type() == pcbnew.PCB_VIA_T:
+                c = xy(n.GetPosition())
+                near = dseg(c[0], c[1], a, b) < VIA / 2 + t.GetWidth() / 2e6 + 0.21
+            else:
+                near = t.GetLayer() == n.GetLayer() and segdist(xy(n.GetStart()), xy(n.GetEnd()), a, b) < (n.GetWidth() + t.GetWidth()) / 2e6 + 0.21
+            if near:
+                hit.add(t.m_Uuid.AsString())
+    if not hit:
+        return set()
+    by_id = {t.m_Uuid.AsString(): t for t in tracks}
+    ends, stops = {}, set()
+    for t in tracks:
+        for pt in (t.GetStart(), t.GetEnd()):
+            ends.setdefault((t.GetNetCode(), t.GetLayer(), pt.x, pt.y), []).append(t.m_Uuid.AsString())
+    for v in board.GetTracks():
+        if v.Type() == pcbnew.PCB_VIA_T:
+            stops.add((v.GetNetCode(), v.GetPosition().x, v.GetPosition().y))
+    pads = {}
+    for fp in board.GetFootprints():
+        for p in fp.Pads():
+            pads.setdefault(p.GetNetCode(), []).append(p.GetBoundingBox())
+    gone, todo = set(), list(hit)
+    while todo:
+        u = todo.pop()
+        if u in gone:
+            continue
+        gone.add(u)
+        t = by_id[u]
+        for pt in (t.GetStart(), t.GetEnd()):
+            there = ends[(t.GetNetCode(), t.GetLayer(), pt.x, pt.y)]
+            if (len(there) == 2 and (t.GetNetCode(), pt.x, pt.y) not in stops
+                    and not any(b.Contains(pt) for b in pads.get(t.GetNetCode(), ()))):
+                todo += [w for w in there if w not in gone]
+    names = {by_id[u].GetNetname() for u in gone}
+    for u in gone:
+        board.Remove(by_id[u])
+    return names
 
 
 def over_plane(name):
@@ -338,6 +413,8 @@ def fanout():
     Smallest supply pads first, so fine-pitch pins get out before the capacitors beside them take the room. A pad
     joins a via that is already there for its net when that is within reach.
     """
+    if os.path.exists(PUSHED):
+        os.remove(PUSHED)                        # a new placement starts with nothing fixed
     board = pcbnew.LoadBoard(PCB)
     grid = Grid(board)
     nets = board.GetNetsByName()
@@ -359,12 +436,66 @@ def fanout():
                    lambda px, py, a=a, b=b, c=c: dseg(px, py, a, b) if math.hypot(px - c[0], py - c[1]) > 4.5 else 9, 0.3, t.GetNetCode())
     print(f"motor outputs: {len(motor)} segments on the top layer; not routed: {', '.join(lost) or 'none'}")
 
+    lines = {}              # the drivers' bus lines keep their place on the bottom layer before anything else takes it
+    for k, name in enumerate(BUS):
+        y = P.DRIVER_Y + 3.35 + 0.8 * k
+        t = pcbnew.PCB_TRACK(board)
+        t.SetStart(pcbnew.VECTOR2I(mm(OX + P.AXIS_X[1] - 5.2), mm(OY + y)))
+        t.SetEnd(pcbnew.VECTOR2I(mm(OX + P.AXIS_X[4] - 2.5), mm(OY + y)))
+        t.SetWidth(mm(TRACK))
+        t.SetLayer(pcbnew.B_Cu)
+        t.SetNet(nets[name])
+        board.Add(t)
+        grid.add(t)
+        lines[name] = t
+    done, far, failed, tied = [], [], [], set()
+
+    def is_ic(fp):
+        return len([p for p in fp.Pads() if min(p.GetSize().x, p.GetSize().y) <= 450000]) >= 8
+
+    def is_driver(fp):
+        return fp.GetValue().startswith("TMC5240")
+
+    def tie(names, want=lambda fp: True):
+        anchors = plane_vias(board)
+        pads = []
+        for fp in board.GetFootprints():
+            for p in fp.Pads():
+                if (p.GetNetname() in names and not p.GetDrillSize().x and p.IsOnLayer(pcbnew.F_Cu) and want(fp)
+                        and fp.GetReference() + "." + p.GetNumber() not in tied):
+                    b = p.GetBoundingBox()
+                    r = (b.GetLeft() / 1e6 - OX, b.GetTop() / 1e6 - OY, b.GetRight() / 1e6 - OX, b.GetBottom() / 1e6 - OY)
+                    x, y = xy(p.GetPosition())
+                    if any(r[0] <= i * STEP <= r[2] and r[1] <= j * STEP <= r[3] for i, j in anchors.get(p.GetNetCode(), ())):
+                        continue                                  # an exposed pad that has its vias already
+                    if any(net == p.GetNetname() and inside(pts, x, y) for net, pts in P.POURS):
+                        continue                                  # sits in its own pour on the top layer
+                    pads.append(((r[2] - r[0]) * (r[3] - r[1]), fp.GetReference(), p.GetNumber(), p.GetNetname(), x, y))
+        for _, ref, num, name, x, y in sorted(pads):
+            net = nets[name]
+            code = net.GetNetCode()
+            mine = anchors.setdefault(code, set())
+            path = search(grid, code, (0,) + cell(x, y), plane=over_plane(name), gnd=name == "GND", limit=3000000, anchors=mine, flat=True)
+            if not path:
+                failed.append(f"{ref}.{num} {name}")
+                continue
+            if len(path) * STEP > 6:                         # far from its plane: a job for the router, not for a stub
+                far.append(f"{ref}.{num} {name}")
+                continue
+            end = (path[-1][1], path[-1][2])
+            lay(board, grid, net, path, end_via=end not in mine)
+            mine.add(end)
+            tied.add(f"{ref}.{num}")
+            done.append(ref)
+
+
     by_net = {}             # what belongs together: a capacitor reaches its pin before anything passes between them
     for fp in board.GetFootprints():
         for p in fp.Pads():
             name = p.GetNetname()
             if name and name not in PLANE_NETS and not fnmatch.fnmatchcase(name, "M?_??") and p.IsOnLayer(pcbnew.F_Cu):
                 by_net.setdefault(name, []).append((fp.GetReference() + "." + p.GetNumber(), xy(p.GetPosition())))
+    tie({"GND", "+3V3", "VM"}, lambda fp: is_ic(fp) and not is_driver(fp))    # before local tracks fence these pins in
     pairs = sorted((math.dist(a[1], b[1]), name, a, b) for name, pads in by_net.items()
                    for i, a in enumerate(pads) for b in pads[i + 1:] if math.dist(a[1], b[1]) <= 3.0)
     group = {}
@@ -387,41 +518,12 @@ def fanout():
 
     print(f"local connections: {local} of {len(pairs)} pad pairs within 3 mm")
 
-    def tie(names):
-        anchors = plane_vias(board)
-        pads = []
-        for fp in board.GetFootprints():
-            for p in fp.Pads():
-                if p.GetNetname() in names and not p.GetDrillSize().x and p.IsOnLayer(pcbnew.F_Cu):
-                    b = p.GetBoundingBox()
-                    r = (b.GetLeft() / 1e6 - OX, b.GetTop() / 1e6 - OY, b.GetRight() / 1e6 - OX, b.GetBottom() / 1e6 - OY)
-                    x, y = xy(p.GetPosition())
-                    if any(r[0] <= i * STEP <= r[2] and r[1] <= j * STEP <= r[3] for i, j in anchors.get(p.GetNetCode(), ())):
-                        continue                                  # an exposed pad that has its vias already
-                    if any(net == p.GetNetname() and inside(pts, x, y) for net, pts in P.POURS):
-                        continue                                  # sits in its own pour on the top layer
-                    pads.append(((r[2] - r[0]) * (r[3] - r[1]), fp.GetReference(), p.GetNumber(), p.GetNetname(), x, y))
-        for _, ref, num, name, x, y in sorted(pads):
-            net = nets[name]
-            code = net.GetNetCode()
-            mine = anchors.setdefault(code, set())
-            path = search(grid, code, (0,) + cell(x, y), plane=over_plane(name), gnd=name == "GND", limit=3000000, anchors=mine)
-            if not path:
-                failed.append(f"{ref}.{num} {name}")
-                continue
-            if len(path) * STEP > 6:                         # far from its plane: a job for the router, not for a stub
-                far.append(f"{ref}.{num} {name}")
-                continue
-            end = (path[-1][1], path[-1][2])
-            lay(board, grid, net, path, end_via=end not in mine)
-            mine.add(end)
-            done.append(ref)
-
     touched = set(wired)                        # pads that have a track already
 
-    def escape(want):
-        """A short track on the top layer and a via for IC pins that have no track yet, so the router finds them
-        from the bottom layer or inner layer 2 instead of having to dig them out."""
+    def escape(want, where=lambda x, y: True, reach=4.0, bare=True):
+        """A short track on the top layer and a via for IC pins that have no track yet (bare), or whose net is not
+        complete yet, so the router finds them from the bottom layer or inner layer 2 instead of having to dig them
+        out. `where` says where the via may land."""
         pins = []
         for fp in board.GetFootprints():
             small = [p for p in fp.Pads() if min(p.GetSize().x, p.GetSize().y) <= 450000]
@@ -429,23 +531,22 @@ def fanout():
                 continue
             for p in small:
                 name, key = p.GetNetname(), fp.GetReference() + "." + p.GetNumber()
-                if (name and name not in PLANE_NETS and not fnmatch.fnmatchcase(name, "M?_??") and key not in touched
+                if (name and name not in PLANE_NETS and name not in BUS and not fnmatch.fnmatchcase(name, "M?_??")
+                        and (key not in touched if bare else len({root(k) for k, _ in by_net.get(name, ())}) > 1)
                         and len(by_net.get(name, ())) > 1 and not p.GetDrillSize().x and want(fp, p)):
                     pins.append((not fp.GetValue().startswith("TMC5240"), min(p.GetSize().x, p.GetSize().y), fp.GetReference(),
                                  int(p.GetNumber()) if p.GetNumber().isdigit() else 0, p))
         made = 0
         for _, _, ref, num, p in sorted(pins, key=lambda t: t[:4]):
-            path = search(grid, p.GetNetCode(), (0,) + cell(*xy(p.GetPosition())), plane=lambda x, y: True, limit=200000)
-            if path and len(path) * STEP <= 4:
+            path = search(grid, p.GetNetCode(), (0,) + cell(*xy(p.GetPosition())), plane=where, limit=400000, flat=True)
+            if path and len(path) * STEP <= reach:
                 lay(board, grid, p.GetNet(), path, end_via=True)
                 touched.add(f"{ref}.{num}")
                 made += 1
         return made
 
-    done, far, failed = [], [], []
     tie({"VM"})     # the motor supply before the bus, whose tracks would otherwise fence in the 10 uF capacitors
 
-    first = escape(lambda fp, p: fp.GetValue().startswith("TMC5240") and p.GetNumber() == "26")   # chip select, above the bus pins
     # the drivers' bus: three straight lines on the bottom layer just below the row of drivers, 0.8 mm apart so a via
     # fits on each, and from every driver pin a track on the top layer to a via on its line
     lost, taps = [], {}
@@ -454,7 +555,7 @@ def fanout():
         for k, name in enumerate(BUS):
             yl = P.DRIVER_Y + 3.35 + 0.8 * k
             pin = [xy(p.GetPosition()) for p in fp.Pads() if p.GetNetname() == name][0]
-            path = search(grid, nets[name].GetNetCode(), (0,) + cell(*pin), limit=400000,
+            path = search(grid, nets[name].GetNetCode(), (0,) + cell(*pin), limit=400000, flat=True,
                           plane=lambda x, y, yl=yl, cx=cx: abs(y - yl) < 0.6 * STEP and cx - 5.2 < x < cx - 2.5)
             if path:
                 lay(board, grid, nets[name], path, end_via=True)
@@ -462,26 +563,21 @@ def fanout():
                 touched.add(fp.GetReference() + "." + [p.GetNumber() for p in fp.Pads() if p.GetNetname() == name][0])
             else:
                 lost.append(f"{name} at {fp.GetReference()}")
-    for name, ends in taps.items():
-        a, b = min(ends), max(ends)
-        code = nets[name].GetNetCode()
-        grid.use(code)
-        if not grid.clear(pcbnew.B_Cu, a, b, code, None):
+    for name, t in lines.items():       # trim each line to its outer taps
+        ends = taps.get(name, [])
+        if len(ends) < 2:
             lost.append(f"{name} line")
             continue
-        t = pcbnew.PCB_TRACK(board)
-        t.SetStart(pcbnew.VECTOR2I(mm(OX + a[0] * STEP), mm(OY + a[1] * STEP)))
-        t.SetEnd(pcbnew.VECTOR2I(mm(OX + b[0] * STEP), mm(OY + b[1] * STEP)))
-        t.SetWidth(mm(TRACK))
-        t.SetLayer(pcbnew.B_Cu)
-        t.SetNet(nets[name])
-        board.Add(t)
-        grid.add(t)
+        t.SetStart(pcbnew.VECTOR2I(mm(OX + min(ends)[0] * STEP), mm(OY + min(ends)[1] * STEP)))
+        t.SetEnd(pcbnew.VECTOR2I(mm(OX + max(ends)[0] * STEP), mm(OY + max(ends)[1] * STEP)))
     print(f"driver bus: {sum(len(e) for e in taps.values())} pins on {len(taps)} lines; not routed: {', '.join(lost) or 'none'}")
 
+    # the drivers' own signals (chip select, enable, DIAG0, DIAG1): the bus lines wall off the bottom layer below the
+    # drivers, so their vias land where inner layer 2 is free to carry them south, over the +3V3 plane
+    tie({"GND", "+3V3"})        # supply pads before signal escapes: a supply pad must reach its plane, a signal has other ways
+    first = escape(lambda fp, p: fp.GetValue().startswith("TMC5240"), where=over_plane("+3V3"), reach=9.0, bare=False)
     rest = escape(lambda fp, p: True)
-    print(f"escape vias: {first + rest} fine-pitch signal pins")
-    tie({"GND", "+3V3"})
+    print(f"escape vias: {first} driver pins, {rest} other fine-pitch signal pins")
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(PCB, board)
     project.patch()
@@ -508,13 +604,20 @@ def one_round(n):
     board = pcbnew.LoadBoard(PCB)
     report = drc(PCB)
     by_uuid = {t.m_Uuid.AsString(): t for t in board.GetTracks()}
+    fixed = set(json.load(open(PUSHED))) if os.path.exists(PUSHED) else set()
+
+    def firm(t):
+        n = t.GetNetname()
+        return n in PLANE_NETS or n in BUS or n in fixed or fnmatch.fnmatchcase(n, "M?_??")
+
     doomed = set()
     for v in report["violations"]:
         if v["type"] in ("shorting_items", "clearance", "track_width", "via_dangling", "track_dangling", "items_not_allowed",
                          "tracks_crossing", "annular_width", "hole_clearance", "copper_edge_clearance"):
             items = [by_uuid[i["uuid"]] for i in v["items"] if i.get("uuid") in by_uuid]
             if v["type"] in ("shorting_items", "clearance", "tracks_crossing") and len(items) > 1:
-                items = sorted(items, key=lambda t: (t.Type() == pcbnew.PCB_VIA_T, t.GetLength()))[:1]    # drop the smaller offender
+                # drop one offender: a movable track before a fixed one, a track before a via, the shorter first
+                items = sorted(items, key=lambda t: (firm(t), t.Type() == pcbnew.PCB_VIA_T, t.GetLength()))[:1]
             doomed.update(t.m_Uuid.AsString() for t in items
                           if not (t.Type() == pcbnew.PCB_VIA_T and tuple(round(c, 3) for c in xy(t.GetPosition())) in VIA_KEEP))
     for fp in board.GetFootprints():                      # other nets in a driver's bottom window
@@ -539,8 +642,9 @@ def one_round(n):
         project.patch()
         report = drc(PCB)
         board = pcbnew.LoadBoard(PCB)
-    grid = Grid(board)
+    grid = Grid(board, fixed)
     nets = board.GetNetsByName()
+    pushed = 0
     tests = {name: filled_plane(board, name) for name in PLANE_NETS}
     anchors = plane_vias(board, lambda name: tests[name])
     done = failed = 0
@@ -577,13 +681,25 @@ def one_round(n):
         if best:
             lay(board, grid, net, best)
             done += 1
+            continue
+        for la in ((a[1],) if a[1] is not None else (0, 1)):          # no free way: push other tracks out of it
+            for lb in ((b[1],) if b[1] is not None else (0, 1)):
+                best = best or search(grid, code, (la,) + cell(a[2], a[3]), goal=(lb,) + cell(b[2], b[3]), push=True)
+        if best:
+            fixed.add(name)
+            grid.firm.add(code)          # before its tracks go into the grid: nothing later in this round may cross them
+            out = rip(board, grid, lay(board, grid, net, best, push=True))
+            done += 1
+            pushed += 1
+            notes.append(f"{name}: laid by pushing out {', '.join(sorted(out)) or 'nothing'}")
         else:
             failed += 1
             notes.append(f"{name}: no path from ({a[2]:.1f}, {a[3]:.1f}) to ({b[2]:.1f}, {b[3]:.1f})")
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(PCB, board)
     project.patch()
-    print(f"round {n}: removed {len(doomed)} bad items, routed {done}, could not route {failed}", flush=True)
+    json.dump(sorted(fixed), open(PUSHED, "w"))
+    print(f"round {n}: removed {len(doomed)} bad items, routed {done} ({pushed} by pushing), could not route {failed}", flush=True)
     for line in notes[:20]:
         print("   " + line, flush=True)
     return len(doomed) + done

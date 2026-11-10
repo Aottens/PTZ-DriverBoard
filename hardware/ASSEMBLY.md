@@ -37,7 +37,7 @@ must be able to do. A bolt, tool or plug that cannot reach is a design error: ch
    down: the nearest parts are the camera connector and the supply connector at the top-left hole (both lower than
    10 mm within 5 mm of the screw), `X1` at the top-right, `I2C` at the bottom-left and the fan connector at the
    bottom-right. Screw heads up to 6 mm fit the 7 mm bare circle.
-5. **Side-entry plugs go in last, from the three free sides,** with at least 28 mm to the wall: `CAM`, `ETH`, `USB`
+5. **Side-entry plugs go in last, from the three free sides,** with at least 15 mm to the wall, and about 30 mm at the middle of each free edge: `CAM`, `ETH`, `USB`
    and `I2C` on the left edge, `X1` to `X4` and `RS485` on the right edge. Each needs about 13 mm of straight room
    for plug and bend.
 6. Antenna pigtail onto the module, pressed straight down until it clicks.

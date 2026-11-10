@@ -20,7 +20,7 @@ R_WALL = 80.0                    # mm, inner radius of the base
 MOTOR = (-21.0, -76.7, 21.0, -34.7)   # x0, y0, x1, y1 in base coordinates: 42 mm square centred at (0, -55.7)
 GAP_TO_MOTOR = 1.0
 HEIGHT_MAX = 25.0
-EDGE_TO_WALL_MIN = 28.0
+EDGE_TO_WALL_MIN = 10.0
 OX, OY = 100.0, 100.0            # board origin on the KiCad sheet (tools/board.py)
 
 # footprint name contains -> (kind, mated height or plug reach, cable bend, plug height for side entry)
@@ -53,7 +53,7 @@ def main():
         if not ok:
             fails.append(text)
 
-    check(w <= 85.0 + 1e-6 and h <= 65.0 + 1e-6, f"outline {w:.1f} x {h:.1f} mm, at most 85 x 65 (BRD-04)")
+    check(w <= 100.0 + 1e-6 and h <= 80.0 + 1e-6, f"outline {w:.1f} x {h:.1f} mm, at most 100 x 80 (BRD-04)")
     corners = [base(0, 0), base(w, 0), base(w, h), base(0, h)]
     check(all(math.hypot(*c) < R_WALL for c in corners), f"board corners inside the base, farthest at {max(math.hypot(*c) for c in corners):.1f} of {R_WALL} mm")
     left = min(math.sqrt(R_WALL ** 2 - y ** 2) - abs(base(0, 0)[0]) for y in (corners[0][1], corners[3][1]))

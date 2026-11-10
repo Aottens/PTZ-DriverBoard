@@ -48,7 +48,7 @@ X0, Y0, X1, Y1 = outline()
 
 def brd_01_outline_and_holes():
     w, h = X1 - X0, Y1 - Y0
-    check(w <= 85.0 + 1e-6 and h <= 65.0 + 1e-6, f"BRD-01/04 outline {w:.2f} x {h:.2f} mm, at most 85 x 65")
+    check(w <= 100.0 + 1e-6 and h <= 80.0 + 1e-6, f"BRD-01/04 outline {w:.2f} x {h:.2f} mm, at most 100 x 80")
     holes = [(xy(p.GetPosition()), p.GetDrillSize().x / 1e6, p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH)
              for fp in FPS.values() if fp.GetReference().startswith("H") for p in fp.Pads()]
     want = {(4.0, 4.0), (w - 4.0, 4.0), (4.0, h - 4.0), (w - 4.0, h - 4.0)}
