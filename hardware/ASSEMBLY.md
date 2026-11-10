@@ -10,8 +10,9 @@ must be able to do. A bolt, tool or plug that cannot reach is a design error: ch
   6 mm, so nothing on the board's underside is touched. The underside carries no parts, only solder joints of the
   through-hole connectors (up to 2 mm) under the top edge and the bottom-right corner.
 - A flat on the wall, or a bracket, in line with the USB-C socket on the left short edge, with a slot for the plug:
-  the socket's face is 36 mm from the wall by calculation, so a normal USB-C plug (about 25 to 30 mm of body) passes
-  through the wall. Without the slot the board cannot be flashed in place.
+  the socket's face is 29 mm from the wall by calculation (`check_fit.py`), about the length of a USB-C plug's body
+  (25 to 30 mm). So the slot must be wide enough for the plug and two fingers, or the base carries a short USB-C
+  panel extension. Without either the board cannot be flashed in place.
 - A hole for the antenna's bulkhead connector, anywhere within the pigtail's reach of the module (U201, bottom-left
   quarter of the board). The module's connector is a W.FL / MHF III type: an ordinary U.FL pigtail does not fit.
 - The Ethernet jack is not on the board. Mount a jack with magnetics (for example an HR911105A on a small carrier)
@@ -20,8 +21,8 @@ must be able to do. A bolt, tool or plug that cannot reach is a design error: ch
   builds up charge. Run a wire from each motor's housing to a `GND` point: pin 2 or the mounting tabs of any GH
   connector, or `TP906` / `TP907`.
 - Optional, for more than about 1 A per axis continuously (`calc/thermal.py`): a flat aluminium bar of about
-  60 x 10 mm under the driver row, pressed with a 0.5 to 1 mm thermal pad against the four bare copper windows on
-  the underside (centres 13.6 mm apart, 11.5 mm below the top edge). The pad must be an insulating one: there are
+  65 x 10 mm under the driver row, pressed with a 0.5 to 1 mm thermal pad against the four bare copper windows on
+  the underside (centres 17.0 mm apart, 12.05 mm below the top edge). The pad must be an insulating one: there are
   vias of other nets between the windows, under solder mask. Or a 5 V fan on J902.
 
 ## Order of work
