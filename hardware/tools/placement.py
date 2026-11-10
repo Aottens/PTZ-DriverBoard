@@ -12,8 +12,11 @@ STEP = 0.25
 REACH = 25.0
 KEEPOUT = [(4.4, 22.6, 11.3, 25.8)]   # the VM pour between TVS and fuse, with its vias
 # supply plane on inner layer 2: the motor supply under the drivers and bulk capacitors, 3.3 V under the logic
-PLANES = [("VM", [(0, 0), (85, 0), (85, 33.0), (24.5, 33.0), (24.5, 25.9), (0, 25.9)]),
-          ("+3V3", [(0, 26.4), (24.0, 26.4), (24.0, 33.5), (85, 33.5), (85, 65), (0, 65)])]
+# VM covers the input corner and the strip under the drivers' VS pins; +3V3 starts under their logic side
+PLANES = [("VM", [(0, 0), (85, 0), (85, 13.2), (64.6, 13.2), (64.6, 29.0), (58.2, 29.0), (58.2, 13.2), (51.1, 13.2), (51.1, 29.0),
+                  (44.9, 29.0), (44.9, 13.2), (24.5, 13.2), (24.5, 25.9), (0, 25.9)]),     # two tongues reach the bulk capacitors
+          ("+3V3", [(0, 26.4), (25.0, 26.4), (25.0, 13.7), (44.4, 13.7), (44.4, 29.5), (51.6, 29.5), (51.6, 13.7), (57.7, 13.7),
+                    (57.7, 29.5), (65.1, 29.5), (65.1, 13.7), (85, 13.7), (85, 65), (0, 65)])]
 # pours on the top layer that carry the input current (BRD-06): connector to FET, FET to fuse, fuse to bulk capacitor
 POURS = [("VIN_RAW", [(10.1, 2.6), (13.7, 2.6), (13.7, 9.6), (18.0, 9.6), (18.0, 17.4), (11.8, 17.4), (11.8, 9.6), (10.1, 9.6)]),
          ("VIN", [(16.2, 19.2), (18.6, 19.2), (18.6, 25.9), (16.2, 25.9)]),
@@ -23,7 +26,7 @@ VM_VIAS = [(x, y) for x in (5.2, 6.5, 7.8, 9.1, 10.4) for y in (23.4, 25.0)]
 MAY_OVERLAP = {"H1", "H2", "H3", "H4"}
 
 AXIS_X = {1: 26.0, 2: 39.6, 3: 53.2, 4: 66.8}   # centre line of each driver cell
-DRIVER_Y = 11.9
+DRIVER_Y = 12.05
 
 FIXED = {
     "H1": (4, 4, 0), "H2": (81, 4, 0), "H3": (4, 61, 0), "H4": (81, 61, 0),
@@ -36,7 +39,7 @@ FIXED = {
     "J802": (81.75, 51.4, 90),
     # power
     "C101": (52.6, 27.1, 0), "C102": (66.1, 27.1, 0), "U101": (31.0, 24.6, 0), "L101": (40.6, 26.4, 0),
-    "U204": (44.9, 19.6, 0),
+    "U204": (42.9, 19.7, 0),
     # logic
     "U801": (15.2, 32.0, 0), "U201": (17.2, 49.0, 0), "U202": (30.0, 45.0, 0), "U203": (30.5, 53.5, 0),
     "U701": (41.0, 45.2, 0), "U702": (52.0, 44.5, 0), "U703": (73.5, 46.0, 0), "U802": (71.5, 54.5, 0),
@@ -62,13 +65,13 @@ NEAR = {
 # One driver cell, relative to the driver's centre. The chip is turned so its motor side faces the connector above it:
 # top = VS and the four outputs, right = charge pump, DIAG, enable, left = SLEEPN, SPI, REFL, bottom = IREF, 1V8, VCC_IO.
 CELL = {  # ref suffix: (dx, dy, rotation)
-    "C04": (3.95, -2.55, 90),    # VCP to VM, at the corner between pin 16 and pin 17
-    "C02": (5.75, -3.33, 0),     # 100 nF on the right-hand VS pin
-    "C05": (3.75, 0.05, 90),    # charge pump capacitor on pins 14 and 15
+    "C04": (3.30, -3.95, 180),   # VCP to VM, above the corner: VM pad over pin 17, VCP pad reached from pin 16
+    "C02": (5.85, -3.60, 0),     # 100 nF on the right-hand VS pin
+    "C05": (3.75, -0.95, 90),    # charge pump capacitor straight out of pins 14 and 15; DIAG and enable pass below it
     "R04": (5.60, 0.20, 0), "R03": (5.60, 1.30, 0),      # DIAG pull-ups
     "R02": (-3.75, -2.30, 90),   # SLEEPN to VM, at the corner between pin 25 and pin 24
     "C01": (-5.30, -3.30, 180),  # 100 nF on the left-hand VS pin
-    "C03": (-5.60, 1.00, 270),   # 10 uF
+    "C03": (-5.85, 4.90, 270),   # 10 uF, low on the left so the SPI pins have room for their vias
     "R01": (-1.82, 4.20, 270), "C06": (-0.75, 4.20, 270), "C07": (0.32, 4.20, 270),   # under pins 1, 3 and 5
 }
 for n, x in AXIS_X.items():
@@ -87,7 +90,11 @@ for n, x in AXIS_X.items():
 
 # Silkscreen texts with a fixed place: (text, x, y, angle). The small parts keep clear of them.
 # Everything else on the silkscreen finds its own free spot (tools/silk.py).
-LABELS = {"J101": ("12-24V", 8.3, 4.7, 90), "J801": ("ETH", 8.0, 32.1, 90), "J202": ("I2C", 7.7, 53.5, 90)}
+LABELS = {"J101": ("12-24V", 8.3, 4.7, 90), "J901": ("CAM", 7.5, 13.0, 90), "J801": ("ETH", 8.0, 32.1, 90), "J202": ("I2C", 7.7, 53.5, 90)}
+LABELS.update({"SW201": ("BOOT", 38.0, 58.0, 0), "J201": ("USB", 9.68, 44.15, 90), "J802": ("RS485", 77.8, 51.4, 90),
+               "J803": ("CAN", 62.0, 56.5, 0), "J902": ("FAN", 72.0, 56.9, 0)})
+for n, y in enumerate((13.0, 22.6, 32.2, 41.8), 1):
+    LABELS[f"J{n + 2}03"] = (f"X{n}", 77.8, y, 90)
 for n, x in AXIS_X.items():
     LABELS[f"J{n + 2}01"] = (f"M{n}", x, 8.05, 0)
 for n in AXIS_X:

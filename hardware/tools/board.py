@@ -255,6 +255,8 @@ def build():
 
     board = pcbnew.BOARD()
     board.SetCopperLayerCount(4)
+    for layer in (pcbnew.In1_Cu, pcbnew.In2_Cu):     # planes: the router must not put tracks here (BRD-03)
+        board.SetLayerType(layer, pcbnew.LT_POWER)
     nets = {}
     for name in sorted(set(pins.values())):
         ni = pcbnew.NETINFO_ITEM(board, name)
@@ -264,6 +266,7 @@ def build():
         fp = it.fp
         lib, name = it.comp["footprint"].split(":")
         fp.SetFPID(pcbnew.LIB_ID(lib, name))
+        fp.SetLocalClearance(None)       # some library footprints carry their own; the net classes decide here
         fp.SetReference(it.ref)
         fp.SetValue(it.comp["value"])
         fp.SetPath(pcbnew.KIID_PATH(f"{it.comp['path']}{it.comp['uuid']}"))
@@ -425,6 +428,12 @@ if __name__ == "__main__":
     elif cmd == "dsn":
         board = pcbnew.LoadBoard(PCB)
         assert pcbnew.ExportSpecctraDSN(board, sys.argv[2]), "DSN export failed"
+        text = open(sys.argv[2]).read()
+        for name in ("In1.Cu", "In2.Cu"):            # whatever KiCad wrote, the planes are power layers to the router
+            text = text.replace(f"(layer {name}\n      (type signal)", f"(layer {name}\n      (type power)")
+        assert text.count("(type power)") == 2, "inner layers not marked as power layers in the DSN"
+        text = text.replace("(type route)", "(type protect)")     # what is on the board already (plane vias and their stubs) stays
+        open(sys.argv[2], "w").write(text)
     elif cmd == "ses":
         board = pcbnew.LoadBoard(PCB)
         assert pcbnew.ImportSpecctraSES(board, sys.argv[2]), "SES import failed"
