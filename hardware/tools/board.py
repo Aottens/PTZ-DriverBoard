@@ -365,6 +365,9 @@ def _d_seg_rect(a, b, r):
     return min(_d_seg_seg(a, b, c[i], c[(i + 1) % 4]) for i in range(4))
 
 
+WIDE_NETS = {"+3V3": 0.5}      # a default-class net whose tracks still get width where there is room (blind review B1)
+
+
 def widen(board):
     """Give every track the width of its net class where its surroundings allow, motor outputs up to 0.8 mm (BRD-06).
 
@@ -377,7 +380,7 @@ def widen(board):
     pads = [(p, p.GetBoundingBox()) for fp in board.GetFootprints() for p in fp.Pads()]
     pads = [(p, (bb.GetLeft() / 1e6 - OX, bb.GetTop() / 1e6 - OY, bb.GetRight() / 1e6 - OX, bb.GetBottom() / 1e6 - OY)) for p, bb in pads]
     for t in list(tracks):                   # a long narrow segment is cut up first, so each piece gets the width its own spot allows
-        want = target.get(t.GetNetClassName(), 0.2)
+        want = max(target.get(t.GetNetClassName(), 0.2), WIDE_NETS.get(t.GetNetname(), 0))
         a, b = _pt(t.GetStart()), _pt(t.GetEnd())
         n = math.ceil(math.hypot(b[0] - a[0], b[1] - a[1]) / 0.5)
         if want > 0.2 and t.GetWidth() / 1e6 < want and n > 1:
@@ -394,7 +397,7 @@ def widen(board):
     changed = 0
     for cap in (0.6, 9.9):                   # first every track to 0.6 mm, then what is left to the widest: neighbours share the room
         for t in tracks:
-            want = min(cap, target.get(t.GetNetClassName(), 0))
+            want = min(cap, max(target.get(t.GetNetClassName(), 0), WIDE_NETS.get(t.GetNetname(), 0)))
             if not want or t.GetWidth() / 1e6 >= want:
                 continue
             a, b, layer, net = _pt(t.GetStart()), _pt(t.GetEnd()), t.GetLayer(), t.GetNetCode()

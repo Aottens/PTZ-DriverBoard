@@ -29,7 +29,7 @@ HOMEn_IN (port) ── 10k pull-up, 22k series, 1 nF, clamp diodes ──► REF
 - **ENC-03** One home or limit input per axis, on pin 7. It has a 10 kΩ pull-up to `+3V3`, so a switch to `GND` works with two wires, and reaches the driver's REFL pin through 22 kΩ with 1 nF to `GND` and clamp diodes to `GND` and `+3V3` (datasheet p59). The driver stops the motor on it by itself. By calculation in `hardware/calc/power.py`, 24 V on this pin puts under 1 mA into the clamp.
 - **ENC-04** Cable integrity over the longest run is a bench test on the rig (R-T2) and is **not** proven by this build. What the board does for it: ENC-05 and ENC-06.
 - **ENC-05** The sensor cables are isolated from the main bus. U701 drives each port's SCK and MOSI separately, and its outputs are off unless `CS_SNS_EN_N` is low; 100 kΩ pull-downs hold the lines then. U702 lets only the selected port's MISO onto `SPI_MISO`.
-- **ENC-06** Every signal to a port has a series resistor at the driving end (33 Ω out, 100 Ω in), to damp the cable and to limit the current into a short.
+- **ENC-06** Every signal to a port has a series resistor at the driving end (33 Ω on clock and data out, 100 Ω on chip select and data in), to damp the cable and to limit the current into a short. Chip select idles high for as long as the board is on, so its resistor alone must keep a short to ground under the decoder's 50 mA limit (SN74LVC139A, absolute maximum continuous output current): 3.3 V / 100 Ω = 33 mA; 33 Ω gave about 60 mA (blind review, K5).
 - **ENC-07** The port supply `+3V3_SNS` is `+3V3` through F701, shared by the four ports, with 4.7 µF after it. Ports are 3.3 V only: with a 5 V sensor the 3.3 V clock would not reach its input-high level.
 
 ## Connections, per axis
@@ -41,7 +41,7 @@ n = axis 1 to 4, a = 3 to 6.
 | Ja02 | BM07B-GHS-TBT | 1 = `+3V3_SNS`, 2 = `GND`, 3 = `SNSn_SCK`, 4 = `SNSn_MOSI`, 5 = `SNSn_MISO`, 6 = `SNSn_CS`, 7 = `HOMEn_IN`; mounting pads = `GND` |
 | Ra07 | 33R | `SNS_SCKn_B`, `SNSn_SCK` |
 | Ra08 | 33R | `SNS_MOSIn_B`, `SNSn_MOSI` |
-| Ra09 | 33R | `CS_SNSn`, `SNSn_CS` |
+| Ra09 | 100R | `CS_SNSn`, `SNSn_CS` |
 | Ra10 | 100R | `SNSn_MISO`, `SNSn_MISO_B` |
 | Ra11 | 100k | `SNSn_SCK`, `GND` |
 | Ra12 | 100k | `SNSn_MOSI`, `GND` |

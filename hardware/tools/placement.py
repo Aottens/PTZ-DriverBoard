@@ -72,6 +72,11 @@ SWAP = [("C804", "C808")]
 # Parts moved a little after the automatic placement, so a neighbour's pin 1 mark on the silkscreen is not on their pad.
 SHIFT = {"C201": (-0.4, 0.0), "R301": (0.0, 0.25), "R401": (0.0, 0.25), "R501": (0.0, 0.25), "R601": (0.0, 0.25)}
 
+# Extra vias to the plane, beyond the one each supply pad gets (blind review B1 and K1): (reference, pad, how many).
+# The 3.3 V regulator's output and the two bulk capacitors must not hang on a single 0.3 mm via.
+MORE_VIAS = [("L102", "2", 3), ("C112", "1", 1), ("C113", "1", 1),
+             ("C101", "1", 2), ("C101", "2", 2), ("C102", "1", 2), ("C102", "2", 2)]
+
 # One driver cell, relative to the driver's centre. The chip is turned so its motor side faces the connector above it:
 # top = VS and the four outputs, right = charge pump, DIAG, enable, left = SLEEPN, SPI, REFL, bottom = IREF, 1V8, VCC_IO.
 CELL = {  # ref suffix: (dx, dy, rotation)

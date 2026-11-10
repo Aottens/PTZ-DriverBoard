@@ -687,6 +687,31 @@ def fanout():
     print("   no way out:", ", ".join(failed) or "none")
 
 
+def more_vias():
+    """Extra plane vias at the pads placement.MORE_VIAS names, each at least 0.9 mm from the net's other vias."""
+    board = pcbnew.LoadBoard(PCB)
+    grid = Grid(board, (), preroutes())
+    made = 0
+    for ref, num, count in P.MORE_VIAS:
+        pad = [p for p in board.FindFootprintByReference(ref).Pads() if p.GetNumber() == num][0]
+        name, code = pad.GetNetname(), pad.GetNetCode()
+        test = filled_plane(board, name)
+        x, y = xy(pad.GetPosition())
+        for _ in range(count):
+            own = [xy(t.GetPosition()) for t in board.GetTracks() if t.Type() == pcbnew.PCB_VIA_T and t.GetNetCode() == code]
+            path = search(grid, code, (0,) + cell(x, y), gnd=name == "GND",
+                          plane=lambda px, py: test(px, py) and all(math.hypot(px - vx, py - vy) >= 0.9 for vx, vy in own))
+            if not path or len(path) * STEP > 6:
+                print(f"   {ref}.{num} {name}: no spot for another via within 6 mm")
+                break
+            lay(board, grid, code, path, end_via=True)
+            made += 1
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+    pcbnew.SaveBoard(PCB, board)
+    project.patch()
+    print(f"more vias: {made} added")
+
+
 def drc(path):
     out = os.path.join(tempfile.mkdtemp(), "drc.json")
     subprocess.run([CLI, "pcb", "drc", "--format", "json", "--severity-all", "-o", out, path], capture_output=True)
@@ -835,6 +860,13 @@ def one_round(n, prune=False):
         else:
             failed += 1
             notes.append(f"{name}: no path from ({a[2]:.1f}, {a[3]:.1f}) to ({b[2]:.1f}, {b[3]:.1f})")
+    seen = set()                                           # two ends of one piece each laid the same way: keep one
+    for t in list(board.GetTracks()):
+        k = (t.GetNetCode(), "via", t.GetPosition().x, t.GetPosition().y) if t.Type() == pcbnew.PCB_VIA_T else (t.GetNetCode(),) + key(t)
+        if k in seen:
+            board.Remove(t)
+            GRAVE.append(t)
+        seen.add(k)
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(PCB, board)
     project.patch()
@@ -848,6 +880,9 @@ def one_round(n, prune=False):
 if __name__ == "__main__":
     if sys.argv[1:] == ["fanout"]:
         fanout()
+        sys.exit()
+    if sys.argv[1:] == ["more"]:
+        more_vias()
         sys.exit()
     if sys.argv[1:] == ["prune"]:               # at the very end: take out what hangs loose, until nothing does
         while one_round(0, prune=True):

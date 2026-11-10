@@ -35,11 +35,11 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | C20785 | SMD0603P020TF | 0603 | 3 | Economic and Standard | Extended | 3 687 | 0.2 A PTC |
 | C22787 | 0603WAF1200T5E | 0603 | 2 | Economic and Standard | Basic | not read | 120R |
 | C23733 | CL05A475MP5NRNC | 0402 | 7 | Economic and Standard | Basic | not read | 4.7 µF |
-| C25076 | 0402WGF1000TCE | 0402 | 5 | Economic and Standard | Basic | not read | 100R |
+| C25076 | 0402WGF1000TCE | 0402 | 9 | Economic and Standard | Basic | not read | 100R |
 | C25077 | 0402WGF100JTCE | 0402 | 1 | Economic and Standard | Basic | not read | 10R |
 | C25091 | 0402WGF2200TCE | 0402 | 10 | Economic and Standard | Basic | not read | 220R |
 | C25092 | 0402WGF220JTCE | 0402 | 2 | Economic and Standard | Basic | not read | 22R |
-| C25105 | 0402WGF330JTCE | 0402 | 12 | Economic and Standard | Basic | not read | 33R |
+| C25105 | 0402WGF330JTCE | 0402 | 8 | Economic and Standard | Basic | not read | 33R |
 | C25120 | 0402WGF499JTCE | 0402 | 4 | Economic and Standard | Basic | not read | 49.9R |
 | C25741 | 0402WGF1003TCE | 0402 | 23 | Economic and Standard | Basic | not read | 100k |
 | C25744 | 0402WGF1002TCE | 0402 | 25 | Economic and Standard | Basic | not read | 10k |

@@ -342,7 +342,7 @@ def enc_06_series_resistors():
     for n, a in AXES:
         two(d, ref("R", a, 7), "SNS_SCK%d_B" % n, "SNS%d_SCK" % n, "33R")
         two(d, ref("R", a, 8), "SNS_MOSI%d_B" % n, "SNS%d_MOSI" % n, "33R")
-        two(d, ref("R", a, 9), "CS_SNS%d" % n, "SNS%d_CS" % n, "33R")
+        two(d, ref("R", a, 9), "CS_SNS%d" % n, "SNS%d_CS" % n, "100R")
         two(d, ref("R", a, 10), "SNS%d_MISO" % n, "SNS%d_MISO_B" % n, "100R")
     return d
 

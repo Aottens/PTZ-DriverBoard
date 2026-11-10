@@ -6027,7 +6027,7 @@
 				)
 			)
 		)
-		(property "Value" "33R"
+		(property "Value" "100R"
 			(at 294.64 78.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6070,7 +6070,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25105"
+		(property "LCSC" "C25076"
 			(at 294.64 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)

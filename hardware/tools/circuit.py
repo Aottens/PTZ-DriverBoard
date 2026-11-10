@@ -299,7 +299,7 @@ def axis(n):
     res(r(6), "22k", f"HOME{n}_IN", f"HOME{n}", sh)
     res(r(7), "33R", f"SNS_SCK{n}_B", f"SNS{n}_SCK", sh)
     res(r(8), "33R", f"SNS_MOSI{n}_B", f"SNS{n}_MOSI", sh)
-    res(r(9), "33R", f"CS_SNS{n}", f"SNS{n}_CS", sh)
+    res(r(9), "100R", f"CS_SNS{n}", f"SNS{n}_CS", sh)     # idles high: a short to ground stays under the decoder's 50 mA
     res(r(10), "100R", f"SNS{n}_MISO", f"SNS{n}_MISO_B", sh)
     res(r(11), "100k", f"SNS{n}_SCK", "GND", sh)
     res(r(12), "100k", f"SNS{n}_MOSI", "GND", sh)
