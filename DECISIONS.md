@@ -4,6 +4,26 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev A: what was done with the blind review
+
+The review is `hardware/review/BLIND_REVIEW.md`: no KRITIEK finding, five BELANGRIJK. `hardware/review/HANDLED.md` lists every finding, the small ones too.
+
+**B1, the 3.3 V output on one 0.2 mm track and one via: fixed.** Six vias and 0.5 mm tracks now. Checked on the board: `+3V3` vias at L102.2, C112.1 and C113.1, track widths 0.5 mm.
+
+**B2, the W5500 crystal tracks: partly fixed, the rest accepted.** `ETH_XI`, the oscillator's input, now runs on the top layer only, 2.4 mm from pin 30 to the crystal and 3.7 mm on to R802 and C810. A `+3V3` track that ran between the crystal's pads is gone. `ETH_XO`, the driven end, is down from about 36 mm and five vias to about 22 mm and three, and no longer passes the 5 V regulator. A shorter way does not exist without moving parts: pin 31 is shut in on the top layer between the tracks of pins 30 and 33, and the inner layer and the bottom under the crystal carry the SPI and chip-select lines.
+*Why accepted:* the calculation gives about 3 pF of extra capacitance on XO (three vias at 0.4 pF, 11.5 mm on inner layer 2, 6 mm on the bottom, 4 mm on top), which moves the load the crystal sees from 12 pF to between 11 and 12.5 pF: under 15 ppm of pull at the usual 10 to 15 ppm/pF, against the 50 ppm Ethernet allows. XO is the low-impedance end of the oscillator; the sensitive end is the short one.
+*Reversal trigger:* the link does not come up or drops packets in bring-up step 7.1b. Then Rev B turns the crystal a quarter and puts it beside pins 30 and 31.
+
+**B3, the TVS D102 has no JLC footprint to check its rotation against: accepted with two checks.** The placement file carries KiCad's own angle for it. KiCad's `D_SMB` has pad 1 as the cathode; how JLC's library draws this part is not known, so the angle is not verified. It is the first line of the JLC preview checklist in the pull request, and bring-up step 0.3b measures the diode's direction before any supply is connected. A reversed TVS costs turning one SMB part by hand.
+*Reversal trigger:* none; a later revision takes a part number that JLC's library knows.
+
+**B4, the sensor ports only suit SPI with the clock resting low: accepted as a stated limit.** One pin both enables the buffer and selects the sensor, so a clock that rests high rises at the port as chip select falls. `specs/modules/sensing.md` ENC-05 now says so, and the bring-up checklist has step 5.2b. The reviewer names AS5047 and AS5048A as sensors with the clock resting low, and MT6835 as one with the clock resting high. *Alternatives:* a pull-up footprint per port or a separate enable pin; both need a pin or parts the board has no room for at this stage, and no sensor has been chosen that needs them.
+*Reversal trigger:* the rig (R-T2) chooses a sensor that needs the clock high at rest and does not accept mode 0 timing. Then Rev B gives the buffer its own enable.
+
+**B5, four axes at 1.5 A RMS continuously run hot: accepted, as `calc/thermal.py` already said.** The reviewer's own calculation comes to a junction at 100 to 125 °C in a closed base. The board has nine vias under each driver, a bare copper window under each for a heat bar, a fan output, and standstill current reduction is a firmware setting. Bring-up steps 4.4 and 4.8 read the temperatures before the board goes into the base.
+*Reversal trigger:* step 4.8 shows a driver over 100 °C at the currents the head really uses, with the heat bar fitted.
+---
+
 ## 2026-11-10 — Rev A: the board grows to 100 × 80 mm
 
 **Decision (owner, in chat):** The board may be 100 × 80 mm instead of 85 × 65 mm. It lies in the base, not in the head, where the first size came from. The RJ45 jack and the supply inlet sit in the base wall. The four M3 holes stay 4 mm from the edges in each corner.

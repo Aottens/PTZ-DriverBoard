@@ -11,6 +11,7 @@ Test points are named on the silkscreen. Use the lab supply with its current lim
 - [ ] 0.1 Look at the board next to `hardware/fab/` renders: every part present, no bridges on the four drivers (U301, U401, U501, U601), the W5500 (U801) and the USB-C socket.
 - [ ] 0.2 Pin 1 and polarity as in the JLC preview list in the pull request: the four drivers, U201, U801, D102 (band towards the board's top edge side marked on silk), C101 and C102 (plus mark), Q101.
 - [ ] 0.3 With a multimeter, no supply connected: `VM` to `GND` (TP902 to TP906) is not a short (expect it to climb as the capacitors charge); `+3V3` to `GND` (TP905) above 100 Ω; `+5V` to `GND` (TP903) above 100 Ω; `VIN` to `GND` (TP901) not a short.
+- [ ] 0.3b **TVS direction (blind review, B3).** Multimeter on diode test, no supply connected: red lead on `GND` (TP906), black on `VM` (TP902) reads 0.5 to 0.8 V; leads swapped reads open or a slowly rising value. If it is the other way round, or both ways read a diode, D102 is fitted reversed: do not apply power, turn D102 first. JLC's library had no footprint to check its rotation against.
 - [ ] 0.4 Solder jumpers as delivered: JP801 open (RS-485 terminator off), JP802 closed (CAN terminator on), JP901 on the `5V` side.
 - [ ] 0.5 Nothing plugged in: no motors, no sensors, no USB.
 
@@ -58,6 +59,7 @@ Test points are named on the silkscreen. Use the lab supply with its current lim
 
 - [ ] 5.1 Pin 1 of each sensor port (J302, J402, J502, J602) carries 3.2 to 3.4 V; pin 2 is `GND`.
 - [ ] 5.2 An AS5047P or another 3.3 V SPI sensor on J302 through a 15 cm lead: reads a stable angle with sensor strobe and address 0. Repeat on the other three ports.
+- [ ] 5.2b Firmware keeps the sensor clock low at rest (SPI mode 0 or 1). A sensor whose datasheet only gives mode 3 is first tried here in mode 0; if its angle is wrong by a bit shift, it does not fit Rev A's ports (`specs/modules/sensing.md`, ENC-05).
 - [ ] 5.3 With a scope on the sensor's clock pin: no clock edges while the firmware talks to a driver or to Ethernet (ENC-05).
 - [ ] 5.4 Short pin 7 (HOME) of J302 to pin 2: the driver's REFL input reads active over SPI (ENC-03). Repeat on the other ports.
 - [ ] 5.5 Short pin 1 of a sensor port to pin 2 for 5 s: the board may reset; it works again after the short is gone (POW-02c).
@@ -73,6 +75,7 @@ Test points are named on the silkscreen. Use the lab supply with its current lim
 ## 7. Ethernet, RS-485, CAN, USB (CTL-02 to CTL-07)
 
 - [ ] 7.1 Ethernet: wire an RJ45 jack with magnetics (for example an HR911105A) to J801 with leads under 10 cm: J801 pin 3 and 4 to the jack's TD+ and TD-, 5 and 6 to RD+ and RD-, 1 to TCT, 7 to RCT, 2 to the jack's ground and shield. The LINK LED lights on a switch; the board answers a ping.
+- [ ] 7.1b Leave a ping running for 10 minutes with a motor turning: note lost packets. The W5500's crystal output track is about 22 mm long with three vias (blind review, B2); a link that drops or will not come up points there first.
 - [ ] 7.2 RS-485: receive DMX or a known serial stream on J802; then transmit and check on the far end. Close JP801 if this board is at the end of the line.
 - [ ] 7.3 CAN: with a second node and both ends terminated, frames pass both ways at 500 kbit/s. Without motor power the CAN transceiver is off.
 - [ ] 7.4 WiFi with the antenna on the module's connector (a W.FL or MHF III plug, **not** U.FL): the board joins the network; note the signal strength with the board in its place in the base.
