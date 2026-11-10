@@ -10,7 +10,7 @@ Four identical axis cells. Axis n = 1 to 4; its parts carry references in the hu
 | Ref | Part | LCSC | Datasheet read |
 | --- | --- | --- | --- |
 | U301, U401, U501, U601 | TMC5240ATJ+T, TQFN-32 5 × 5 mm | C7494373 | Analog Devices 19-101625C, Rev 1, 4/24; pin table p15-18 |
-| J301, J401, J501, J601 | JST S4B-XH-A, 4 pins, 2.5 mm, through-hole, side entry | C157925 | JST XH series |
+| J301, J401, J501, J601 | JST B4B-XH-A, 4 pins, 2.5 mm, through-hole, top entry | C144395 | JST XH series |
 | J303, J403, J503, J603 | JST SM04B-GHS-TB, 4 pins, 1.25 mm, SMD, side entry, with latch | C189895 | JST GH series |
 | U703 | SN74AHCT244PWR, octal buffer, TSSOP-20 | C484743 | TI SCLS228O, July 2024 |
 | F702 | 0.2 A PTC, 0603 | C20785 | SMD0603P020TF |
@@ -26,7 +26,7 @@ TMC5240 pins used here, TQFN-32 (datasheet p16-18): 1 IREF, 2 AIN, 3 VDD1V8, 4 A
 - **DRV-05** Thermal, by calculation in `hardware/calc/thermal.py` with its assumptions written down: junction temperature with all four axes at 1.5 A RMS in still air stays below the 125 °C operating limit with margin, and the board temperature is stated, since the housing softens first (MEC-06). The exposed pad has at least 9 vias to the ground planes, checked in `hardware/check_board.py`.
 - **DRV-06** Each axis has an external driver port: pin 1 = `+5V_EXT`, 2 = STEP, 3 = DIR, 4 = `GND`. STEP and DIR are the driver's DIAG0 and DIAG1 (datasheet p60-61), buffered to 5 V by U703 through 220 Ω. U703's outputs are enabled by `DRV_ENN`, so the direct stop pin also stops an external driver's steps.
 - **DRV-07** `DRV_ENN` is one direct MCU pin to all four drivers and to U703, pulled up to `+3V3` by R701 (10 kΩ), so the bridges are off until firmware drives it low.
-- **DRV-08** Supply decoupling as the datasheet's application circuit (p20, p166): per driver two 100 nF and one 10 µF, all 50 V, from `VM` to `GND`; 1 µF from VCP to `VM`; 22 nF 50 V between CPI and CPO; 2.2 µF from VDD1V8 to `GND`; 100 nF on VCC_IO. The 440 µF bulk is shared (POW).
+- **DRV-08** Supply decoupling as the datasheet's application circuit (p20, p166): per driver two 100 nF and one 10 µF, all 50 V, from `VM` to `GND`; 1 µF from VCP to `VM`; 22 nF 50 V between CPI and CPO; 4.7 µF from VDD1V8 to `GND` (the datasheet asks for 2.2 µF or larger); 100 nF on VCC_IO. The 440 µF bulk is shared (POW).
 - **DRV-09** Unused pins are tied off: AIN, ENCA, ENCB, ENCN and REFR to `GND`; OV left open. SLEEPN goes to `VM` through 100 kΩ, because it may not exceed VS + 0.3 V (datasheet p10) and `+3V3` is present on USB power when `VM` is not.
 - **DRV-10** Each motor output has 470 pF 50 V to `GND` against ESD from a belt drive in a plastic housing (datasheet p167).
 
@@ -37,13 +37,13 @@ n = axis 1 to 4, a = 3 to 6.
 | Ref | Value | Connections |
 | --- | --- | --- |
 | Ua01 | TMC5240ATJ | VS (4 pins) = `VM`; VCC_IO = `+3V3`; AGND and exposed pad = `GND`; VDD1V8 = `An_1V8`; VCP = `An_VCP`; CPO = `An_CPO`; CPI = `An_CPI`; IREF = `An_IREF`; SLEEPN = `An_SLEEPN`; AIN, CLK, UART_EN, ENCA, ENCB, ENCN, REFR = `GND`; OV = not connected; CSN = `CS_DRVn`; SCK = `SPI_SCK`; SDI = `SPI_MOSI`; SDO = `SPI_MISO`; DRV_ENN = `DRV_ENN`; DIAG0 = `DIAG0_n`; DIAG1/SW = `DIAG1_n`; REFL = `HOMEn`; OUT1A = `Mn_A1`; OUT2A = `Mn_A2`; OUT1B = `Mn_B1`; OUT2B = `Mn_B2` |
-| Ja01 | S4B-XH-A | 1 = `Mn_A1`, 2 = `Mn_A2`, 3 = `Mn_B1`, 4 = `Mn_B2` |
+| Ja01 | B4B-XH-A | 1 = `Mn_A1`, 2 = `Mn_A2`, 3 = `Mn_B1`, 4 = `Mn_B2` |
 | Ja03 | SM04B-GHS-TB | 1 = `+5V_EXT`, 2 = `STEPn_O`, 3 = `DIRn_O`, 4 = `GND`; mounting pads = `GND` |
 | Ca01, Ca02 | 100 nF 50 V | `VM`, `GND` |
 | Ca03 | 10 µF 50 V | `VM`, `GND` |
 | Ca04 | 1 µF 50 V | `An_VCP`, `VM` |
 | Ca05 | 22 nF 50 V | `An_CPI`, `An_CPO` |
-| Ca06 | 2.2 µF | `An_1V8`, `GND` |
+| Ca06 | 4.7 µF | `An_1V8`, `GND` |
 | Ca07 | 100 nF | `+3V3`, `GND` |
 | Ca08, Ca09, Ca10, Ca11 | 470 pF 50 V | `Mn_A1`, `Mn_A2`, `Mn_B1`, `Mn_B2` to `GND`, in that order |
 | Ra01 | 12k | `An_IREF`, `GND` |

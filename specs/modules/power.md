@@ -32,17 +32,17 @@ J101 ─ VIN_RAW ─ Q101 (reverse polarity) ─ VIN ─┬─ F101 7 A ─ VM �
 
 ## Acceptance criteria
 
-- **POW-01** One DC input on J101, a locking JST VH header: pin 1 = `VIN_RAW` (plus), pin 2 = `GND`. Nominal 12 to 24 V; the board runs from 10.8 to 26.4 V. The upper limit follows from D102's stand-off voltage.
+- **POW-01** One DC input on J101, a locking JST VH header: pin 1 = `VIN_RAW` (plus), pin 2 = `GND`. Nominal 12 to 24 V; the board runs from 10.8 to 25.2 V (24 V + 5 %). The upper limit keeps the supply below D102's lowest breakdown voltage of 26.7 V.
 - **POW-02** The board survives:
   - **a. Reverse polarity** to -30 V: Q101 sits in the plus line with its drain at `VIN_RAW` and its source at `VIN`, its gate at `RP_GATE`, pulled to `GND` by R101 (100 kΩ) and clamped to the source by D101 (cathode at `VIN`).
   - **b. A hot-plug spike:** C101 and C102 damp the ring of the supply cable, and D102 clamps `VM` (cathode at `VM`, anode at `GND`). `hardware/calc/power.py` shows the peak.
   - **c. A short on any output connector** to `GND` or to its neighbour pin, per connector in the table under *Outputs and what limits them*.
-- **POW-03** Motor and logic supply are fused separately: F101 between `VIN` and `VM`, F102 between `VIN` and `VIN_L`. Nothing but F101, F102, Q101 and D101 connects to `VIN`.
+- **POW-03** Motor and logic supply are fused separately: F101 between `VIN` and `VM`, F102 between `VIN` and `VIN_L`. Nothing but F101, F102, Q101, D101 and the test point TP901 connects to `VIN`.
 - **POW-04** The margin from the highest voltage `VM` can reach to the TMC5240's 41 V absolute maximum is calculated in `hardware/calc/power.py` for: the TVS clamp at its rated pulse, a hot-plug, and a motor driven by hand or decelerating. Every part on `VM`, `VIN` and `VIN_L` is rated for at least 50 V, except D102.
 - **POW-05** USB alone powers logic only. `VBUS` reaches `VSYS` through D105 (anode at `VBUS`) and nothing else; `+5V` reaches `VSYS` through D104 (anode at `+5V`). So USB cannot feed `+5V`, `VM` or the host.
 - **POW-06** Firmware reads the motor supply: `VM_SENSE` is `VM` divided by 11 (R110 100 kΩ from `VM`, R111 10 kΩ and C114 100 nF to `GND`) on an ADC pin. A blown F101 reads as 0 V.
 - **POW-07** `+5V` is 4.97 V ± 4 % from U101 (R106 + R112 over R107), sized for 1.5 A. Its under-voltage lock-out starts the converter above about 9.2 V and stops it below about 8.1 V (R102, R103), by calculation.
-- **POW-08** `+3V3` is 3.3 V ± 3 % from U102, sized for 1.5 A, fed from `VSYS`.
+- **POW-08** `+3V3` is 3.3 V ± 3 % from U102, fed from `VSYS`. The budget is 0.8 A peak; D104 and D105 limit the feed to 1 A.
 - **POW-09** The supply current is budgeted in `hardware/calc/power.py` for each rail and for the input at 12 V and 24 V, and the fuses, connector and copper are rated above it.
 - **POW-10** Every rail has a test point (AUX-05) and its nominal voltage on the silkscreen.
 

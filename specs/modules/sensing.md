@@ -16,7 +16,7 @@ HOMEn_IN (port) ── 10k pull-up, 22k series, 1 nF, clamp diodes ──► REF
 
 | Ref | Part | LCSC | Datasheet read |
 | --- | --- | --- | --- |
-| J302, J402, J502, J602 | JST SM07B-GHS-TB, 7 pins, 1.25 mm, SMD, side entry, with latch | C495552 | JST GH series |
+| J302, J402, J502, J602 | JST BM07B-GHS-TBT, 7 pins, 1.25 mm, SMD, top entry, with latch | C378970 | JST GH series |
 | U701 | SN74LVC244APWR, octal buffer, TSSOP-20 | C7668 | TI SCAS414AG, June 2026 |
 | U702 | SN74LVC125APWR, quad buffer with separate enables, TSSOP-14 | C7813 | TI SCAS290T, September 2024 |
 | D301, D401, D501, D601 | BAT54S, two Schottky diodes in series, SOT-23 | C7420333 | Pin 1 anode, pin 2 cathode, pin 3 the common point |
@@ -38,7 +38,7 @@ n = axis 1 to 4, a = 3 to 6.
 
 | Ref | Value | Connections |
 | --- | --- | --- |
-| Ja02 | SM07B-GHS-TB | 1 = `+3V3_SNS`, 2 = `GND`, 3 = `SNSn_SCK`, 4 = `SNSn_MOSI`, 5 = `SNSn_MISO`, 6 = `SNSn_CS`, 7 = `HOMEn_IN`; mounting pads = `GND` |
+| Ja02 | BM07B-GHS-TBT | 1 = `+3V3_SNS`, 2 = `GND`, 3 = `SNSn_SCK`, 4 = `SNSn_MOSI`, 5 = `SNSn_MISO`, 6 = `SNSn_CS`, 7 = `HOMEn_IN`; mounting pads = `GND` |
 | Ra07 | 33R | `SNS_SCKn_B`, `SNSn_SCK` |
 | Ra08 | 33R | `SNS_MOSIn_B`, `SNSn_MOSI` |
 | Ra09 | 33R | `CS_SNSn`, `SNSn_CS` |

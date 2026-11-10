@@ -15,21 +15,23 @@ Grows out of CTL-01..07 in `specs/PRD.md`. **Which MCU pin carries which net is 
 | J201 | USB Type-C receptacle, 16 pins, HRO TYPE-C-31-M-12 | C165948 | Korean Hroparts drawing |
 | J202 | JST SM04B-SRSS-TB, 4 pins, 1.0 mm, SMD | C160404 | JST SH series |
 | U801 | W5500, Ethernet controller, LQFP-48 | C32843 | WIZnet datasheet v1.1.0; reference schematic "W5500-Ref-RJ45WithMag", 2015-09-25 |
-| J801 | HanRun HR911105A, RJ45 with magnetics and LEDs, through-hole | C12074 | Pinout from KiCad's library symbol, which cites the HanRun drawing; the drawing itself did not load |
+| J801 | JST SM07B-GHS-TB, 7 pins, 1.25 mm, SMD, side entry: header to an off-board RJ45 jack with magnetics | C495552 | JST GH series |
+| D802, D803 | Red LED, 0603 | C2286 | KT-0603R; pin 1 cathode, pin 2 anode |
 | Y801 | 25 MHz crystal, 3225, 4 pads | C9006 | X322525MOB4SI |
 | U802 | SP3485EN, 3.3 V RS-485 transceiver, SOIC-8 | C8963 | MaxLinear SP3485 |
 | D801 | SM712, RS-485 TVS, SOT-23 | C521963 | Pins 1 and 2 the lines, pin 3 ground |
 | U803 | TJA1051T/3, CAN transceiver with 3.3 V I/O, SOIC-8 | C2671195 | NXP Rev 9, 28 November 2017 |
-| J802, J803 | JST SM04B-GHS-TB, 4 pins | C189895 | JST GH series |
-| SW201, SW202 | Tactile switch, 5.1 mm, SMD | C318884 | TS-1187A-B-A-B |
+| J802 | JST SM04B-GHS-TB, 4 pins, side entry | C189895 | JST GH series |
+| J803 | JST BM04B-GHS-TBT, 4 pins, top entry | C161692 | JST GH series |
+| SW201 | Tactile switch, 5.1 mm, SMD | C318884 | TS-1187A-B-A-B |
 
 ## Acceptance criteria
 
-- **CTL-01** The MCU is U201 with an external antenna. Its supply has 22 µF and 100 nF at the pin. EN has 10 kΩ to `+3V3` and 1 µF to `GND` (datasheet p40), and a reset button SW202 to `GND`. No copper keep-out is needed under a MINI-1U (datasheet p10).
+- **CTL-01** The MCU is U201 with an external antenna. Its supply has 22 µF and 100 nF at the pin. EN has 10 kΩ to `+3V3` and 1 µF to `GND` (datasheet p40) and a test point; there is no reset button, since the chip resets over USB and space is short. No copper keep-out is needed under a MINI-1U (datasheet p10).
 - **CTL-01a Strapping pins** (datasheet p12-15). GPIO9 = `BOOT` has 10 kΩ to `+3V3` and the button SW201 to `GND`: high for a normal boot, held low at reset for download. GPIO8 is held high by an I2C pull-up, which download mode requires. GPIO4, GPIO5 and GPIO15 only matter for SDIO and for eFuse-selected JTAG, which this board does not use; they carry `CS_A0`, `CS_A1` and `FAN_PWM`, whose level at reset does no harm.
 - **CTL-01b Every signal that stops a motor is on a direct MCU pin:** `DRV_ENN` (DRV-07) and the interrupt `XINT_N` (CTL-09). `check_netlist.py` checks every MCU pin against `pins.h`.
 - **CTL-02** WiFi and ESP-NOW come from the module; the antenna plugs into the module's own connector, which must stay reachable (BRD-07).
-- **CTL-03** Ethernet: U801 on the shared SPI bus with its own chip select `ETH_CS_N` on a direct pin, wired as WIZnet's reference schematic for a jack with magnetics, and J801 assembled on the board. Interrupt and reset are on the expander. The PHY mode pins are tied high: all modes, auto-negotiation.
+- **CTL-03** Ethernet: U801 on the shared SPI bus with its own chip select `ETH_CS_N` on a direct pin, wired as WIZnet's reference schematic for a jack with magnetics. **The jack itself is off the board** (BRD-04: it did not fit): J801 is a 7-pin header that carries the six signals of such a jack and `GND`, for a short lead to a jack with magnetics such as the HR911105A. J801: 1 = TCT, 2 = `GND`, 3 = TD+, 4 = TD-, 5 = RD+, 6 = RD-, 7 = RCT. Link and activity show on two LEDs on the board. Interrupt and reset are on the expander. The PHY mode pins are tied high: all modes, auto-negotiation.
 - **CTL-04** RS-485: U802, half duplex. DE and the inverted RE are tied together to `RS485_DE`, pulled down so the board listens at reset. The bus has D801 as protection and a 120 Ω terminator behind solder jumper JP801, open as delivered. J802: 1 = A, 2 = B, 3 and 4 = `GND`.
 - **CTL-06** CAN: U803 with its S pin at `GND` (normal mode). A 120 Ω terminator behind solder jumper JP802, closed as delivered. J803: 1 = CANH, 2 = CANL, 3 and 4 = `GND`. The transceiver's 5 V supply is only there with motor power.
 - **CTL-07** USB-C J201 for flashing and logs, through the chip's own USB serial/JTAG. Both CC pins have 5.1 kΩ to `GND`; D+ and D- go straight to the module with U205 as ESD protection; the shield is at `GND`. It must be reachable from outside (BRD-07).
@@ -46,7 +48,6 @@ Grows out of CTL-01..07 in `specs/PRD.md`. **Which MCU pin carries which net is 
 | C202 | 100 nF | `+3V3`, `GND` |
 | R201 | 10k | `EN`, `+3V3` |
 | C203 | 1 µF | `EN`, `GND` |
-| SW202 | reset | `EN`, `GND` |
 | SW201 | boot and user | `BOOT`, `GND` |
 | R202 | 10k | `BOOT`, `+3V3` |
 | R203 | 22R | `SPI_SCK_MCU`, `SPI_SCK` |
@@ -79,7 +80,9 @@ Expander nets: `DIAG0_n` and `DIAG1_n` come from the drivers, `ETH_INT_N` and `E
 | Ref | Value | Connections |
 | --- | --- | --- |
 | U801 | W5500 | TXP = `ETH_TXP`; TXN = `ETH_TXN`; RXP = `ETH_RXP`; RXN = `ETH_RXN`; AVDD (6 pins) = `3V3A`; AGND (6 pins) and GND = `GND`; VDD = `+3V3`; EXRES1 = `ETH_RES`; TOCAP = `ETH_TOCAP`; 1V2O = `ETH_1V2`; XI/CLKIN = `ETH_XI`; XO = `ETH_XO`; SCSn = `ETH_CS_N`; SCLK = `SPI_SCK`; MOSI = `SPI_MOSI`; MISO = `SPI_MISO`; INTn = `ETH_INT_N`; RSTn = `ETH_RST_N`; PMODE0, PMODE1, PMODE2 = `+3V3`; RSVD pin 23 = `GND`; LINKLED = `ETH_LINK`; ACTLED = `ETH_ACT`; DNC, VBG, SPDLED, DUPLED, RSVD pins 38 to 42 and the NC pins = not connected |
-| J801 | HR911105A | TD+ = `ETH_TXP`; TD- = `ETH_TXN`; TCT = `ETH_TCT`; RD+ = `ETH_RDP`; RD- = `ETH_RDN`; RCT = `ETH_RCT`; pin 7 = not connected; pin 8 and shield = `GND`; green LED anode (9) = `+3V3`, cathode (10) = `ETH_LED_G`; yellow LED anode (12) = `+3V3`, cathode (11) = `ETH_LED_Y` |
+| J801 | SM07B-GHS-TB | 1 = `ETH_TCT`, 2 = `GND`, 3 = `ETH_TXP`, 4 = `ETH_TXN`, 5 = `ETH_RDP`, 6 = `ETH_RDN`, 7 = `ETH_RCT`; mounting pads = `GND` |
+| D802 | red LED, link | A = `+3V3`, K = `ETH_LED_L` |
+| D803 | red LED, activity | A = `+3V3`, K = `ETH_LED_A` |
 | FB801 | ferrite bead 600 Ω | `+3V3`, `3V3A` |
 | C801, C802, C803, C804 | 100 nF | `3V3A`, `GND` |
 | C805 | 10 µF | `3V3A`, `GND` |
@@ -99,12 +102,12 @@ Expander nets: `DIAG0_n` and `DIAG1_n` come from the drivers, `ETH_INT_N` and `E
 | C813 | 6.8 nF | `ETH_RXP`, `ETH_RDP` |
 | C814 | 6.8 nF | `ETH_RXN`, `ETH_RDN` |
 | C815 | 10 nF | `ETH_RCT`, `GND` |
-| R808 | 330R | `ETH_LINK`, `ETH_LED_G` |
-| R809 | 330R | `ETH_ACT`, `ETH_LED_Y` |
+| R808 | 1k | `ETH_LINK`, `ETH_LED_L` |
+| R809 | 1k | `ETH_ACT`, `ETH_LED_A` |
 | R810 | 10k | `ETH_INT_N`, `+3V3` |
 | R811 | 10k | `ETH_RST_N`, `+3V3` |
 
-The jack's shield is tied straight to `GND`: the head is plastic, there is no chassis to refer it to. The isolation of the cable side is the transformer's and the jack's internal 1 nF 2 kV capacitor.
+J801 has the same 7-pin plug as the sensor ports. Its pin order is chosen so that a sensor plugged in here by mistake sees 3.3 V through 10 Ω on its supply pin and `GND` on its ground pin, and nothing that can harm it. The off-board jack's shield and its pin 8 go to pin 2.
 
 ## Connections: RS-485 and CAN
 
@@ -123,7 +126,7 @@ The jack's shield is tied straight to `GND`: the head is plastic, there is no ch
 | C818 | 100 nF | `+3V3`, `GND` |
 | R815 | 120R | `CAN_H`, `CAN_TERM` |
 | JP802 | solder jumper, bridged | `CAN_TERM`, `CAN_L` |
-| J803 | SM04B-GHS-TB | 1 = `CAN_H`, 2 = `CAN_L`, 3 = `GND`, 4 = `GND`; mounting pads = `GND` |
+| J803 | BM04B-GHS-TBT | 1 = `CAN_H`, 2 = `CAN_L`, 3 = `GND`, 4 = `GND`; mounting pads = `GND` |
 
 ## Not verified in this build
 
