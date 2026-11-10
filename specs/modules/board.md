@@ -29,7 +29,7 @@ From the owner's brief. `hardware/check_fit.py` holds the same numbers.
 - **BRD-08 Assembly** is written out in `hardware/ASSEMBLY.md`: the order of mounting and plugging, and which tool reaches which bolt. A bolt, tool or plug that cannot reach is a design error.
 - **BRD-09 Silkscreen:** board name, revision and date; at every connector its name, pin 1 and the voltage or signal names; polarity at every polarised part that is soldered or plugged by hand; a label at every solder jumper and test point.
 - **BRD-10** ERC is clean; DRC is clean with 0 unconnected items and schematic parity, both through `kicad-cli`.
-- **BRD-11** Each TMC5240's exposed pad has at least 9 vias to the ground planes, and the bottom layer has `GND` copper under it (DRV-05).
+- **BRD-11** Each TMC5240's exposed pad has at least 9 vias to the ground planes. On the bottom, under each driver, there is a bare `GND` copper window of at least 5.5 × 5.5 mm that holds those vias and nothing of another net. The four windows lie in one row, so one flat metal bar with a thermal pad can be pressed against them as a heat spreader (DRV-05).
 
 ## Not verified in this build
 

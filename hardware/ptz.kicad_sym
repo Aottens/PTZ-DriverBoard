@@ -6995,7 +6995,7 @@
 			(pin passive line
 				(at -10.16 -2.54 0)
 				(length 2.54)
-				(name "B1"
+				(name "B2"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -7013,7 +7013,7 @@
 			(pin passive line
 				(at -10.16 -5.08 0)
 				(length 2.54)
-				(name "B2"
+				(name "B1"
 					(effects
 						(font
 							(size 1.27 1.27)

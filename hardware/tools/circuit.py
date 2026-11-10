@@ -35,7 +35,7 @@ RES = {"22R": "C25092", "33R": "C25105", "49.9R": "C25120", "100R": "C25076", "2
 CAP = {"100 nF": ("C1525", "0402"), "100 nF 50 V": ("C307331", "0402"), "1 nF": ("C1523", "0402"),
        "10 nF": ("C15195", "0402"), "22 nF 50 V": ("C1532", "0402"), "22 nF": ("C1532", "0402"),
        "470 pF 50 V": ("C307449", "0402"), "18 pF": ("C1549", "0402"), "22 pF": ("C1555", "0402"),
-       "100 pF": ("C1546", "0402"), "6.8 nF": ("C1568", "0402"), "1 µF": ("C52923", "0402"),
+       "100 pF": ("C1546", "0402"), "6.8 nF": ("C1542", "0402"), "1 µF": ("C52923", "0402"),
        "4.7 µF": ("C23733", "0402"), "1 µF 50 V": ("C15849", "0603"), "4.7 µF 16 V": ("C19666", "0603"),
        "10 µF 10 V": ("C19702", "0603"), "10 µF": ("C19702", "0603"), "22 µF": ("C45783", "0805"),
        "22 µF 25 V": ("C45783", "0805"), "10 µF 50 V": ("C13585", "1206"), "4.7 µF 50 V": ("C29823", "1206")}
@@ -144,7 +144,7 @@ USBC = own("USB_C_16P", [(n, "VBUS", P) for n in ("A4", "A9", "B4", "B9")] + [("
            [("A6", "D+", P), ("B6", "D+", P), ("A7", "D-", P), ("B7", "D-", P), ("A8", "SBU1", NC), ("B8", "SBU2", NC)],
            [(n, "GND", P) for n in ("A1", "A12", "B1", "B12")] + [("SH", "SHIELD", P)], "J")
 J_VH2 = conn("VH_2", ["+VIN", "GND"])
-J_XH4 = conn("XH_4_MOTOR", ["A1", "A2", "B1", "B2"])
+J_XH4 = conn("XH_4_MOTOR", ["A1", "A2", "B2", "B1"])
 J_XH2 = conn("XH_2_FAN", ["FAN+", "FAN-"])
 J_GH7 = conn("GH_7_SENSOR", ["3V3", "GND", "SCK", "MOSI", "MISO", "CS", "HOME"], mp=True)
 J_GH7E = conn("GH_7_ETH", ["TCT", "GND", "TD+", "TD-", "RD+", "RD-", "RCT"], mp=True)
@@ -278,7 +278,7 @@ def axis(n):
             SCK="SPI_SCK", SDI="SPI_MOSI", SDO="SPI_MISO", DRV_ENN="DRV_ENN", DIAG0=f"DIAG0_{n}", REFL=f"HOME{n}",
             OUT1A=f"M{n}_A1", OUT2A=f"M{n}_A2", OUT1B=f"M{n}_B1", OUT2B=f"M{n}_B2")
     u.net("DIAG1/SW", f"DIAG1_{n}").nc("OV")
-    add(f"J{a}01", "B4B-XH-A", J_XH4, FP["XH4"], sh, "C144395", "B4B-XH-A(LF)(SN)", nets=[f"M{n}_{x}" for x in ("A1", "A2", "B1", "B2")])
+    add(f"J{a}01", "B4B-XH-A", J_XH4, FP["XH4"], sh, "C144395", "B4B-XH-A(LF)(SN)", nets=[f"M{n}_{x}" for x in ("A1", "A2", "B2", "B1")])
     add(f"J{a}02", "BM07B-GHS-TBT", J_GH7, FP["GH7V"], sh, "C378970", "BM07B-GHS-TBT(LF)(SN)(N)", GND="GND", SCK=f"SNS{n}_SCK", MOSI=f"SNS{n}_MOSI",
         MISO=f"SNS{n}_MISO", CS=f"SNS{n}_CS", HOME=f"HOME{n}_IN", MP="GND").net("3V3", "+3V3_SNS")
     add(f"J{a}03", "SM04B-GHS-TB", J_GH4E, FP["GH4"], sh, "C189895", "SM04B-GHS-TB(LF)(SN)", STEP=f"STEP{n}_O", DIR=f"DIR{n}_O", GND="GND", MP="GND").net("5V", "+5V_EXT")

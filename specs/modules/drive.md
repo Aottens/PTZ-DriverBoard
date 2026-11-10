@@ -19,11 +19,11 @@ TMC5240 pins used here, TQFN-32 (datasheet p16-18): 1 IREF, 2 AIN, 3 VDD1V8, 4 A
 
 ## Acceptance criteria
 
-- **DRV-01** Four axes, each a TMC5240 with its own motor connector. Motor connector pin 1 = OUT1A, 2 = OUT2A (coil A), 3 = OUT1B, 4 = OUT2B (coil B).
+- **DRV-01** Four axes, each a TMC5240 with its own motor connector. Motor connector pin 1 = OUT1A, 2 = OUT2A (coil A), 3 = OUT2B, 4 = OUT1B (coil B). Coil B is mirrored because that is the order in which the driver's pins leave the chip, so the four tracks do not cross.
 - **DRV-02** Each driver is set up from firmware over SPI: UART_EN and CLK are tied to `GND` (SPI, internal clock), SCK, SDI and SDO are on the shared bus, and each CSN has its own decoder output `CS_DRVn`. SDO is three-state (datasheet p16), so the four share `SPI_MISO` directly.
 - **DRV-03** No trimmers. IREF has 12 kΩ 1 % to `GND`, which gives the full 3 A peak range; firmware picks the range and scales the current (datasheet p46-47).
 - **DRV-04** DIAG0 and DIAG1 of every axis reach the MCU: each has a 10 kΩ pull-up to `+3V3` and goes to the I/O expander, whose interrupt `XINT_N` is on a direct MCU pin (`specs/modules/control.md`, CTL-09). The driver stops the motor itself on a stall or a home input; the MCU's own stop is DRV-07.
-- **DRV-05** Thermal, by calculation in `hardware/calc/thermal.py` with its assumptions written down: junction temperature with all four axes at 1.5 A RMS in still air stays below the 125 °C operating limit with margin, and the board temperature is stated, since the housing softens first (MEC-06). The exposed pad has at least 9 vias to the ground planes, checked in `hardware/check_board.py`.
+- **DRV-05** Thermal, by calculation in `hardware/calc/thermal.py` with its assumptions written down. **The calculation does not support all four axes at 1.5 A RMS continuously in still air:** it gives a board of about 120 °C and junctions past the 125 °C limit. In still air the continuous limit is about 1.0 A on all four axes, or about 1.35 A on two axes with the other two at 0.3 A; the board, at 80 °C for a printed housing (MEC-06), is reached before the chip. With moving air or a metal spreader the same calculation allows 1.5 A and more. So the board provides: at least 9 vias under each exposed pad into the ground planes; a bare ground-copper window on the bottom under each driver, the four in one row, to press a metal spreader against (BRD-11); the fan output (AUX-03); and temperature readings for firmware to limit current (AUX-04). Checked in `hardware/check_board.py`.
 - **DRV-06** Each axis has an external driver port: pin 1 = `+5V_EXT`, 2 = STEP, 3 = DIR, 4 = `GND`. STEP and DIR are the driver's DIAG0 and DIAG1 (datasheet p60-61), buffered to 5 V by U703 through 220 Ω. U703's outputs are enabled by `DRV_ENN`, so the direct stop pin also stops an external driver's steps.
 - **DRV-07** `DRV_ENN` is one direct MCU pin to all four drivers and to U703, pulled up to `+3V3` by R701 (10 kΩ), so the bridges are off until firmware drives it low.
 - **DRV-08** Supply decoupling as the datasheet's application circuit (p20, p166): per driver two 100 nF and one 10 µF, all 50 V, from `VM` to `GND`; 1 µF from VCP to `VM`; 22 nF 50 V between CPI and CPO; 4.7 µF from VDD1V8 to `GND` (the datasheet asks for 2.2 µF or larger); 100 nF on VCC_IO. The 440 µF bulk is shared (POW).
@@ -37,7 +37,7 @@ n = axis 1 to 4, a = 3 to 6.
 | Ref | Value | Connections |
 | --- | --- | --- |
 | Ua01 | TMC5240ATJ | VS (4 pins) = `VM`; VCC_IO = `+3V3`; AGND and exposed pad = `GND`; VDD1V8 = `An_1V8`; VCP = `An_VCP`; CPO = `An_CPO`; CPI = `An_CPI`; IREF = `An_IREF`; SLEEPN = `An_SLEEPN`; AIN, CLK, UART_EN, ENCA, ENCB, ENCN, REFR = `GND`; OV = not connected; CSN = `CS_DRVn`; SCK = `SPI_SCK`; SDI = `SPI_MOSI`; SDO = `SPI_MISO`; DRV_ENN = `DRV_ENN`; DIAG0 = `DIAG0_n`; DIAG1/SW = `DIAG1_n`; REFL = `HOMEn`; OUT1A = `Mn_A1`; OUT2A = `Mn_A2`; OUT1B = `Mn_B1`; OUT2B = `Mn_B2` |
-| Ja01 | B4B-XH-A | 1 = `Mn_A1`, 2 = `Mn_A2`, 3 = `Mn_B1`, 4 = `Mn_B2` |
+| Ja01 | B4B-XH-A | 1 = `Mn_A1`, 2 = `Mn_A2`, 3 = `Mn_B2`, 4 = `Mn_B1` |
 | Ja03 | SM04B-GHS-TB | 1 = `+5V_EXT`, 2 = `STEPn_O`, 3 = `DIRn_O`, 4 = `GND`; mounting pads = `GND` |
 | Ca01, Ca02 | 100 nF 50 V | `VM`, `GND` |
 | Ca03 | 10 µF 50 V | `VM`, `GND` |
