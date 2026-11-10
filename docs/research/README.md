@@ -1,7 +1,7 @@
 # Research phase
 
 The owner and Claude work through these questions together before the hardware is fixed. Each ends in an entry in
-`DECISIONS.md` and a change to `specs/PRD.md`. No schematic work starts before they are closed.
+`DECISIONS.md` and a change to `specs/PRD.md`. No schematic work starts before they are closed, except the Rev A one-run build (`DECISIONS.md`, 2026-11-10), which uses the leading candidates below.
 
 **Confidence tags:** `[datasheet]` = read in the manufacturer's datasheet, page given. `[zeker]` = from the JLC parts search on
 2026-11-04 or a calculation shown here. `[bron]` = from a secondary source listed at the bottom. `[geheugen]` = from Claude's memory, no
@@ -12,7 +12,7 @@ source yet; treat as a question.
 | R-01 | What must the head do, in numbers? | Owner | closed: targets approved 2026-11-04 |
 | R-02 | Which motor technology? | Claude + test rig | leading candidate |
 | R-03 | Which driver, and where does motion happen? | Claude + test rig | TMC5240 checked on paper, rig left |
-| R-04 | Which MCU? | Claude | leading candidate |
+| R-04 | Which MCU? | Claude | C6-MINI-1U chosen for Rev A (owner), pin table open |
 | R-05 | Which position sensor, over which bus? | Claude + test rig | leading candidate |
 | R-06 | How small can the board get? | Claude + 3D design | first round |
 | R-07 | Which supply voltage? | Claude + test rig | open: 12 or 24 V, rig decides |
@@ -123,7 +123,9 @@ Far below the 125 °C operating limit `[datasheet p10]`. A 50×50 mm board in st
 Outside the ESP32 family: STM32 parts have almost no JLC stock (STM32G474RET6: 19) `[zeker]`, and an RP2350 ($1.30) `[zeker]` needs a
 separate radio. Both add a chip and lose the radio-on-board simplicity.
 
-**Leading candidate: ESP32-S3-MINI-1U-N8**, with an external antenna: smaller than the WROOM and probably more pins. The firmware has no clear need for PSRAM `[geheugen]`.
+**Chosen for Rev A: ESP32-C6-MINI-1U-H4 (owner, 2026-11-10).** JLC's part pages, read that day, list the ESP32-S3-MINI-1U and WROOM-1U modules as "Standard Only", and the C6-MINI-1U as "Economic and Standard" `[zeker]`. The module has 22 GPIOs including USB, one core at 160 MHz, 4 MB flash and one user SPI bus `[datasheet v1.5]`. About 27 signals are needed, so it takes an I2C expander and a chip-select decoder `[zeker, as a sum]`. Whether one core is enough is untested; the TMC5240 generates the motion itself `[datasheet p1]`.
+
+**Earlier leading candidate: ESP32-S3-MINI-1U-N8**, with an external antenna: smaller than the WROOM and probably more pins. The firmware has no clear need for PSRAM `[geheugen]`.
 Pin budget with a TMC5240 chain and no RS-232, LANC or expander, with the fan output: **about 30** `[zeker, as a sum]`, which fits. The module's real pin count is still to check, and with it the strapping pins.
 The C6-MINI-1U ($4.20, 13.2×12.5 mm, 3,869 in stock `[zeker]`) is smaller still and could become an option at 30 pins; its pin count is the first thing to check.
 

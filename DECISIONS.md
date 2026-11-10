@@ -4,6 +4,32 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-10 — Rev A is designed in one run by Fable 5.2, before the rig results
+
+**Decision:** One Fable 5.2 session takes Rev A from requirements to files ready to order, from `docs/prompts/fable-board-rev-a.md`, without waiting for the rig. It uses the leading candidates, at most 85×65 mm, JLC Economic PCBA, a W5500 with RJ45, and two open-drain camera outputs. Gate 1 for this build is the owner's approval of that prompt. The order gate is unchanged, and only the owner orders.
+
+**Alternatives considered:** waiting for the rig results; building in several reviewed slices as `BACKLOG.md` planned.
+
+**Reasoning:** the owner wants one board that can do everything and wants to test this model on a task of this size. A prototype costs little next to weeks of slices. It can also replace the breakout boards on the rig.
+
+**Risk accepted:** the rig can still overturn the motor, driver, sensor or voltage choice, or show that the sensor cable needs another design (R-T1, R-T2). Then Rev A is partly thrown away. The board is checked by calculation and review only until the owner's bring-up run.
+
+**Reversal trigger:** the blind review finds the approach unsound, or the rig shows a part choice fails before the order is placed.
+
+---
+
+## 2026-11-10 — The MCU for Rev A is the ESP32-C6-MINI-1U
+
+**Decision:** Rev A uses the ESP32-C6-MINI-1U-H4 (LCSC C20627095), assembled by JLC with Economic PCBA. This replaces the ESP32-S3-MINI-1U as the design basis. The owner chose it.
+
+**Alternatives considered:** an ESP32-S3-WROOM-1U soldered by hand on an otherwise JLC-assembled board, which has the most pins and two cores; a bare ESP32-S3FN8, which needs our own RF section, tuned with a network analyser, and 0201 parts that Economic cannot place; an RP2350B with a separate radio and second firmware; Standard PCBA, whose 70 mm minimum size excludes a 65 mm wide board without a panel.
+
+**Reasoning:** one "Standard Only" part moves the whole order to Standard, and JLC lists the ESP32-S3 modules that way. The C6 module keeps the radio in a finished module. The TMC5240 generates the motion, so the MCU has less to do. The price is 22 GPIOs for about 27 signals, one user SPI bus and one core, so the board needs an I2C expander and a chip-select decoder and has almost no spare pins.
+
+**Reversal trigger:** the pin plan does not close, one core cannot hold the control and sensor loop on the rig, or JLC changes a part's PCBA type.
+
+---
+
 ## 2026-11-09 — Working rules for board design, from Anthropic's electronics work
 
 **Decision:** Schematic and layout go to the strongest model available instead of Sonnet. Added to `CLAUDE.md`: route the hard nets first, a layout may overturn the pin table, check the board in its housing by code, sort every manufacturability and sourcing flag. The owner approved this.

@@ -1,10 +1,10 @@
 # PTZ driver board — PRD
 
-Status: **DRAFT, not approved by the owner.** Nothing here is a commitment until gate 1. Lines marked
+Status: **The hardware sections (POW, DRV, ENC, CTL, CAM, AUX, BRD) are approved for Rev A by the owner (2026-11-10). The firmware and mechanics sections are still a draft.** Lines marked
 **[OPEN]** wait for an owner decision; the rest are proposals to strike or change. Ids are stable so the
 owner can comment per line. They become full acceptance criteria in `specs/modules/` per slice.
 
-**Part names are candidates until the research phase closes** (`docs/research/README.md`). What the board must do is
+**Part names are candidates until the research phase closes** (`docs/research/README.md`), but the leading candidates are the design basis for Rev A. What the board must do is
 the requirement; which chip does it is not.
 
 ## Core value
@@ -56,17 +56,17 @@ Numbers and reasoning in `docs/research/README.md`, R-01. First camera: Panasoni
   to motor wires.
 
 ### Control (CTL)
-- CTL-01 MCU per R-04, leading candidate ESP32-S3-MINI-1**U**, with an external antenna. A PCB antenna inside a housing of
+- CTL-01 MCU: ESP32-C6-MINI-1**U**-H4, with an external antenna (owner, 2026-11-10). JLC Economic cannot place ESP32-S3 modules. A PCB antenna inside a housing of
   carbon-filled filament with motors around it is a risk to measure (see MEC-05).
 - CTL-02 WiFi and ESP-NOW from the module.
-- CTL-03 Wired Ethernet (W5500), for fixed installs. Footprint on the board, assembled later (proposal, 2026-11-04). **[OPEN: first check its size against BRD-04]**
+- CTL-03 Wired Ethernet (W5500) with an RJ45 jack, assembled, for fixed installs (owner, 2026-11-10). If BRD-04 runs out of room, the jack becomes a header for an off-board jack first, and the CAN connector goes next.
 - CTL-04 RS-485 port, for DMX, Pelco-D and control from a console.
 - CTL-06 CAN port, for a remote axis node or expansion.
 - CTL-07 USB-C for flashing and logs, reachable with the head closed.
 
 ### Camera (CAM)
 - CAM-01 Struck: the owner's camera has no LANC, and a zoom motor is needed anyway (2026-11-04).
-- CAM-02 Tally output and record trigger. **[OPEN]**
+- CAM-02 Two open-drain outputs on one small connector, for tally and record trigger (owner, 2026-11-10).
 
 ### Other I/O (AUX)
 - AUX-01 Spare I2C port for a display or sensor.
@@ -76,10 +76,10 @@ Numbers and reasoning in `docs/research/README.md`, R-01. First camera: Panasoni
 - AUX-05 Test points on every rail and bus.
 
 ### Physical (BRD)
-- BRD-01 Outline and mounting are designed together with the new 3D head (R-06).
-- BRD-02 All SMD on top, assembled by JLC; connectors at the board edges.
+- BRD-01 Rev A's outline and mounting follow the working envelope in `docs/prompts/fable-board-rev-a.md`. The new 3D head is then designed around the board (R-06).
+- BRD-02 All SMD on top, assembled by JLC with Economic PCBA, so no part may be Standard Only; connectors at the board edges.
 - BRD-03 Layers follow from the thermal and routing need of DRV-05. Proposal: 4 layers.
-- BRD-04 **As small as possible** (owner, 2026-11-04). When a feature and size conflict, the conflict goes to the owner. First estimate: about 50×50 mm, with heat as the likely limit.
+- BRD-04 **At most 85×65 mm** (owner, 2026-11-10), smaller only when heat, routing and probing do not suffer. When a feature and size conflict, CTL-03 sets what goes first and the choice is reported to the owner.
 
 ## Firmware (FW)
 

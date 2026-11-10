@@ -9,7 +9,8 @@ Talk to the owner in **Dutch**; write specs, code, comments and commits in **Eng
 1. **Spec first.** Every feature has a spec in `specs/modules/<module>.md` with numbered acceptance
    criteria (`POW-03`, `DRV-02`, …), growing out of the ids in `specs/PRD.md`. No net, part or code
    for a criterion that has no number. If the spec is missing or unclear, write or extend it and stop
-   for owner approval (gate 1).
+   for owner approval (gate 1), except in the Rev A one-run build, whose gate 1 is the owner's approval
+   of `docs/prompts/fable-board-rev-a.md`: that build writes its own module specs and carries on.
 2. **Test second.** A criterion gets its check before the design that meets it:
    - **Schematic:** an expected pin → net entry in `hardware/check_netlist.py`, derived from the spec
      and a datasheet, never from the schematic. Named per criterion id: `def pow_03_...`.
@@ -19,7 +20,9 @@ Talk to the owner in **Dutch**; write specs, code, comments and commits in **Eng
 3. **Build third, by a subagent.** The main session writes spec and failing checks; a subagent makes
    the smallest change that turns them green; the main session reviews the diff before it goes to the
    owner. Firmware and scripts go to a Sonnet subagent (`model: sonnet`). Schematic and layout go to the
-   strongest model available, since board layout depends heavily on the model.
+   strongest model available, since board layout depends heavily on the model. The Rev A one-run build
+   is done by one Fable 5.2 session instead, which delegates where it chooses and keeps its checks
+   independent of the schematic.
 4. **Review.** One branch and one PR per build on GitHub; the owner reviews and merges (gate 2).
    Anything only a real board can show ships with a checklist in `tests/hardware/` that only the owner
    can tick (gate 3).
@@ -40,9 +43,11 @@ Use the `project-orchestrator` agent in `.claude/agents/` for pre-flight and pos
 ## Builds and sessions
 
 - A build is one session, one branch and one PR, holding one task or a few that belong together: at
-  most three tasks and at most one of them M. An L or XL is a build of its own.
+  most three tasks and at most one of them M. An L or XL is a build of its own. The Rev A one-run build
+  is the single exception: one session, one branch and one PR for S2-01 to S3-03.
 - One commit per task, so a task can be reverted alone. Each task gets its own subagent with
-  its own brief: criteria ids, failing checks, files to read and what the task before it left.
+  its own brief: criteria ids, failing checks, files to read and what the task before it left. In the
+  Rev A one-run build, commits follow its own blocks and subagents are its own choice.
 - When a task outgrows its size or review finds a defect in the approach, ship what is done and move
   the rest to the next build.
 - A session that changes files gets its own worktree. Never check out or pull in the owner's checkout
