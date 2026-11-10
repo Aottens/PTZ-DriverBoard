@@ -8,3 +8,8 @@ hardware/fp-info-cache
 hardware/*.kicad_prl
 hardware/~*.lck
 *.lck
+
+# Datasheets are fetched for reading, not redistributed: hardware/datasheets/README.md lists sources and revisions
+hardware/datasheets/*.pdf
+hardware/datasheets/*.txt
+__pycache__/
