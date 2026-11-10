@@ -4,6 +4,58 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-04 — Targets approved, G7 first, and the rig goes ahead
+
+**Decision:** TGT-01..05 are approved. The first camera is a Panasonic G7 with a 14-140 mm, Micro Four Thirds. A one-axis test rig goes ahead.
+
+**Alternatives considered:** designing the board first and measuring on it.
+
+**Reasoning:** at 140 mm on this sensor a pixel is smaller than the 200 mm assumed so far, so exactness gets harder. The rig tests motor, reduction, voltage and cable before an order that costs weeks.
+
+**Reversal trigger:** the rig shows the targets are out of reach within DIY means; then the targets go back to the owner.
+
+---
+
+## 2026-11-04 — The fan output stays, as an option
+
+**Decision:** Keep a switched PWM output for a fan (AUX-03), off by default. This corrects "No fan" in the entry below: the head is still designed to meet its targets without one.
+
+**Alternatives considered:** striking the output, to save a pin and some board space.
+
+**Reasoning:** the owner wants the option. It costs one pin and a small switch, and it is a reserve if the heat calculation proves optimistic.
+
+**Reversal trigger:** it turns out to be the part that keeps the board from getting smaller.
+
+---
+
+## 2026-11-04 — Theatre use sets the bar, and the old head is out
+
+**Decision:** The head carries a DSLR or mirrorless up to 2 kg, in theatres among the audience, as exact as DIY allows. No LANC, since the camera has none. No fan. The old head is left out, so
+the evidence comes from a new one-axis test rig. Targets TGT-01..05 are proposed, from a professional head, for the owner to approve.
+
+**Alternatives considered:** measuring the old head as a baseline; keeping LANC for other cameras (the board is for one head and should be small).
+
+**Reasoning:** the owner does not know the speeds yet, so a reference gives something to change. A rig answers noise, smoothness, reduction and cable questions on real hardware before any board is ordered.
+
+**Reversal trigger:** another camera with LANC comes into use; then CAM-01 returns.
+
+---
+
+## 2026-11-04 — One head, small, a research phase first
+
+**Decision:** The board is for one head, the owner's own, and as small as possible. Four axes. Limited pan with a cable loop, no
+slip ring. RS-232 is dropped, so VISCA only runs over IP. ESP32-S3 and TMC2209 go back to being candidates, and a joint research phase
+comes before the hardware is fixed. The new 3D head does not exist yet, and Claude helps design it.
+
+**Alternatives considered:** fixing the proposed parts directly, as in the first PRD draft.
+
+**Reasoning:** the owner named those parts as examples and wants to look for better solutions together. One head means CE and series cost
+do not steer the choices, so a dearer driver can win if it makes the board smaller.
+
+**Reversal trigger:** selling it after all; then this entry and the out-of-scope list get reopened.
+
+---
+
 ## 2026-11-04 — A new hardware and software pair, as one driver board for all heads
 
 **Decision:** Start over on both board and firmware, in this repo. The board carries its stepper drivers in SMD and is

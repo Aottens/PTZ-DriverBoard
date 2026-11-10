@@ -11,7 +11,7 @@ How an idea moves: **new** → **triaged** → **specced** → **backlog** → *
 | Id | Idea | Status | Phase | Module |
 | --- | --- | --- | --- | --- |
 | IDEA-01 | Field control box with joystick over ESP-NOW | triaged | after v1 | firmware |
-| IDEA-02 | Remote axis node above pan | new | decide in slice 1 | hardware |
+| IDEA-02 | Remote axis node above pan | new | decide in R-06 | hardware |
 | IDEA-03 | Power over Ethernet | new | after v1 | hardware |
 
 ### IDEA-01 — Field control box with joystick over ESP-NOW
@@ -20,7 +20,8 @@ needs no extra hardware for it: the radio is on the module. It comes in as one m
 
 ### IDEA-02 — Remote axis node above pan
 A small second board in the yoke with the tilt, zoom and focus drivers, fed by power and CAN through the pan shaft. Solves
-the wire count (MEC-04) and a slip ring (MEC-07), at the cost of a second design. CTL-06 keeps this door open.
+the wire count (MEC-04) and moves heat out of the base, at the cost of a second design. CTL-06 keeps this door open. A slip
+ring is off the table (MEC-07), so it is no longer needed for that.
 
 ### IDEA-03 — Power over Ethernet
 No wall adapter in fixed installs. Open question: can it deliver enough for the motors, given what the power calculation

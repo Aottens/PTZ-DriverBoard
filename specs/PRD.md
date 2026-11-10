@@ -4,115 +4,127 @@ Status: **DRAFT, not approved by the owner.** Nothing here is a commitment until
 **[OPEN]** wait for an owner decision; the rest are proposals to strike or change. Ids are stable so the
 owner can comment per line. They become full acceptance criteria in `specs/modules/` per slice.
 
+**Part names are candidates until the research phase closes** (`docs/research/README.md`). What the board must do is
+the requirement; which chip does it is not.
+
 ## Core value
 
-One board, with its own firmware, that can drive any PTZ head the owner builds: the same print whatever the
-mechanics, motors or control source turn out to be.
+One board, as small as possible, with its own firmware, that can drive any PTZ head the owner builds: the same print
+whatever the mechanics, motors or control source turn out to be. Built for one head, the owner's own.
 
 **Success test (CORE-01).** A new head with different mechanics needs a configuration change only: no new
 board, no new firmware build, no soldered wires.
 
+## Targets (approved by the owner, 2026-11-04)
+
+Numbers and reasoning in `docs/research/README.md`, R-01. First camera: Panasonic G7 with a 14-140 mm (Micro Four Thirds).
+
+- TGT-01 Payload 2.5 kg including plate: a camera up to 2 kg.
+- TGT-02 Slowest clean pan and tilt 0.08°/s.
+- TGT-03 Fastest quiet pan and tilt 60°/s.
+- TGT-04 No louder than NC35 up to 60°/s; slow moves inaudible at 2 m in a quiet room, judged by the owner. Used in theatres among the audience.
+- TGT-05 A preset lands within about 0.005°, from the same side each time.
+
 ## Hardware: on the board
 
 ### Power (POW)
-- POW-01 Single DC input, 12 to 24 V nominal, through a locking connector.
+- POW-01 Single DC input of 12 to 24 V through a locking connector. Which of the two the head runs on follows from the rig (R-07).
 - POW-02 Survives reverse polarity, a hot-plug spike and a short on any output connector. The previous board
   burned out on a 12 V/MOSFET problem, so this is checked by calculation and in the bring-up run.
 - POW-03 Motor supply and logic supply are fused separately.
-- POW-04 Margin: TMC2209 has an absolute maximum of 29 V, so at 24 V the spike clamp, the bulk capacitance
-  and back-EMF are calculated, not assumed.
+- POW-04 Margin to the driver's absolute maximum is calculated, not assumed: spike clamp, bulk capacitance and
+  back-EMF. Voltage per R-07.
 - POW-05 USB alone powers logic for flashing and setup, never the motors, and cannot backfeed the host.
 - POW-06 Firmware reads input voltage and refuses to enable motors outside the allowed range.
 
 ### Motor drive (DRV)
-- DRV-01 **Four** stepper axes with drivers on the board: pan, tilt, zoom, focus. **[OPEN: 4 or 3]**
-- DRV-02 Driver: TMC2209, set up over UART (current, microsteps, StealthChop, SpreadCycle), one shared bus
-  with four hardware addresses.
+- DRV-01 **Four** motor axes with drivers on the board: pan, tilt, zoom, focus (owner, 2026-11-04). Motor technology per R-02.
+- DRV-02 Driver per R-03. Candidates: TMC5240 (leading), TMC2240, TMC2209. Current, microsteps and chopper mode are set from firmware.
 - DRV-03 Current per axis is set in firmware and survives a reboot; no trimmers.
 - DRV-04 Stall and fault per axis reach the MCU (DIAG), so sensorless homing is possible.
 - DRV-05 Thermal: at the specified current, with stated assumptions about the enclosure, the calculated driver
   temperature leaves margin. Copper and vias under each driver are sized for that.
-- DRV-06 Each axis also has an **external driver port** (STEP, DIR, EN, UART, GND), so a closed-loop driver or a
-  larger stage can replace the on-board driver without new hardware.
+- DRV-06 Each axis also has an **external driver port** (STEP, DIR, GND at the least), so a closed-loop driver or a
+  larger stage can replace the on-board driver without new hardware. The TMC5240 can output STEP and DIR itself (datasheet p60).
 
 ### Position sensing (ENC)
-- ENC-01 One encoder port per axis, 3V3 I2C through a TCA9548A mux, so sensors with a fixed address work (AS5600
-  and alike).
+- ENC-01 One absolute sensor port per axis. Sensor and bus per R-05. Candidates: an SPI sensor (leading), or I2C through a mux.
 - ENC-02 Port pinout is identical on all axes and suits a small remote sensor board.
-- ENC-03 One home/limit input per axis, 3V3 or 5 V sensor, protected, with a pull-up selected by solder jumper.
-- ENC-04 Encoder cable integrity is proven for the longest run in the mechanics, by a bench test before the board
-  is ordered (S1-05). A tilt encoder through a hollow pan shaft runs far beyond the 15 cm of the April brief, next
+- ENC-03 One home/limit input per axis, protected, for heads without an absolute sensor on that axis.
+- ENC-04 Sensor cable integrity is proven for the longest run in the mechanics, by a bench test before the board
+  is ordered (R-T2). A tilt sensor through a hollow pan shaft runs far beyond the 15 cm of the April brief, next
   to motor wires.
 
 ### Control (CTL)
-- CTL-01 MCU: ESP32-S3-WROOM-1**U**-N16R8, with an external antenna. A PCB antenna inside a housing of carbon-filled
-  filament with motors around it is a known risk (see MEC-05).
+- CTL-01 MCU per R-04, leading candidate ESP32-S3-MINI-1**U**, with an external antenna. A PCB antenna inside a housing of
+  carbon-filled filament with motors around it is a risk to measure (see MEC-05).
 - CTL-02 WiFi and ESP-NOW from the module.
-- CTL-03 Wired Ethernet (W5500), for fixed installs. **[OPEN: assembled, footprint only, or none]**
-- CTL-04 RS-485 port, for DMX, Pelco-D and control from a console. **[OPEN]**
-- CTL-05 RS-232 or RS-422 port, for classic VISCA. **[OPEN]**
-- CTL-06 CAN port, for a remote axis node or expansion. **[OPEN]**
+- CTL-03 Wired Ethernet (W5500), for fixed installs. Footprint on the board, assembled later (proposal, 2026-11-04). **[OPEN: first check its size against BRD-04]**
+- CTL-04 RS-485 port, for DMX, Pelco-D and control from a console.
+- CTL-06 CAN port, for a remote axis node or expansion.
 - CTL-07 USB-C for flashing and logs, reachable with the head closed.
 
 ### Camera (CAM)
-- CAM-01 LANC port, for zoom and record on Sony and Canon cameras without a zoom motor. **[OPEN]**
+- CAM-01 Struck: the owner's camera has no LANC, and a zoom motor is needed anyway (2026-11-04).
 - CAM-02 Tally output and record trigger. **[OPEN]**
 
 ### Other I/O (AUX)
 - AUX-01 Spare I2C port for a display or sensor.
-- AUX-02 Status RGB LED and a user button.
-- AUX-03 One 12/24 V switched output with PWM, for a fan. **[OPEN]**
+- AUX-02 Status RGB LED, dark during a show, and a user button.
+- AUX-03 One optional switched output with PWM, for a fan (owner, 2026-11-04). Off by default; the head must meet its targets without it.
 - AUX-04 Board temperature read by firmware.
 - AUX-05 Test points on every rail and bus.
 
 ### Physical (BRD)
-- BRD-01 Outline and mounting from the 3D design. **[OPEN: dimensions come from MEC-01]**
+- BRD-01 Outline and mounting are designed together with the new 3D head (R-06).
 - BRD-02 All SMD on top, assembled by JLC; connectors at the board edges.
 - BRD-03 Layers follow from the thermal and routing need of DRV-05. Proposal: 4 layers.
+- BRD-04 **As small as possible** (owner, 2026-11-04). When a feature and size conflict, the conflict goes to the owner. First estimate: about 50×50 mm, with heat as the likely limit.
 
 ## Firmware (FW)
 
 A new code base. The old firmware in `PTZ-head` is reference only.
 
-- FW-01 Stack. Proposal: C++ with FastAccelStepper, which on ESP32-S3 drives at least 4 axes with hardware-generated
-  steps. Arduino core 3.x or ESP-IDF is decided in the first firmware spec.
+- FW-01 Stack, decided in the first firmware spec. C++ in any case. If R-03 keeps step pulses on the MCU: FastAccelStepper, which drives
+  at least 4 axes with hardware-generated steps on ESP32-S3. With a motion-controller driver it is not needed.
 - FW-02 Motion core: velocity and position moves with acceleration limits per axis, coordinated preset moves that
   arrive together, and soft limits. Pure logic, tested on the host.
 - FW-03 Absolute position at boot when the encoder sits on the output axis; homing via hall or stall otherwise.
   Which applies is configuration per axis.
 - FW-04 Presets: store and recall named positions, kept across power loss.
-- FW-05 Control sources run side by side behind one command interface: OSC first. VISCA-over-IP, ESP-NOW, DMX and
-  Pelco-D follow as their ports arrive. **[OPEN: order]**
+- FW-05 Control sources run side by side behind one command interface: OSC first. VISCA-over-IP (the only VISCA, no
+  serial port), ESP-NOW, DMX and Pelco-D follow. **[OPEN: order]**
 - FW-06 Feedback: position, state and faults to whoever controls the head.
 - FW-07 Safety: a watchdog stops motion on lost control, a failed sensor read, a driver fault or bad input voltage.
 - FW-08 Every per-head value (ratios, directions, currents, limits, sensor type) is configuration, set without a rebuild.
 - FW-09 OTA updates over the network, so the head need not be opened.
 - FW-10 A web page for setup and calibration. **[OPEN: v1 or later]**
+- FW-11 A preset always lands from the same side, to take out backlash and hysteresis (R-08).
 
 ## What the 3D design must provide (MEC)
 
 These flow from the software and electronics into the mechanics, and are the input the design is waiting for.
 
-- MEC-01 Board space in the base: outline, height, mounting points, and where connectors may exit.
+- MEC-01 Board space in the base: outline, height, mounting points and where connectors exit. The 3D head does not exist yet, so Claude helps design both.
 - MEC-02 Absolute at boot only works with a **magnet on the output axis** that turns less than once over the whole
   range. On a motor shaft behind a reduction, the position is gone after a restart.
 - MEC-03 A magnet must sit on the axis centre, with no steel within about 5 mm. A hollow pan shaft has its centre taken
   by cables, so pan needs a 1:1 belt to a separate sensor shaft, or a different sensor type.
-- MEC-04 **Wire count through the shafts.** Per axis above pan: motor 4, encoder 4, home 3. Tilt, zoom and focus together
-  come to 33 wires, against a bundle of 7 in the July design. Either the bore grows or a remote node sits above pan (IDEA-02).
+- MEC-04 **Wire count through the shafts.** With absolute sensors on a shared SPI bus and no home switches: motors 12 + sensors 8 =
+  20 wires for tilt, zoom and focus (R-05). The bore is sized for that, or a remote node sits above pan (IDEA-02).
 - MEC-05 A place for the external antenna outside the carbon-filled walls.
-- MEC-06 Heat: four drivers and their path out of a closed base (vent, fan, or a metal plate).
-- MEC-07 Pan range: limited with a service loop, or continuous with a slip ring. **[OPEN]** A slip ring rules out long I2C.
+- MEC-06 Heat: designed to work without a fan, with room to add one (AUX-03). The board stays off the plastic; a printed part softens long before the chips reach their limit (R-03).
+- MEC-07 Pan range is limited, with a cable service loop (owner, 2026-11-04). No slip ring.
 
 ## Out of scope for v1
 
 - Closed-loop control in our own firmware. External closed-loop drivers can connect through DRV-06.
 - Motor drive above 2 A RMS per axis on the board. Larger motors use DRV-06.
-- Selling: CE marking and a release process. **[OPEN: is this one head or a product?]**
+- Selling: CE marking, a release process and series production. One head, for the owner (2026-11-04).
 
 ## Part check (JLC, 2026-11-04)
 
-Stock and first-tier price from the JLC parts search, checked once. To be rechecked at order time.
+Stock and first-tier price from the JLC parts search, checked once. To be rechecked at order time. Alternatives are in `docs/research/README.md`.
 
 | Part | LCSC | Stock | Price |
 | --- | --- | --- | --- |
@@ -123,6 +135,5 @@ Stock and first-tier price from the JLC parts search, checked once. To be rechec
 | W5500 | C32843 | 12,692 | $2.84 |
 | TJA1051T/3 (CAN) | C38695 | 154,640 | $0.58 |
 | SP3485EN (RS-485) | C8963 | 360,578 | $0.26 |
-| SP3232EEN (RS-232) | C9378 | 142,434 | $0.36 |
 | TPS54360 (buck, up to 60 V) | C44377 | 51,291 | $0.72 |
 | AS5600-ASOM (for a remote sensor board) | C79815 | 401 | $1.71 |
