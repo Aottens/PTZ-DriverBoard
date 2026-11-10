@@ -4,6 +4,80 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-10 — Rev A is designed in one run by Fable 5.2, before the rig results
+
+**Decision:** One Fable 5.2 session takes Rev A from requirements to files ready to order, from `docs/prompts/fable-board-rev-a.md`, without waiting for the rig. It uses the leading candidates, at most 85×65 mm, JLC Economic PCBA, a W5500 with RJ45, and two open-drain camera outputs. Gate 1 for this build is the owner's approval of that prompt. The order gate is unchanged, and only the owner orders.
+
+**Alternatives considered:** waiting for the rig results; building in several reviewed slices as `BACKLOG.md` planned.
+
+**Reasoning:** the owner wants one board that can do everything and wants to test this model on a task of this size. A prototype costs little next to weeks of slices. It can also replace the breakout boards on the rig.
+
+**Risk accepted:** the rig can still overturn the motor, driver, sensor or voltage choice, or show that the sensor cable needs another design (R-T1, R-T2). Then Rev A is partly thrown away. The board is checked by calculation and review only until the owner's bring-up run.
+
+**Reversal trigger:** the blind review finds the approach unsound, or the rig shows a part choice fails before the order is placed.
+
+---
+
+## 2026-11-10 — The MCU for Rev A is the ESP32-C6-MINI-1U
+
+**Decision:** Rev A uses the ESP32-C6-MINI-1U-H4 (LCSC C20627095), assembled by JLC with Economic PCBA. This replaces the ESP32-S3-MINI-1U as the design basis. The owner chose it.
+
+**Alternatives considered:** an ESP32-S3-WROOM-1U soldered by hand on an otherwise JLC-assembled board, which has the most pins and two cores; a bare ESP32-S3FN8, which needs our own RF section, tuned with a network analyser, and 0201 parts that Economic cannot place; an RP2350B with a separate radio and second firmware; Standard PCBA, whose 70 mm minimum size excludes a 65 mm wide board without a panel.
+
+**Reasoning:** one "Standard Only" part moves the whole order to Standard, and JLC lists the ESP32-S3 modules that way. The C6 module keeps the radio in a finished module. The TMC5240 generates the motion, so the MCU has less to do. The price is 22 GPIOs for about 27 signals, one user SPI bus and one core, so the board needs an I2C expander and a chip-select decoder and has almost no spare pins.
+
+**Reversal trigger:** the pin plan does not close, one core cannot hold the control and sensor loop on the rig, or JLC changes a part's PCBA type.
+
+---
+
+## 2026-11-09 — Working rules for board design, from Anthropic's electronics work
+
+**Decision:** Schematic and layout go to the strongest model available instead of Sonnet. Added to `CLAUDE.md`: route the hard nets first, a layout may overturn the pin table, check the board in its housing by code, sort every manufacturability and sourcing flag. The owner approved this.
+
+**Alternatives considered:** keeping Sonnet for all building; waiting with these rules until the board starts.
+
+**Reasoning:** [Anthropic's write-up with Diode Computers](https://www.anthropic.com/research/claude-electronics-design) reports a benchmark for placement and rerouting going from 25 % to 69 % between two model generations, and describes these habits. Diode has a commercial relationship with Anthropic, and the prototypes were not electrically validated, so this is a working habit and not proof.
+
+**Reversal trigger:** a Sonnet layout holds up against the blind review, or the rules slow the work without catching defects.
+
+---
+
+## 2026-11-04 — The base is at most Ø165 mm
+
+**Decision:** The head's base is at most Ø165 mm. The motor sits under the pulley, so the centres are at most 55.7 mm. The rig keeps to that and compares 6.25:1 without idlers against 7.5:1 with two idlers. This replaces the 9:1 and 12.5:1 rig in the entry below.
+
+**Alternatives considered:** 12.5:1 with a 200T (Ø196 with idlers, about Ø300 without); 9:1 with a 144T, which reaches the limit with no margin.
+
+**Reasoning:** the owner rejected the size of a 200T and a 400 mm belt, and small is a stated goal. Claude had let tooth grip set the layout. A rig with the head's real geometry also tests the right question.
+
+**Reversal trigger:** the rig shows neither ratio is acceptable; then the capstan (IDEA-04) comes first, within the same base.
+
+---
+
+## 2026-11-04 — One belt stage, no double belt
+
+**Decision:** The head uses one belt stage per axis. The rig compares 9:1 and 12.5:1, with 26 and 42 Ncm motors. This replaces the 30:1 two-stage layout and the 17 Ncm motor in the rig entry below.
+
+**Alternatives considered:** 30:1 in two stages; a capstan drive (IDEA-04); gearboxes, worm gears and harmonic drives, set aside for backlash, noise or price.
+
+**Reasoning:** the owner does not want a double belt. Claude's case for 30:1 counted absolute stepper error, while a preset landing from the same side mostly repeats it. The remaining risk is a slow wave at very low speed, which the rig measures.
+
+**Reversal trigger:** the wave stays visible at 12.5:1 even with a tuned microstep table; then a capstan comes first, before a second belt.
+
+---
+
+## 2026-11-04 — The rig spec is approved
+
+**Decision:** `specs/modules/rig.md` is approved (gate 1), with the 17HE08-1004S and 17HE12-1204S motors instead of the 0.4 A motor from the July design.
+
+**Alternatives considered:** the 17HS13-0404S1, which needs 35 V at 300 rpm at rated current by calculation.
+
+**Reasoning:** low-resistance motors reach the speed on 12 V and are thinner, which suits a small base.
+
+**Reversal trigger:** R-T1 shows these motors are too weak or too loud.
+
+---
+
 ## 2026-11-04 — Targets approved, G7 first, and the rig goes ahead
 
 **Decision:** TGT-01..05 are approved. The first camera is a Panasonic G7 with a 14-140 mm, Micro Four Thirds. A one-axis test rig goes ahead.
