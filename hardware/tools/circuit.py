@@ -155,12 +155,12 @@ J_SH4 = conn("SH_4_I2C", ["GND", "3V3", "SDA", "SCL"], mp=True)
 FP = dict(
     TMC="Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.1x3.1mm", ESP="ptz:ESP32-C6-MINI-1U", W5500="Package_QFP:LQFP-48_7x7mm_P0.5mm",
     HSOP8="Package_SO:TI_SO-PowerPAD-8", SOT235="Package_TO_SOT_SMD:SOT-23-5", SOT23="Package_TO_SOT_SMD:SOT-23",
-    SOT236="Package_TO_SOT_SMD:SOT-23-6", DPAK="Package_TO_SOT_SMD:TO-252-2", SOD123="Diode_SMD:D_SOD-123", SMB="Diode_SMD:D_SMB",
+    SOT236="Package_TO_SOT_SMD:SOT-23-6", DPAK="ptz:TO-252_JLC", SOD123="Diode_SMD:D_SOD-123", SMB="Diode_SMD:D_SMB",
     SMA="Diode_SMD:D_SMA", TSSOP14="Package_SO:TSSOP-14_4.4x5mm_P0.65mm", TSSOP16="Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
     TSSOP20="Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm", TSSOP24="Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm",
     SOIC8="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", VSSOP8="Package_SO:VSSOP-8_3x3mm_P0.65mm",
     XTAL="Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm", NANO2="Fuse:Fuse_Littelfuse-NANO2-451_453", F1206="Fuse:Fuse_1206_3216Metric",
-    F0603="Fuse:Fuse_0603_1608Metric", F1812="Fuse:Fuse_1812_4532Metric", ELEC="Capacitor_SMD:CP_Elec_10x10",
+    F0603="Fuse:Fuse_0603_1608Metric", F1812="Fuse:Fuse_1812_4532Metric", ELEC="Capacitor_SMD:CP_Elec_10x10.5",
     L0630="Inductor_SMD:L_7.3x7.3_H4.5", L0402S="Inductor_SMD:L_Sunlord_MWSA0402S", FB0603="Inductor_SMD:L_0603_1608Metric",
     VH2="Connector_JST:JST_VH_B2P-VH_1x02_P3.96mm_Vertical", XH4="Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical",
     XH2="Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical", GH7="Connector_JST:JST_GH_SM07B-GHS-TB_1x07-1MP_P1.25mm_Horizontal",
@@ -180,7 +180,7 @@ two("D101", "12 V zener", "DZ", FP["SOD123"], "VIN", "RP_GATE", sh, "C12747", "L
 res("R101", "100k", "RP_GATE", "GND", sh)
 two("F101", "7 A slow", "F", FP["NANO2"], "VIN", "VM", sh, "C72975", "0452007.MRL")
 two("F102", "1.5 A", "F", FP["F1206"], "VIN", "VIN_L", sh, "C187598", "046601.5NRHF")
-two("D102", "SMBJ24A", "DZ", FP["SMB"], "VM", "GND", sh, "C211760", "SMBJ24A")
+two("D102", "SMBJ24A", "DZ", FP["SMB"], "VM", "GND", sh, "C7470946", "SMBJ24A")
 for r in ("C101", "C102"):
     two(r, "220 µF 50 V", "CP", FP["ELEC"], "VM", "GND", sh, "C970698")
 add("U101", "TPS54360", TPS54360, FP["HSOP8"], sh, "C44377", "TPS54360DDAR", VIN="VIN_L", EN="BUCK_EN", COMP="BUCK_COMP",
@@ -289,8 +289,6 @@ def axis(n):
     cap(k(5), "22 nF 50 V", f"A{n}_CPI", f"A{n}_CPO", sh)
     cap(k(6), "4.7 µF", f"A{n}_1V8", "GND", sh)
     cap(k(7), "100 nF", "+3V3", "GND", sh)
-    for i, x in enumerate(("A1", "A2", "B1", "B2")):
-        cap(k(8 + i), "470 pF 50 V", f"M{n}_{x}", "GND", sh)
     cap(k(12), "1 nF", f"HOME{n}", "GND", sh)
     res(r(1), "12k", f"A{n}_IREF", "GND", sh)
     res(r(2), "100k", f"A{n}_SLEEPN", "VM", sh)

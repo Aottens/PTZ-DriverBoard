@@ -8,6 +8,7 @@ Run with KiCad's Python, from hardware/:
 Big parts sit where placement.py says. Small parts are put as close as they fit to the pad they belong to:
 a hint in placement.py, or else a pad of a part that shares one of their signal nets.
 """
+import json
 import math
 import os
 import sys
@@ -18,6 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import netlist  # noqa: E402
 import placement as P  # noqa: E402
+import project  # noqa: E402
 
 HW = os.path.dirname(HERE)
 PCB = os.path.join(HW, "ptz-driver.kicad_pcb")
@@ -88,7 +90,6 @@ def overlap(a, b):
 def place(items):
     """Fill item.pos for every item. Returns the items that found no place."""
     taken = [(x - 3.5, y - 3.5, x + 3.5, y + 3.5) for x, y in P.HOLES]   # hole keep-outs
-    taken += [k for k in P.KEEPOUT]
     for ref, (cx, cy, rot) in P.FIXED.items():
         it = items[ref]
         x, y = it.origin_for_centre(cx, cy, rot)
@@ -98,11 +99,32 @@ def place(items):
             assert not overlap(r, other) or ref in P.MAY_OVERLAP, f"{ref} overlaps a placed part or keep-out: {r} / {other}"
         taken.append(r)
 
+    taken += list(P.KEEPOUT)   # keep-outs bind the small parts only
+
+    labels = {}
+
+    def label_of(it):
+        if it.ref.startswith("TP"):
+            return P.TP_NAMES.get(it.comp["value"], it.comp["value"])
+        return P.PART_LABELS.get(it.ref)
+
     def free(it, x, y, rot, grow):
+        """The room the part takes at this spot, with its silkscreen name beside it, or None when it does not fit."""
         r = it.rect(x, y, rot, grow)
-        if r[0] < P.EDGE or r[1] < P.EDGE or r[2] > W - P.EDGE or r[3] > H - P.EDGE:
-            return False
-        return not any(overlap(r, t) for t in taken)
+        name = label_of(it)
+        for side in ((1, -1) if name else (0,)):
+            c = r
+            if side:
+                w = len(name) * P.TEXT_H_SMALL * 0.92 + 0.2
+                lx, ly = (r[2] + w / 2 if side > 0 else r[0] - w / 2), (r[1] + r[3]) / 2
+                tb = P.text_box(name, lx, ly, P.TEXT_H_SMALL)
+                c = (min(r[0], tb[0]), min(r[1], tb[1]), max(r[2], tb[2]), max(r[3], tb[3]))
+                it.label = (name, round(lx, 3), round(ly, 3), 0)
+            if c[0] < P.EDGE or c[1] < P.EDGE or c[2] > W - P.EDGE or c[3] > H - P.EDGE:
+                continue
+            if not any(overlap(c, t) for t in taken):
+                return c
+        return None
 
     def target(it):
         """(x, y, my pad) to sit next to, or None while the part it belongs to is not placed yet."""
@@ -160,12 +182,15 @@ def place(items):
                     break
             if best:
                 it.pos = best[1:]
-                taken.append(it.rect(*it.pos, 0.0))
+                taken.append(free(it, *it.pos, 0.0) or it.rect(*it.pos, 0.0))   # also settles which side the name is on
+                if label_of(it):
+                    labels[it.ref] = it.label
                 todo.remove(it)
                 progress = True
             else:
                 failed.append(it)
                 todo.remove(it)
+    json.dump(labels, open(os.path.join(HW, "tools", "tp_labels.json"), "w"), indent=0, sort_keys=True)
     return failed + todo
 
 
@@ -185,6 +210,27 @@ def zone(board, net, layer, pts, clearance=0.2):
     return z
 
 
+def keepout(board, layers, pts, pour, vias=False):
+    """A rule area without tracks; pour and vias say whether zone copper and vias may still be in it."""
+    z = pcbnew.ZONE(board)
+    z.SetIsRuleArea(True)
+    ls = pcbnew.LSET()
+    for layer in layers:
+        ls.AddLayer(layer)
+    z.SetLayerSet(ls)
+    z.SetDoNotAllowTracks(True)
+    z.SetDoNotAllowVias(not vias)
+    z.SetDoNotAllowZoneFills(not pour)
+    z.SetDoNotAllowPads(False)
+    z.SetDoNotAllowFootprints(False)
+    outline = z.Outline()
+    outline.NewOutline()
+    for x, y in pts:
+        outline.Append(mm(OX + x), mm(OY + y))
+    board.Add(z)
+    return z
+
+
 def via(board, net, x, y, size=0.6, drill=0.3):
     v = pcbnew.PCB_VIA(board)
     v.SetPosition(vec(x, y))
@@ -194,6 +240,11 @@ def via(board, net, x, y, size=0.6, drill=0.3):
     v.SetNet(net)
     board.Add(v)
     return v
+
+
+def save(board):
+    pcbnew.SaveBoard(PCB, board)
+    project.patch()   # KiCad writes the project file too, with whatever the board object holds
 
 
 def build():
@@ -216,9 +267,12 @@ def build():
         fp.SetReference(it.ref)
         fp.SetValue(it.comp["value"])
         fp.SetPath(pcbnew.KIID_PATH(f"{it.comp['path']}{it.comp['uuid']}"))
-        for key in ("LCSC", "MPN"):
-            if it.comp["fields"].get(key):
-                fp.SetField(key, it.comp["fields"][key])
+        for key, value in it.comp["fields"].items():      # every symbol field, so schematic parity holds
+            if key not in ("Footprint", "Datasheet", "Description"):
+                fp.SetField(key, value)
+        for field in fp.GetFields():
+            if field.GetName() not in ("Reference", "Value"):
+                field.SetVisible(False)
         for pad in fp.Pads():
             net = pins.get((it.ref, pad.GetNumber()))
             if net:
@@ -239,17 +293,124 @@ def build():
     zone(board, nets["GND"], pcbnew.In1_Cu, [(0, 0), (W, 0), (W, H), (0, H)])
     for net, pts in P.PLANES:
         zone(board, nets[net], pcbnew.In2_Cu, pts)
-    # nine vias under each driver into the ground planes (BRD-11)
+    for net, pts in P.POURS:
+        z = zone(board, nets[net], pcbnew.F_Cu, pts)
+        z.SetAssignedPriority(10)
+    for x, y in P.VM_VIAS:
+        via(board, nets["VM"], x, y, 0.8, 0.4)
+    # nine vias under each driver into the ground planes, and no other copper under it on the bottom (BRD-11)
     for it in items.values():
         if it.comp["value"].startswith("TMC5240"):
+            x, y = it.pos[:2]
             for dx in (-1.03, 0, 1.03):
                 for dy in (-1.03, 0, 1.03):
-                    via(board, nets["GND"], it.pos[0] + dx, it.pos[1] + dy)
-    pcbnew.SaveBoard(PCB, board)
+                    via(board, nets["GND"], x + dx, y + dy)
+            keepout(board, [pcbnew.B_Cu], [(x - 2.9, y - 2.9), (x + 2.9, y - 2.9), (x + 2.9, y + 2.9), (x - 2.9, y + 2.9)], pour=True, vias=True)
+    # nothing but bare board within 3.5 mm of a mounting hole's centre, top and bottom (BRD-01)
+    for hx, hy in P.HOLES:
+        ring = [(hx + 3.5 * math.cos(math.radians(a)), hy + 3.5 * math.sin(math.radians(a))) for a in range(0, 360, 15)]
+        keepout(board, [pcbnew.F_Cu, pcbnew.B_Cu], ring, pour=False)
+    save(board)
     area = sum((i.box[2] - i.box[0]) * (i.box[3] - i.box[1]) for i in items.values() if i.pos)
     print(f"{len(items)} footprints, {len(lost)} without a place: {' '.join(sorted(i.ref for i in lost))}")
     print(f"courtyard area {area:.0f} mm2 of {W * H:.0f} = {100 * area / (W * H):.0f} %")
     return not lost
+
+
+# ---------------------------------------------------------------- after routing
+
+def _pt(v):
+    return (v.x / 1e6 - OX, v.y / 1e6 - OY)
+
+
+def _d_point_seg(p, a, b):
+    ax, ay, bx, by = *a, *b
+    dx, dy = bx - ax, by - ay
+    t = 0 if dx == dy == 0 else max(0, min(1, ((p[0] - ax) * dx + (p[1] - ay) * dy) / (dx * dx + dy * dy)))
+    return math.hypot(p[0] - ax - t * dx, p[1] - ay - t * dy)
+
+
+def _cross(a, b, c, d):
+    def side(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+    return side(a, b, c) * side(a, b, d) < 0 and side(c, d, a) * side(c, d, b) < 0
+
+
+def _d_seg_seg(a, b, c, d):
+    if _cross(a, b, c, d):
+        return 0.0
+    return min(_d_point_seg(a, c, d), _d_point_seg(b, c, d), _d_point_seg(c, a, b), _d_point_seg(d, a, b))
+
+
+def _d_seg_rect(a, b, r):
+    x0, y0, x1, y1 = r
+    if x0 <= a[0] <= x1 and y0 <= a[1] <= y1:
+        return 0.0
+    c = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    return min(_d_seg_seg(a, b, c[i], c[(i + 1) % 4]) for i in range(4))
+
+
+def widen(board):
+    """Give motor outputs and supply stubs all the width their surroundings allow (BRD-06)."""
+    target = {"Motor": 0.8, "Supply": 0.6}
+    tracks = [t for t in board.GetTracks() if t.Type() != pcbnew.PCB_VIA_T]
+    vias = [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_VIA_T]
+    pads = [(p, p.GetBoundingBox()) for fp in board.GetFootprints() for p in fp.Pads()]
+    pads = [(p, (bb.GetLeft() / 1e6 - OX, bb.GetTop() / 1e6 - OY, bb.GetRight() / 1e6 - OX, bb.GetBottom() / 1e6 - OY)) for p, bb in pads]
+    changed = 0
+    for t in tracks:
+        want = target.get(t.GetNetClassName())
+        if not want or t.GetWidth() / 1e6 >= want:
+            continue
+        a, b, layer, net = _pt(t.GetStart()), _pt(t.GetEnd()), t.GetLayer(), t.GetNetCode()
+        room = min(a[0], a[1], b[0], b[1], W - a[0], W - b[0], H - a[1], H - b[1]) - 0.3
+        for o in tracks:
+            if o.GetLayer() == layer and o.GetNetCode() != net:
+                room = min(room, _d_seg_seg(a, b, _pt(o.GetStart()), _pt(o.GetEnd())) - o.GetWidth() / 2e6 - 0.2)
+        for v in vias:
+            if v.GetNetCode() != net:
+                room = min(room, _d_point_seg(_pt(v.GetPosition()), a, b) - v.GetWidth(pcbnew.F_Cu) / 2e6 - 0.2)
+        for p, r in pads:
+            if p.GetNetCode() != net and (p.IsOnLayer(layer) or p.GetDrillSize().x):
+                room = min(room, _d_seg_rect(a, b, r) - 0.2)
+        width = min(want, math.floor(2 * (room - 0.01) / 0.05) * 0.05)
+        if width > t.GetWidth() / 1e6 + 1e-6:
+            t.SetWidth(mm(width))
+            changed += 1
+    print(f"widened {changed} track segments")
+
+
+def finish():
+    board = pcbnew.LoadBoard(PCB)
+    widen(board)
+    nets = board.GetNetsByName()
+    gnd = nets["GND"]
+    for z in list(board.Zones()):      # a rerun replaces the outer ground pours
+        if not z.GetIsRuleArea() and z.GetNetname() == "GND" and z.GetLayer() in (pcbnew.F_Cu, pcbnew.B_Cu):
+            board.Remove(z)
+    for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
+        z = zone(board, gnd, layer, [(0, 0), (W, 0), (W, H), (0, H)], clearance=0.25)
+        z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
+        z.SetThermalReliefGap(mm(0.25))
+        z.SetThermalReliefSpokeWidth(mm(0.3))
+        z.SetMinThickness(mm(0.25))
+    for d in list(board.GetDrawings()):  # a rerun replaces what this function drew
+        if d.GetLayer() in (pcbnew.B_Mask, pcbnew.F_SilkS, pcbnew.B_SilkS):
+            board.Remove(d)
+    for fp in board.GetFootprints():
+        if fp.GetValue().startswith("TMC5240"):     # bare window under each driver for a heat spreader (BRD-11)
+            x, y = _pt(fp.GetPosition())
+            r = pcbnew.PCB_SHAPE(board, pcbnew.SHAPE_T_RECTANGLE)
+            r.SetStart(vec(x - 2.8, y - 2.8))
+            r.SetEnd(vec(x + 2.8, y + 2.8))
+            r.SetLayer(pcbnew.B_Mask)
+            r.SetFilled(True)
+            r.SetWidth(0)
+            board.Add(r)
+    import silk
+    silk.draw(board)
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+    save(board)
 
 
 if __name__ == "__main__":
@@ -263,4 +424,6 @@ if __name__ == "__main__":
         board = pcbnew.LoadBoard(PCB)
         assert pcbnew.ImportSpecctraSES(board, sys.argv[2]), "SES import failed"
         pcbnew.ZONE_FILLER(board).Fill(board.Zones())
-        pcbnew.SaveBoard(PCB, board)
+        save(board)
+    elif cmd == "finish":
+        finish()

@@ -4,6 +4,84 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-10 — Rev A: the Ethernet jack is off the board
+
+**Decision:** The W5500 and all of its circuit stay on the board, but the RJ45 jack does not: J801 is a 7-pin header for a short lead to a jack with magnetics in the housing wall. The CAN connector stays.
+
+**Alternatives considered:** the HR911105A on the board, as the brief asked first; a transformer on the board with a 4-wire header behind it; dropping CAN as well.
+
+**Reasoning:** counted by courtyard area, everything on 85 x 65 mm with parts on one side came to about 76 % of the area where parts can go, which leaves no room to route. The brief names the jack as the first thing to go (CTL-03). The header costs a tenth of the jack's area. A transformer on the board would have been the cleaner electrical cut, but its pin order could not be checked against a maker's sheet in this run.
+
+**Reversal trigger:** a later revision gets a larger outline or parts on both sides; then the jack returns to the board.
+
+---
+
+## 2026-11-10 — Rev A: one chip select per driver and per sensor, no daisy chain
+
+**Decision:** The four drivers and four sensor ports each have their own chip select from a dual 2-to-4 decoder (two address lines, two strobes). The drivers are not daisy-chained.
+
+**Alternatives considered:** the TMC5240 daisy chain with one chip select, which `docs/research/README.md` called possibly the best part; a 4-to-16 decoder that also selects the W5500.
+
+**Reasoning:** a chain makes every access four times as long and lets one dead driver take the other three off the bus, on a prototype whose job is to be measured. Four separate writes at 4 MHz start four axes within about 40 microseconds of each other, by calculation (4 x 40 bits), which a camera head cannot show. Two strobes keep the decoder free of glitches when the address changes. The W5500 keeps a plain chip select, because Espressif's driver expects one.
+
+**Reversal trigger:** the rig shows that axes must start within microseconds; then the chain is a board change, not a firmware one.
+
+---
+
+## 2026-11-10 — Rev A: slow signals on an I/O expander, the stop on direct pins
+
+**Decision:** The ESP32-C6's 22 pins carry the SPI bus, chip selects, I2C, RS-485, CAN, USB, the fan, the supply reading, the boot button, and the two signals that stop motors: `DRV_ENN` and the expander's interrupt. DIAG0 and DIAG1 of all axes, the Ethernet interrupt and reset, the status LED and the camera outputs are on a PCAL6416A. No pin is spare.
+
+**Alternatives considered:** DIAG wired together on one direct pin, which fails when one axis uses DIAG0 as a step output; an expander without an interrupt mask, which would flood the MCU with interrupts in that case.
+
+**Reasoning:** the driver stops its own motor on a stall or a home switch, in the chip. What the MCU needs fast is a way to cut power, and that is `DRV_ENN` on a direct pin, pulled up so the bridges are off at reset. The same pin gates the buffer of the external driver ports, so it stops those too.
+
+**Reversal trigger:** firmware needs a DIAG edge faster than an I2C read, about 0.1 ms.
+
+---
+
+## 2026-11-10 — Rev A: sensor ports on their own buffered bus, 3.3 V only
+
+**Decision:** Each sensor port gets its own buffered clock and data-out, switched on only while a sensor is selected, and its data-in passes a buffer that opens only for that port. The ports are 3.3 V only. The home input shares the 7-pin connector.
+
+**Alternatives considered:** the sensor cable directly on the bus that the drivers and Ethernet share; a solder jumper for 5 V sensors.
+
+**Reasoning:** the brief asks to keep the long cable from loading the shared bus. Buffers do that, and gating them keeps Ethernet's clock edges out of a cable that runs beside motor wires. A 5 V option would need 5 V signal levels as well: a 3.3 V clock does not reach a 5 V sensor's input-high level.
+
+**Reversal trigger:** R-T2 chooses a sensor that needs 5 V or another bus.
+
+---
+
+## 2026-11-10 — Rev A: the board alone carries about 1 A per axis continuously
+
+**Decision:** The board gets nine vias and a bare ground window on the bottom under each driver, the fan output and temperature readings. It is not claimed to carry 1.5 A on all four axes in still air.
+
+**Alternatives considered:** a larger board; a dedicated heat-sink footprint; leaving it to the datasheet's 2.1 A figure.
+
+**Reasoning:** `hardware/calc/thermal.py` puts four axes at 1.5 A at about 120 C board temperature in still air, past what a printed housing and the chip allow; about 1.0 A on four axes, or 1.35 A on two, is the limit. The earlier estimate in `docs/research/README.md` counted the drivers only, cold, on a board with nothing else on it. With a metal bar on the windows or moving air the same calculation allows 1.5 A and more. Nothing here is measured.
+
+**Reversal trigger:** the bring-up run (step 4.4 and 4.8) shows the calculation is far off, either way.
+
+---
+
+## 2026-11-10 — Rev A: smaller choices made in layout
+
+**Decision:**
+- Motor connector pins are A1, A2, B2, B1: coil B mirrored, because that is the order the driver's pins leave the chip.
+- Motor, sensor, CAN and fan connectors are top entry and may stand inside the board; side-entry connectors are on the three free edges.
+- No reset button: the chip resets over USB. A test point on EN remains.
+- No ESD capacitors on the motor outputs: they did not fit. The motor housings must be grounded instead.
+- Fuses are soldered, not in holders.
+- The two bulk capacitors are ordinary aluminium electrolytics on purpose: their resistance damps a hot-plug.
+
+**Alternatives considered:** each of these the other way round; see `specs/modules/` and `hardware/BUILD_NOTES.md`.
+
+**Reasoning:** space on 85 x 65 mm with parts on one side, and tracks that do not cross.
+
+**Reversal trigger:** an ESD reset on the rig brings the output capacitors back first.
+
+---
+
 ## 2026-11-10 — Rev A is designed in one run by Fable 5.2, before the rig results
 
 **Decision:** One Fable 5.2 session takes Rev A from requirements to files ready to order, from `docs/prompts/fable-board-rev-a.md`, without waiting for the rig. It uses the leading candidates, at most 85×65 mm, JLC Economic PCBA, a W5500 with RJ45, and two open-drain camera outputs. Gate 1 for this build is the owner's approval of that prompt. The order gate is unchanged, and only the owner orders.

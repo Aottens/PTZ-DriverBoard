@@ -196,10 +196,10 @@ def _drv_pins(n, a):
 
 
 def drv_01_motor_connectors():
-    """DRV-01. J?01 JST S4B-XH-A: 1 = OUT1A, 2 = OUT2A, 3 = OUT1B, 4 = OUT2B; bridge outputs pins 23, 22, 18, 19."""
+    """DRV-01. J?01 JST S4B-XH-A: 1 = OUT1A, 2 = OUT2A, 3 = OUT2B, 4 = OUT1B (coil B mirrored); bridge outputs pins 23, 22, 18, 19."""
     d = {}
     for n, a in AXES:
-        setp(d, "J%d01" % a, {1: "M%d_A1" % n, 2: "M%d_A2" % n, 3: "M%d_B1" % n, 4: "M%d_B2" % n})
+        setp(d, "J%d01" % a, {1: "M%d_A1" % n, 2: "M%d_A2" % n, 3: "M%d_B2" % n, 4: "M%d_B1" % n})
         setp(d, "U%d01" % a, {23: "M%d_A1" % n, 22: "M%d_A2" % n, 18: "M%d_B1" % n, 19: "M%d_B2" % n})
     return d
 
@@ -288,13 +288,7 @@ def drv_09_tie_offs():
     return d
 
 
-def drv_10_output_esd():
-    """DRV-10. 470 pF 50 V from each motor output to GND: C?08 A1, C?09 A2, C?10 B1, C?11 B2."""
-    d = {}
-    for n, a in AXES:
-        for k, o in ((8, "A1"), (9, "A2"), (10, "B1"), (11, "B2")):
-            two(d, ref("C", a, k), "M%d_%s" % (n, o), "GND", "470 pF 50 V")
-    return d
+# DRV-10 is struck in the spec (Ca08-Ca11 no longer exist): no function.
 
 
 # ================================================================ SENSING (specs/modules/sensing.md)

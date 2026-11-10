@@ -2064,7 +2064,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:TO-252-2"
+		(property "Footprint" "ptz:TO-252_JLC"
 			(at 177.8 40.64 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2874,7 +2874,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C211760"
+		(property "LCSC" "C7470946"
 			(at 294.64 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2984,7 +2984,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:CP_Elec_10x10"
+		(property "Footprint" "Capacitor_SMD:CP_Elec_10x10.5"
 			(at 294.64 35.56 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3127,7 +3127,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:CP_Elec_10x10"
+		(property "Footprint" "Capacitor_SMD:CP_Elec_10x10.5"
 			(at 350.52 35.56 0)
 			(show_name no)
 			(do_not_autoplace no)

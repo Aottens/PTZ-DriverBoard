@@ -104,6 +104,13 @@ def main():
              if a[1] < b[3] and b[1] < a[3] and a[2] < b[4] and b[2] < a[4] and a[5] < b[6] and b[5] < a[6]]
     check(not clash, "no two plugs share space" + (": " + ", ".join(f"{a}/{b}" for a, b in clash) if clash else ""))
 
+    # a screwdriver must come straight down onto each mounting screw: nothing tall within 4 mm of a hole's centre
+    for fp in board.GetFootprints():
+        if "MountingHole" in fp.GetFPID().GetLibItemName().wx_str():
+            hx, hy = fp.GetPosition().x / 1e6 - OX, fp.GetPosition().y / 1e6 - OY
+            close = [b[0] for b in boxes if b[6] > 3.0 and b[1] - 4.0 < hx < b[3] + 4.0 and b[2] - 4.0 < hy < b[4] + 4.0]
+            check(not close, f"{fp.GetReference()}: a driver reaches the screw from above" + (f"; in the way: {close}" if close else ""))
+
     if usb:
         ref, x0, y0, x1, y1, dx, dy, ph = usb
         cx, cyy = (x0 + x1) / 2, (y0 + y1) / 2

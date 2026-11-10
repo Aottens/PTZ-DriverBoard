@@ -8441,7 +8441,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C1568"
+		(property "LCSC" "C1542"
 			(at 294.64 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8584,7 +8584,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C1568"
+		(property "LCSC" "C1542"
 			(at 350.52 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)

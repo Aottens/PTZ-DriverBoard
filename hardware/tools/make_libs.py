@@ -70,6 +70,20 @@ for n, (x, y) in pads.items():
                 ["roundrect_rratio", 0.2]])
 open(f"{HW}/ptz.pretty/LED_RGB_1616.kicad_mod", "w").write(dump(led + [["embedded_fonts", "no"]]) + "\n")
 
+# --- TO-252 (DPAK) with the land pattern JLC uses for the AOD4185 (C400894): KiCad's own is 0.65 mm shorter
+dpak = ["footprint", Q("TO-252_JLC"), ["version", 20241229], ["generator", Q("make_libs")], ["layer", Q("F.Cu")],
+        ["descr", Q("TO-252 / DPAK, pads as JLC's TO-252-3_L6.6-W6.1-P4.57-LS9.9: 1 and 3 the leads, 2 the tab")],
+        text("Reference", "REF**", -4.3, "F.SilkS"), text("Value", "TO-252", 4.3, "F.Fab"),
+        text("Datasheet", "", 0, "F.Fab", True), text("Description", "", 0, "F.Fab", True), ["attr", "smd"]]
+dpak += rect(-2.3, -3.3, 4.3, 3.3, "F.Fab", 0.1) + rect(-4.98, -3.4, 6.98, 3.4, "F.CrtYd", 0.05)
+dpak += [line(-2.4, -3.4, 0.0, -3.4, "F.SilkS", 0.12), line(-2.4, 3.4, 0.0, 3.4, "F.SilkS", 0.12),
+         line(-2.4, -3.4, -2.4, -3.1, "F.SilkS", 0.12), line(-2.4, 3.4, -2.4, 3.1, "F.SilkS", 0.12),
+         line(-4.7, -3.2, -2.4, -3.2, "F.SilkS", 0.12)]
+for n, x, y, w, h in (("1", -3.475, -2.286, 2.5, 1.2), ("3", -3.475, 2.286, 2.5, 1.2), ("2", 3.475, 0, 6.5, 6.0)):
+    dpak.append(["pad", Q(n), "smd", "roundrect", ["at", x, y], ["size", w, h], ["layers", Q("F.Cu"), Q("F.Mask"), Q("F.Paste")],
+                 ["roundrect_rratio", 0.08]])
+open(f"{HW}/ptz.pretty/TO-252_JLC.kicad_mod", "w").write(dump(dpak + [["embedded_fonts", "no"]]) + "\n")
+
 # --- a test point with a tight courtyard: a bare 1.0 mm pad
 tp = ["footprint", Q("TestPoint_D1.0"), ["version", 20241229], ["generator", Q("make_libs")], ["layer", Q("F.Cu")],
       ["descr", Q("Test point, 1.0 mm round pad")], text("Reference", "REF**", -1.3, "F.SilkS"), text("Value", "TP", 1.3, "F.Fab"),
@@ -83,33 +97,7 @@ for name, kind, uri in (("sym-lib-table", "sym_lib_table", "${KIPRJMOD}/ptz.kica
                                                                  ["options", Q("")], ["descr", Q("PTZ driver board")]]]) + "\n")
 print("ptz.pretty, sym-lib-table and fp-lib-table written")
 
-# --- project file: design rules inside JLC's limits (specs/modules/board.md, BRD-05) and net classes (BRD-06)
-import json  # noqa: E402
+import project  # noqa: E402
 
-
-def netclass(name, track, clearance, via, drill, priority):
-    return dict(name=name, track_width=track, clearance=clearance, via_diameter=via, via_drill=drill, priority=priority,
-                bus_width=12, wire_width=6, line_style=0, diff_pair_gap=0.2, diff_pair_via_gap=0.25, diff_pair_width=0.2,
-                microvia_diameter=0.3, microvia_drill=0.1, pcb_color="rgba(0, 0, 0, 0.000)",
-                schematic_color="rgba(0, 0, 0, 0.000)", tuning_profile="")
-
-
-POWER = ["GND", "VM", "VIN", "VIN_RAW", "VIN_L", "+5V", "+5V_EXT", "VSYS", "VBUS", "+3V3", "+3V3_SNS", "+3V3_I2C", "3V3A",
-         "BUCK_SW", "SW3V3", "FAN_V", "FAN_N", "FAN_SRC"]
-pro = dict(
-    board=dict(design_settings=dict(rules=dict(
-        min_clearance=0.15, min_track_width=0.15, min_via_diameter=0.6, min_through_hole_diameter=0.3,
-        min_via_annular_width=0.13, min_copper_edge_clearance=0.3, min_hole_clearance=0.25, min_hole_to_hole=0.25,
-        min_silk_clearance=0.0, min_text_height=0.7, min_text_thickness=0.08, min_connection=0.0, max_error=0.005,
-        min_microvia_diameter=0.2, min_microvia_drill=0.1, min_resolved_spokes=1, min_groove_width=0.0,
-        solder_mask_to_copper_clearance=0.0, use_height_for_length_calcs=True))),
-    meta=dict(filename="ptz-driver.kicad_pro", version=3),
-    net_settings=dict(
-        classes=[netclass("Default", 0.2, 0.15, 0.6, 0.3, 2147483647), netclass("Power", 0.5, 0.2, 0.8, 0.4, 0),
-                 netclass("Motor", 0.8, 0.2, 0.8, 0.4, 1)],
-        meta=dict(version=5), net_colors=None, netclass_assignments=None,
-        netclass_patterns=[dict(netclass="Power", pattern=n) for n in POWER] + [dict(netclass="Motor", pattern="M?_??")]),
-    erc=dict(rule_severities=dict(lib_symbol_issues="warning", lib_symbol_mismatch="warning", footprint_link_issues="warning")),
-    libraries=dict(pinned_footprint_libs=[], pinned_symbol_libs=[]), sheets=[], text_variables={})
-open(f"{HW}/ptz-driver.kicad_pro", "w").write(json.dumps(pro, indent=2) + "\n")
-print("ptz-driver.kicad_pro written")
+project.patch()
+print("ptz-driver.kicad_pro patched")

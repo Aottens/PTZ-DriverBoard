@@ -28,7 +28,7 @@ TMC5240 pins used here, TQFN-32 (datasheet p16-18): 1 IREF, 2 AIN, 3 VDD1V8, 4 A
 - **DRV-07** `DRV_ENN` is one direct MCU pin to all four drivers and to U703, pulled up to `+3V3` by R701 (10 kΩ), so the bridges are off until firmware drives it low.
 - **DRV-08** Supply decoupling as the datasheet's application circuit (p20, p166): per driver two 100 nF and one 10 µF, all 50 V, from `VM` to `GND`; 1 µF from VCP to `VM`; 22 nF 50 V between CPI and CPO; 4.7 µF from VDD1V8 to `GND` (the datasheet asks for 2.2 µF or larger); 100 nF on VCC_IO. The 440 µF bulk is shared (POW).
 - **DRV-09** Unused pins are tied off: AIN, ENCA, ENCB, ENCN and REFR to `GND`; OV left open. SLEEPN goes to `VM` through 100 kΩ, because it may not exceed VS + 0.3 V (datasheet p10) and `+3V3` is present on USB power when `VM` is not.
-- **DRV-10** Each motor output has 470 pF 50 V to `GND` against ESD from a belt drive in a plastic housing (datasheet p167).
+- **DRV-10** Struck in layout: the optional 470 pF capacitors on the motor outputs (datasheet p167, against ESD from a belt drive in a plastic housing) did not fit between driver and connector. Instead the motor housings must be tied to the board's `GND`, which the datasheet names as the first measure; `hardware/ASSEMBLY.md` says how.
 
 ## Connections, per axis
 
@@ -45,7 +45,6 @@ n = axis 1 to 4, a = 3 to 6.
 | Ca05 | 22 nF 50 V | `An_CPI`, `An_CPO` |
 | Ca06 | 4.7 µF | `An_1V8`, `GND` |
 | Ca07 | 100 nF | `+3V3`, `GND` |
-| Ca08, Ca09, Ca10, Ca11 | 470 pF 50 V | `Mn_A1`, `Mn_A2`, `Mn_B1`, `Mn_B2` to `GND`, in that order |
 | Ra01 | 12k | `An_IREF`, `GND` |
 | Ra02 | 100k | `An_SLEEPN`, `VM` |
 | Ra03 | 10k | `DIAG0_n`, `+3V3` |

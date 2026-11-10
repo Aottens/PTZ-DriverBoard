@@ -4729,8 +4729,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "a14d8df6-19ef-5fcf-9f20-bc571e85deda")
-		(property "Reference" "C508"
+		(uuid "b0976026-d026-5bf6-989c-029d9307d410")
+		(property "Reference" "C512"
 			(at 462.28 43.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4740,7 +4740,7 @@
 				)
 			)
 		)
-		(property "Value" "470 pF 50 V"
+		(property "Value" "1 nF"
 			(at 462.28 48.02 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4783,580 +4783,8 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C307449"
-			(at 462.28 45.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 462.28 45.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6e800db9-a55b-5d4f-95f9-fff3e451fc07")
-		)
-		(pin "2"
-			(uuid "50a6a508-88a4-59ca-afb6-dc8abc7c7e46")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "C508")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "M3_A1"
-		(shape passive)
-		(at 458.47 45.72 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "62d4eef2-9ad1-517b-9fb5-f8f1e7ad4eca")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 458.47 45.72 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 466.09 45.72 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "c2d801c0-a7d2-599f-b121-c5241b6a52f8")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 466.09 45.72 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 294.64 55.88 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "abbe834a-4007-569f-b05d-a16274b00c8f")
-		(property "Reference" "C509"
-			(at 294.64 53.58 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "470 pF 50 V"
-			(at 294.64 58.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 294.64 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 294.64 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 294.64 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C307449"
-			(at 294.64 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 294.64 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8a5cf2f0-7779-542e-b2d9-0e7a6e77f971")
-		)
-		(pin "2"
-			(uuid "3b9d4865-e436-53a8-8723-47ee320871d6")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "C509")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "M3_A2"
-		(shape passive)
-		(at 290.83 55.88 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "633a842b-15d6-529d-b76d-961b13f2f188")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 290.83 55.88 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 298.45 55.88 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "dfc6c1c8-5826-51cb-beae-4a441b985001")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 298.45 55.88 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 350.52 55.88 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "9748de44-842f-56ef-8a4b-b7d2228e3d74")
-		(property "Reference" "C510"
-			(at 350.52 53.58 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "470 pF 50 V"
-			(at 350.52 58.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 350.52 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 350.52 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 350.52 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C307449"
-			(at 350.52 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 350.52 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "a31ba8ae-2298-5606-95e5-b703d5e34601")
-		)
-		(pin "2"
-			(uuid "e6385103-4dfa-508f-b3ae-de55a0b4f863")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "C510")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "M3_B1"
-		(shape passive)
-		(at 346.71 55.88 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "8469b8dd-baf2-5724-8818-7d1e6fab3129")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 346.71 55.88 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 354.33 55.88 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "f82bb3a7-5a07-5592-9bdd-40597b11e2a5")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 354.33 55.88 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 406.4 55.88 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "302b58f8-7f0a-51d1-9389-8c8d28f1243d")
-		(property "Reference" "C511"
-			(at 406.4 53.58 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "470 pF 50 V"
-			(at 406.4 58.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 406.4 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 406.4 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 406.4 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C307449"
-			(at 406.4 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 406.4 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "477b31d1-67e1-54e3-8f9c-7c66be3722cb")
-		)
-		(pin "2"
-			(uuid "e0a97fb3-a89c-56b7-8f02-592813005029")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "C511")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "M3_B2"
-		(shape passive)
-		(at 402.59 55.88 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "c58b15a4-4f6a-5a47-be01-f35bd05dbfe2")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 402.59 55.88 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 410.21 55.88 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "791776d0-d4bf-5005-9b10-2eb91f7e2a31")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 410.21 55.88 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 462.28 55.88 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "b0976026-d026-5bf6-989c-029d9307d410")
-		(property "Reference" "C512"
-			(at 462.28 53.58 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "1 nF"
-			(at 462.28 58.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 462.28 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 462.28 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 462.28 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
 		(property "LCSC" "C1523"
-			(at 462.28 55.88 0)
+			(at 462.28 45.72 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5367,7 +4795,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 462.28 55.88 0)
+			(at 462.28 45.72 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5394,7 +4822,7 @@
 	)
 	(global_label "HOME3"
 		(shape passive)
-		(at 458.47 55.88 180)
+		(at 458.47 45.72 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5404,7 +4832,7 @@
 		)
 		(uuid "67693b77-583a-5300-b032-3c8b81a50d5d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 458.47 55.88 0)
+			(at 458.47 45.72 0)
 			(effects
 				(font
 					(size 1 1)
@@ -5415,7 +4843,7 @@
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 466.09 55.88 0)
+		(at 466.09 45.72 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5424,6 +4852,578 @@
 			(justify left)
 		)
 		(uuid "42e79c65-b9e0-59d2-b8a7-db74bba95861")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 466.09 45.72 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 294.64 55.88 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "4c534671-75eb-52e5-9d4b-0bd6599b0f3f")
+		(property "Reference" "R501"
+			(at 294.64 53.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "12k"
+			(at 294.64 58.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 294.64 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 294.64 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 294.64 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25752"
+			(at 294.64 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 294.64 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8e49baf0-8eab-5ac6-b5ec-552248c939e0")
+		)
+		(pin "2"
+			(uuid "03bd3c68-1f4c-5de9-851b-577d25f2c1fa")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
+					(reference "R501")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "A3_IREF"
+		(shape passive)
+		(at 290.83 55.88 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "20078ee3-834a-5d0d-95bc-ec60b0467c2b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 290.83 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape passive)
+		(at 298.45 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "426ecc32-1720-5780-a6d6-d16b600dc4a4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 298.45 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 350.52 55.88 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "900aab5c-35df-5243-8a0c-43931472589d")
+		(property "Reference" "R502"
+			(at 350.52 53.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 350.52 58.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 350.52 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 350.52 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 350.52 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25741"
+			(at 350.52 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 350.52 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5d2d52c7-75b2-53ed-b7d6-0d027409dc01")
+		)
+		(pin "2"
+			(uuid "c39748b6-ad88-5f2a-9aef-d9dec2f7c7a9")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
+					(reference "R502")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "A3_SLEEPN"
+		(shape passive)
+		(at 346.71 55.88 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "135f5d11-154d-5afb-8f2b-f9c82d79ef48")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 346.71 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VM"
+		(shape passive)
+		(at 354.33 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "6c6d533a-0162-54ef-b36e-6ac119bacd8a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 354.33 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 406.4 55.88 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "96ea1b52-6c2a-5c1a-ba3b-4496bf6ff8c0")
+		(property "Reference" "R503"
+			(at 406.4 53.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 406.4 58.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 406.4 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 406.4 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 406.4 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25744"
+			(at 406.4 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 406.4 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e94e5cee-08ee-5668-b975-e42047b6584a")
+		)
+		(pin "2"
+			(uuid "19f4fa6e-9230-5435-b4f0-6af8cd0c430b")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
+					(reference "R503")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "DIAG0_3"
+		(shape passive)
+		(at 402.59 55.88 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "c3961b78-f66a-5a09-ae7e-3dafccf68c05")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 402.59 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "+3V3"
+		(shape passive)
+		(at 410.21 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "61759cb4-dd4d-5379-b728-299073ad2e7e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 410.21 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 462.28 55.88 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "64fd2fcd-91e5-5523-96a6-35e3973a8537")
+		(property "Reference" "R504"
+			(at 462.28 53.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 462.28 58.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 462.28 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 462.28 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 462.28 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25744"
+			(at 462.28 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 462.28 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ff6f7155-c262-56bc-8a20-531cfe621987")
+		)
+		(pin "2"
+			(uuid "32fc1d84-1a9f-5fa6-9493-96cff132c991")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
+					(reference "R504")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "DIAG1_3"
+		(shape passive)
+		(at 458.47 55.88 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "56b1da21-1978-5e24-a264-fe29235987e8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 458.47 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "+3V3"
+		(shape passive)
+		(at 466.09 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "6b26f1bf-da8e-501d-9d43-7713e7a46d4a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 466.09 55.88 0)
 			(effects
@@ -5444,8 +5444,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "4c534671-75eb-52e5-9d4b-0bd6599b0f3f")
-		(property "Reference" "R501"
+		(uuid "91d704fd-355d-5fa3-a030-c05e8c2991e6")
+		(property "Reference" "R505"
 			(at 294.64 63.74 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5455,7 +5455,7 @@
 				)
 			)
 		)
-		(property "Value" "12k"
+		(property "Value" "10k"
 			(at 294.64 68.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5498,7 +5498,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25752"
+		(property "LCSC" "C25744"
 			(at 294.64 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5521,21 +5521,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "8e49baf0-8eab-5ac6-b5ec-552248c939e0")
+			(uuid "55ca9906-b5df-5531-a6c2-96d1772a7e29")
 		)
 		(pin "2"
-			(uuid "03bd3c68-1f4c-5de9-851b-577d25f2c1fa")
+			(uuid "3154348a-08af-525f-8f7b-27e6a962f0e8")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R501")
+					(reference "R505")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "A3_IREF"
+	(global_label "HOME3_IN"
 		(shape passive)
 		(at 290.83 66.04 180)
 		(fields_autoplaced yes)
@@ -5545,7 +5545,7 @@
 			)
 			(justify right)
 		)
-		(uuid "20078ee3-834a-5d0d-95bc-ec60b0467c2b")
+		(uuid "42ad72ca-dde5-56ff-99a5-67befbeed906")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 290.83 66.04 0)
 			(effects
@@ -5556,7 +5556,7 @@
 			)
 		)
 	)
-	(global_label "GND"
+	(global_label "+3V3"
 		(shape passive)
 		(at 298.45 66.04 0)
 		(fields_autoplaced yes)
@@ -5566,7 +5566,7 @@
 			)
 			(justify left)
 		)
-		(uuid "426ecc32-1720-5780-a6d6-d16b600dc4a4")
+		(uuid "0bede4fa-3bff-5fac-a814-d67963504c5a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 298.45 66.04 0)
 			(effects
@@ -5587,8 +5587,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "900aab5c-35df-5243-8a0c-43931472589d")
-		(property "Reference" "R502"
+		(uuid "d09a18ad-a4a9-59fa-a7bf-d56902aee6b1")
+		(property "Reference" "R506"
 			(at 350.52 63.74 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5598,7 +5598,7 @@
 				)
 			)
 		)
-		(property "Value" "100k"
+		(property "Value" "22k"
 			(at 350.52 68.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5641,7 +5641,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25741"
+		(property "LCSC" "C25768"
 			(at 350.52 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5664,21 +5664,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "5d2d52c7-75b2-53ed-b7d6-0d027409dc01")
+			(uuid "793b849c-173d-56d6-a120-7fde4113665a")
 		)
 		(pin "2"
-			(uuid "c39748b6-ad88-5f2a-9aef-d9dec2f7c7a9")
+			(uuid "8582fd5b-090f-550f-bc66-9801dc41bfbc")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R502")
+					(reference "R506")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "A3_SLEEPN"
+	(global_label "HOME3_IN"
 		(shape passive)
 		(at 346.71 66.04 180)
 		(fields_autoplaced yes)
@@ -5688,7 +5688,7 @@
 			)
 			(justify right)
 		)
-		(uuid "135f5d11-154d-5afb-8f2b-f9c82d79ef48")
+		(uuid "ec52e218-fcaf-544c-a60d-be9ba77608ae")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 346.71 66.04 0)
 			(effects
@@ -5699,7 +5699,7 @@
 			)
 		)
 	)
-	(global_label "VM"
+	(global_label "HOME3"
 		(shape passive)
 		(at 354.33 66.04 0)
 		(fields_autoplaced yes)
@@ -5709,7 +5709,7 @@
 			)
 			(justify left)
 		)
-		(uuid "6c6d533a-0162-54ef-b36e-6ac119bacd8a")
+		(uuid "bbfce411-17fc-55fa-ac60-9b1b273f5393")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 354.33 66.04 0)
 			(effects
@@ -5730,8 +5730,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "96ea1b52-6c2a-5c1a-ba3b-4496bf6ff8c0")
-		(property "Reference" "R503"
+		(uuid "03e80e21-a06e-5ec4-9b82-69b5893fbca0")
+		(property "Reference" "R507"
 			(at 406.4 63.74 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5741,7 +5741,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "33R"
 			(at 406.4 68.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5784,7 +5784,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25744"
+		(property "LCSC" "C25105"
 			(at 406.4 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5807,21 +5807,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "e94e5cee-08ee-5668-b975-e42047b6584a")
+			(uuid "99856b96-0704-52c6-8ee9-880b75ce19ab")
 		)
 		(pin "2"
-			(uuid "19f4fa6e-9230-5435-b4f0-6af8cd0c430b")
+			(uuid "40d6347c-6cd0-5680-a4a3-60464a2ffa8e")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R503")
+					(reference "R507")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "DIAG0_3"
+	(global_label "SNS_SCK3_B"
 		(shape passive)
 		(at 402.59 66.04 180)
 		(fields_autoplaced yes)
@@ -5831,7 +5831,7 @@
 			)
 			(justify right)
 		)
-		(uuid "c3961b78-f66a-5a09-ae7e-3dafccf68c05")
+		(uuid "ca6794c3-b5c6-5162-817e-3d18aa39d39b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 402.59 66.04 0)
 			(effects
@@ -5842,7 +5842,7 @@
 			)
 		)
 	)
-	(global_label "+3V3"
+	(global_label "SNS3_SCK"
 		(shape passive)
 		(at 410.21 66.04 0)
 		(fields_autoplaced yes)
@@ -5852,7 +5852,7 @@
 			)
 			(justify left)
 		)
-		(uuid "61759cb4-dd4d-5379-b728-299073ad2e7e")
+		(uuid "ab3a67af-6cf0-51b2-baad-97fa6f3ca9fd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 410.21 66.04 0)
 			(effects
@@ -5873,8 +5873,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "64fd2fcd-91e5-5523-96a6-35e3973a8537")
-		(property "Reference" "R504"
+		(uuid "57021468-260f-5468-a85c-90d1a5ffd1e9")
+		(property "Reference" "R508"
 			(at 462.28 63.74 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5884,7 +5884,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "33R"
 			(at 462.28 68.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5927,7 +5927,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25744"
+		(property "LCSC" "C25105"
 			(at 462.28 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5950,21 +5950,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "ff6f7155-c262-56bc-8a20-531cfe621987")
+			(uuid "63e7ebad-04c7-505b-9e83-8f2c765071dd")
 		)
 		(pin "2"
-			(uuid "32fc1d84-1a9f-5fa6-9493-96cff132c991")
+			(uuid "88a0faa5-a8c7-5167-a2d9-ad04c4676079")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R504")
+					(reference "R508")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "DIAG1_3"
+	(global_label "SNS_MOSI3_B"
 		(shape passive)
 		(at 458.47 66.04 180)
 		(fields_autoplaced yes)
@@ -5974,7 +5974,7 @@
 			)
 			(justify right)
 		)
-		(uuid "56b1da21-1978-5e24-a264-fe29235987e8")
+		(uuid "3b2bbe8c-bc1e-596f-972d-b98fe32365d2")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 458.47 66.04 0)
 			(effects
@@ -5985,7 +5985,7 @@
 			)
 		)
 	)
-	(global_label "+3V3"
+	(global_label "SNS3_MOSI"
 		(shape passive)
 		(at 466.09 66.04 0)
 		(fields_autoplaced yes)
@@ -5995,7 +5995,7 @@
 			)
 			(justify left)
 		)
-		(uuid "6b26f1bf-da8e-501d-9d43-7713e7a46d4a")
+		(uuid "d9bc8079-01bf-53bd-ab79-b8a8e90ba86e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 466.09 66.04 0)
 			(effects
@@ -6016,8 +6016,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "91d704fd-355d-5fa3-a030-c05e8c2991e6")
-		(property "Reference" "R505"
+		(uuid "21ba6004-2c68-5c55-ac47-81d20dd516cf")
+		(property "Reference" "R509"
 			(at 294.64 73.9 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6027,7 +6027,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "33R"
 			(at 294.64 78.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6070,7 +6070,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25744"
+		(property "LCSC" "C25105"
 			(at 294.64 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6093,21 +6093,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "55ca9906-b5df-5531-a6c2-96d1772a7e29")
+			(uuid "c6347a70-de6a-56c3-91ee-8fac2a0dd6b9")
 		)
 		(pin "2"
-			(uuid "3154348a-08af-525f-8f7b-27e6a962f0e8")
+			(uuid "d0699f50-b685-5735-980e-8ac4bd1119a2")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R505")
+					(reference "R509")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "HOME3_IN"
+	(global_label "CS_SNS3"
 		(shape passive)
 		(at 290.83 76.2 180)
 		(fields_autoplaced yes)
@@ -6117,7 +6117,7 @@
 			)
 			(justify right)
 		)
-		(uuid "42ad72ca-dde5-56ff-99a5-67befbeed906")
+		(uuid "aaa528ce-034c-51b9-91ae-0ebbe43b811b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 290.83 76.2 0)
 			(effects
@@ -6128,7 +6128,7 @@
 			)
 		)
 	)
-	(global_label "+3V3"
+	(global_label "SNS3_CS"
 		(shape passive)
 		(at 298.45 76.2 0)
 		(fields_autoplaced yes)
@@ -6138,7 +6138,7 @@
 			)
 			(justify left)
 		)
-		(uuid "0bede4fa-3bff-5fac-a814-d67963504c5a")
+		(uuid "0f4e8be6-84ef-5550-a189-ab094c14ffaf")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 298.45 76.2 0)
 			(effects
@@ -6159,8 +6159,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "d09a18ad-a4a9-59fa-a7bf-d56902aee6b1")
-		(property "Reference" "R506"
+		(uuid "09a3e900-fa34-5819-8d8d-791ee21687aa")
+		(property "Reference" "R510"
 			(at 350.52 73.9 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6170,7 +6170,7 @@
 				)
 			)
 		)
-		(property "Value" "22k"
+		(property "Value" "100R"
 			(at 350.52 78.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6213,7 +6213,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25768"
+		(property "LCSC" "C25076"
 			(at 350.52 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6236,21 +6236,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "793b849c-173d-56d6-a120-7fde4113665a")
+			(uuid "60f3a905-431e-554c-bd60-f54725dbd8a8")
 		)
 		(pin "2"
-			(uuid "8582fd5b-090f-550f-bc66-9801dc41bfbc")
+			(uuid "75f8b2b5-9d83-53e2-ac47-43c076760d7a")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R506")
+					(reference "R510")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "HOME3_IN"
+	(global_label "SNS3_MISO"
 		(shape passive)
 		(at 346.71 76.2 180)
 		(fields_autoplaced yes)
@@ -6260,7 +6260,7 @@
 			)
 			(justify right)
 		)
-		(uuid "ec52e218-fcaf-544c-a60d-be9ba77608ae")
+		(uuid "6a187800-3b5f-5f57-aa7c-b727d3ef57cd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 346.71 76.2 0)
 			(effects
@@ -6271,7 +6271,7 @@
 			)
 		)
 	)
-	(global_label "HOME3"
+	(global_label "SNS3_MISO_B"
 		(shape passive)
 		(at 354.33 76.2 0)
 		(fields_autoplaced yes)
@@ -6281,7 +6281,7 @@
 			)
 			(justify left)
 		)
-		(uuid "bbfce411-17fc-55fa-ac60-9b1b273f5393")
+		(uuid "c3352d14-6210-55d7-93a8-a8f3e37630c8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 354.33 76.2 0)
 			(effects
@@ -6302,8 +6302,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "03e80e21-a06e-5ec4-9b82-69b5893fbca0")
-		(property "Reference" "R507"
+		(uuid "2ae81df7-18eb-54eb-a990-3bd57b4cf8b7")
+		(property "Reference" "R511"
 			(at 406.4 73.9 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6313,7 +6313,7 @@
 				)
 			)
 		)
-		(property "Value" "33R"
+		(property "Value" "100k"
 			(at 406.4 78.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6356,7 +6356,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25105"
+		(property "LCSC" "C25741"
 			(at 406.4 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6379,21 +6379,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "99856b96-0704-52c6-8ee9-880b75ce19ab")
+			(uuid "bf139f70-5e9a-5506-bd98-1006964f08b2")
 		)
 		(pin "2"
-			(uuid "40d6347c-6cd0-5680-a4a3-60464a2ffa8e")
+			(uuid "e8bb10e7-335f-5d68-8c22-f12b5563a675")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R507")
+					(reference "R511")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "SNS_SCK3_B"
+	(global_label "SNS3_SCK"
 		(shape passive)
 		(at 402.59 76.2 180)
 		(fields_autoplaced yes)
@@ -6403,7 +6403,7 @@
 			)
 			(justify right)
 		)
-		(uuid "ca6794c3-b5c6-5162-817e-3d18aa39d39b")
+		(uuid "1e5d66e6-e1a0-58bd-9d4b-db4ca0d84c00")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 402.59 76.2 0)
 			(effects
@@ -6414,7 +6414,7 @@
 			)
 		)
 	)
-	(global_label "SNS3_SCK"
+	(global_label "GND"
 		(shape passive)
 		(at 410.21 76.2 0)
 		(fields_autoplaced yes)
@@ -6424,7 +6424,7 @@
 			)
 			(justify left)
 		)
-		(uuid "ab3a67af-6cf0-51b2-baad-97fa6f3ca9fd")
+		(uuid "5cd8a26a-b887-590b-b64d-34345b78ba24")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 410.21 76.2 0)
 			(effects
@@ -6445,8 +6445,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "57021468-260f-5468-a85c-90d1a5ffd1e9")
-		(property "Reference" "R508"
+		(uuid "bf56678f-2b66-5a8b-b21a-dc541f07de83")
+		(property "Reference" "R512"
 			(at 462.28 73.9 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6456,7 +6456,7 @@
 				)
 			)
 		)
-		(property "Value" "33R"
+		(property "Value" "100k"
 			(at 462.28 78.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6499,7 +6499,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25105"
+		(property "LCSC" "C25741"
 			(at 462.28 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6522,21 +6522,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "63e7ebad-04c7-505b-9e83-8f2c765071dd")
+			(uuid "9fcb338e-a238-56cb-a06a-ed39284d64f9")
 		)
 		(pin "2"
-			(uuid "88a0faa5-a8c7-5167-a2d9-ad04c4676079")
+			(uuid "b3e3dd4b-1602-52a5-80a1-ddf44cb4c97c")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R508")
+					(reference "R512")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "SNS_MOSI3_B"
+	(global_label "SNS3_MOSI"
 		(shape passive)
 		(at 458.47 76.2 180)
 		(fields_autoplaced yes)
@@ -6546,7 +6546,7 @@
 			)
 			(justify right)
 		)
-		(uuid "3b2bbe8c-bc1e-596f-972d-b98fe32365d2")
+		(uuid "1878b87e-6c79-5896-8c41-93a14b42f901")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 458.47 76.2 0)
 			(effects
@@ -6557,7 +6557,7 @@
 			)
 		)
 	)
-	(global_label "SNS3_MOSI"
+	(global_label "GND"
 		(shape passive)
 		(at 466.09 76.2 0)
 		(fields_autoplaced yes)
@@ -6567,7 +6567,7 @@
 			)
 			(justify left)
 		)
-		(uuid "d9bc8079-01bf-53bd-ab79-b8a8e90ba86e")
+		(uuid "136470f4-4e57-5335-900a-e74718c85b04")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 466.09 76.2 0)
 			(effects
@@ -6588,8 +6588,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "21ba6004-2c68-5c55-ac47-81d20dd516cf")
-		(property "Reference" "R509"
+		(uuid "6096c243-badf-5391-91eb-8007191a1d8e")
+		(property "Reference" "R513"
 			(at 294.64 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6599,7 +6599,7 @@
 				)
 			)
 		)
-		(property "Value" "33R"
+		(property "Value" "100k"
 			(at 294.64 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6642,7 +6642,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25105"
+		(property "LCSC" "C25741"
 			(at 294.64 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6665,21 +6665,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "c6347a70-de6a-56c3-91ee-8fac2a0dd6b9")
+			(uuid "102d54e2-8649-5698-87e6-aafb7d394803")
 		)
 		(pin "2"
-			(uuid "d0699f50-b685-5735-980e-8ac4bd1119a2")
+			(uuid "62fc9a0a-7e61-5155-8461-2ecb381c6fa2")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R509")
+					(reference "R513")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "CS_SNS3"
+	(global_label "SNS3_MISO_B"
 		(shape passive)
 		(at 290.83 86.36 180)
 		(fields_autoplaced yes)
@@ -6689,7 +6689,7 @@
 			)
 			(justify right)
 		)
-		(uuid "aaa528ce-034c-51b9-91ae-0ebbe43b811b")
+		(uuid "d99861e9-7641-5f79-9ed6-be6f594622cd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 290.83 86.36 0)
 			(effects
@@ -6700,7 +6700,7 @@
 			)
 		)
 	)
-	(global_label "SNS3_CS"
+	(global_label "GND"
 		(shape passive)
 		(at 298.45 86.36 0)
 		(fields_autoplaced yes)
@@ -6710,7 +6710,7 @@
 			)
 			(justify left)
 		)
-		(uuid "0f4e8be6-84ef-5550-a189-ab094c14ffaf")
+		(uuid "9d18f077-69ed-596a-9c2b-09eeddc8e341")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 298.45 86.36 0)
 			(effects
@@ -6731,8 +6731,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "09a3e900-fa34-5819-8d8d-791ee21687aa")
-		(property "Reference" "R510"
+		(uuid "130a02f1-99f0-5f6c-906e-2790aa53129b")
+		(property "Reference" "R514"
 			(at 350.52 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6742,7 +6742,7 @@
 				)
 			)
 		)
-		(property "Value" "100R"
+		(property "Value" "220R"
 			(at 350.52 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6785,7 +6785,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25076"
+		(property "LCSC" "C25091"
 			(at 350.52 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6808,21 +6808,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "60f3a905-431e-554c-bd60-f54725dbd8a8")
+			(uuid "44e3b84d-4752-5c50-8cf0-e94b4df34653")
 		)
 		(pin "2"
-			(uuid "75f8b2b5-9d83-53e2-ac47-43c076760d7a")
+			(uuid "6aae5a9e-9dcd-5e7c-a1af-23dc22fcbec3")
 		)
 		(instances
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R510")
+					(reference "R514")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(global_label "SNS3_MISO"
+	(global_label "STEP3_B"
 		(shape passive)
 		(at 346.71 86.36 180)
 		(fields_autoplaced yes)
@@ -6832,7 +6832,7 @@
 			)
 			(justify right)
 		)
-		(uuid "6a187800-3b5f-5f57-aa7c-b727d3ef57cd")
+		(uuid "99e9e8da-22dc-5483-a925-13329080037b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 346.71 86.36 0)
 			(effects
@@ -6843,7 +6843,7 @@
 			)
 		)
 	)
-	(global_label "SNS3_MISO_B"
+	(global_label "STEP3_O"
 		(shape passive)
 		(at 354.33 86.36 0)
 		(fields_autoplaced yes)
@@ -6853,7 +6853,7 @@
 			)
 			(justify left)
 		)
-		(uuid "c3352d14-6210-55d7-93a8-a8f3e37630c8")
+		(uuid "5ea634a0-e91c-5643-ac98-46a13b1e5473")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 354.33 86.36 0)
 			(effects
@@ -6874,8 +6874,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "2ae81df7-18eb-54eb-a990-3bd57b4cf8b7")
-		(property "Reference" "R511"
+		(uuid "9990fa47-244b-56bb-b469-5e4b4b93b685")
+		(property "Reference" "R515"
 			(at 406.4 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6885,7 +6885,7 @@
 				)
 			)
 		)
-		(property "Value" "100k"
+		(property "Value" "220R"
 			(at 406.4 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6928,7 +6928,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25741"
+		(property "LCSC" "C25091"
 			(at 406.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6941,578 +6941,6 @@
 		)
 		(property "MPN" ""
 			(at 406.4 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "bf139f70-5e9a-5506-bd98-1006964f08b2")
-		)
-		(pin "2"
-			(uuid "e8bb10e7-335f-5d68-8c22-f12b5563a675")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R511")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "SNS3_SCK"
-		(shape passive)
-		(at 402.59 86.36 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "1e5d66e6-e1a0-58bd-9d4b-db4ca0d84c00")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 402.59 86.36 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 410.21 86.36 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "5cd8a26a-b887-590b-b64d-34345b78ba24")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 410.21 86.36 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 462.28 86.36 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "bf56678f-2b66-5a8b-b21a-dc541f07de83")
-		(property "Reference" "R512"
-			(at 462.28 84.06 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "100k"
-			(at 462.28 88.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 462.28 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 462.28 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 462.28 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C25741"
-			(at 462.28 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 462.28 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9fcb338e-a238-56cb-a06a-ed39284d64f9")
-		)
-		(pin "2"
-			(uuid "b3e3dd4b-1602-52a5-80a1-ddf44cb4c97c")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R512")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "SNS3_MOSI"
-		(shape passive)
-		(at 458.47 86.36 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "1878b87e-6c79-5896-8c41-93a14b42f901")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 458.47 86.36 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 466.09 86.36 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "136470f4-4e57-5335-900a-e74718c85b04")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 466.09 86.36 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 294.64 96.52 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "6096c243-badf-5391-91eb-8007191a1d8e")
-		(property "Reference" "R513"
-			(at 294.64 94.22 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "100k"
-			(at 294.64 98.82 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 294.64 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 294.64 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 294.64 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C25741"
-			(at 294.64 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 294.64 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "102d54e2-8649-5698-87e6-aafb7d394803")
-		)
-		(pin "2"
-			(uuid "62fc9a0a-7e61-5155-8461-2ecb381c6fa2")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R513")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "SNS3_MISO_B"
-		(shape passive)
-		(at 290.83 96.52 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "d99861e9-7641-5f79-9ed6-be6f594622cd")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 290.83 96.52 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 298.45 96.52 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "9d18f077-69ed-596a-9c2b-09eeddc8e341")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 298.45 96.52 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 350.52 96.52 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "130a02f1-99f0-5f6c-906e-2790aa53129b")
-		(property "Reference" "R514"
-			(at 350.52 94.22 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "220R"
-			(at 350.52 98.82 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 350.52 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 350.52 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 350.52 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C25091"
-			(at 350.52 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 350.52 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "44e3b84d-4752-5c50-8cf0-e94b4df34653")
-		)
-		(pin "2"
-			(uuid "6aae5a9e-9dcd-5e7c-a1af-23dc22fcbec3")
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/605d6f3e-dd0e-5d9d-adcd-e99b50feefaf"
-					(reference "R514")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "STEP3_B"
-		(shape passive)
-		(at 346.71 96.52 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "99e9e8da-22dc-5483-a925-13329080037b")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 346.71 96.52 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "STEP3_O"
-		(shape passive)
-		(at 354.33 96.52 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "5ea634a0-e91c-5643-ac98-46a13b1e5473")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 354.33 96.52 0)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 406.4 96.52 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "9990fa47-244b-56bb-b469-5e4b4b93b685")
-		(property "Reference" "R515"
-			(at 406.4 94.22 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Value" "220R"
-			(at 406.4 98.82 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 406.4 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 406.4 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 406.4 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C25091"
-			(at 406.4 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" ""
-			(at 406.4 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7539,7 +6967,7 @@
 	)
 	(global_label "DIR3_B"
 		(shape passive)
-		(at 402.59 96.52 180)
+		(at 402.59 86.36 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7549,7 +6977,7 @@
 		)
 		(uuid "6938b50d-1b24-5c15-a0be-b6aff5bddfa0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 402.59 96.52 0)
+			(at 402.59 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -7560,7 +6988,7 @@
 	)
 	(global_label "DIR3_O"
 		(shape passive)
-		(at 410.21 96.52 0)
+		(at 410.21 86.36 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7570,7 +6998,7 @@
 		)
 		(uuid "718f1589-9861-58aa-b271-ebd230fadc13")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 410.21 96.52 0)
+			(at 410.21 86.36 0)
 			(effects
 				(font
 					(size 1 1)

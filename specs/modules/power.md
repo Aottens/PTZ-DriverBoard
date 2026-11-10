@@ -19,7 +19,7 @@ J101 ─ VIN_RAW ─ Q101 (reverse polarity) ─ VIN ─┬─ F101 7 A ─ VM �
 | J101 | JST B2P-VH, 2 pins, 3.96 mm, through-hole, with latch | C160315 | JST VH series; pin 1 marked on the housing |
 | Q101 | AOD4185, P-channel, -40 V, 15 mΩ at -10 V, TO-252 | C400894 | Alpha & Omega, Rev 4.2, June 2024 |
 | D101 | BZT52C12 class zener, 12 V, SOD-123 | C12747 | LRC LBZT52C12T1G |
-| D102 | SMBJ24A, unidirectional TVS, 600 W | C211760 | Stand-off 24 V, breakdown 26.7 to 29.5 V, clamp 38.9 V at 15.4 A |
+| D102 | SMBJ24A, unidirectional TVS, 600 W | C7470946 | Stand-off 24 V, breakdown 26.7 to 29.5 V, clamp 38.9 V at 15.4 A |
 | F101 | Littelfuse 0452007.MRL, 7 A slow, 2410 | C72975 | Littelfuse 452 series |
 | F102 | Littelfuse 046601.5NRHF, 1.5 A fast, 1206, 63 V | C187598 | Littelfuse 466 series |
 | C101, C102 | 220 µF 50 V aluminium electrolytic, 10 × 10.2 mm | C970698 | Chosen for its ESR, which damps a hot-plug (POW-02) |
