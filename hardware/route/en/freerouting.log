@@ -1,0 +1,37 @@
+2026-11-10 10:15:30.623 INFO   Freerouting v2.4.1 (build-date: 2026-09-03)
+2026-11-10 10:15:30.624 DEBUG  [startup] user-data path : /Users/aernoutottens/Library/Application Support/freerouting  (source: default (OS standard user-data path))
+2026-11-10 10:15:30.624 DEBUG  [startup] log file       : /Users/aernoutottens/Documents/Projects/PTZ-Head-HWRedesign/.claude/worktrees/board-rev-a-decdca/hardware/route/en/freerouting.log
+2026-11-10 10:15:30.646 DEBUG  Settings loaded from '/Users/aernoutottens/Library/Application Support/freerouting/freerouting.json'.
+2026-11-10 10:15:30.646 WARN   [startup] freerouting.json contains a stale 'logging.file.location' value: '/Users/aernoutottens/Library/Logs/freerouting/freerouting.log'. The actual log file is being written to '/Users/aernoutottens/Documents/Projects/PTZ-Head-HWRedesign/.claude/worktrees/board-rev-a-decdca/hardware/route/en/freerouting.log' (as resolved at startup). The stale value will be corrected in freerouting.json on next save. If you see this in Docker, the old JSON was written by an earlier version that stored the host path; the fix is to delete freerouting.json so it is regenerated with the correct path.
+2026-11-10 10:15:30.662 DEBUG  Version: 2.4.1,2026-09-03
+2026-11-10 10:15:30.662 DEBUG  Command line arguments: '-de rev-a.dsn -do rev-a.ses -mp 12 -l en'
+2026-11-10 10:15:30.662 DEBUG  Architecture: Mac OS X,aarch64,26.6.2
+2026-11-10 10:15:30.662 DEBUG  Java: 26.0.2,Homebrew
+2026-11-10 10:15:30.662 DEBUG  System Language: nl,nl_NL
+2026-11-10 10:15:30.663 DEBUG  Hardware: 10 CPU cores, 311333 CPU score, 4096 MB RAM
+2026-11-10 10:15:30.663 DEBUG  UTC Time: 2026-11-10T09:15:30.646981Z
+2026-11-10 10:15:30.663 DEBUG  GUI Language: en
+2026-11-10 10:15:30.663 DEBUG  Host: N/A
+2026-11-10 10:15:30.663 DEBUG  Screen: 1470x956, 128 DPI
+2026-11-10 10:15:31.701 DEBUG  Loaded router settings from: /Users/aernoutottens/Library/Application Support/freerouting/freerouting.json
+2026-11-10 10:15:31.701 DEBUG  Applied CLI router setting: router.max_passes = 12
+2026-11-10 10:15:31.701 DEBUG  Applied CLI router setting: router.enabled = true (implicit from -de/-do batch mode)
+2026-11-10 10:15:31.702 DEBUG  No router settings found in environment variables
+2026-11-10 10:15:31.706 INFO   Opening 'rev-a.dsn'...
+2026-11-10 10:15:31.735 DEBUG  Set DEFAULT clearance (all layers): 1500 (0.0375 mm) from DSN value 150.0
+2026-11-10 10:15:31.736 DEBUG  Set clearance (all layers): smd_smd = 375 (0.009375 mm), classes [2,2]
+2026-11-10 10:15:31.737 DEBUG  Set default trace width (all layers): DSN=200.0 → board=2000 (0.05 mm)
+2026-11-10 10:15:31.751 DEBUG  Loaded router settings from DSN file: rev-a.dsn (4 layers)
+2026-11-10 10:15:31.752 DEBUG  Merging settings from 6 sources:
+2026-11-10 10:15:31.752 DEBUG    - Default Settings (priority 0): base settings
+2026-11-10 10:15:31.753 DEBUG    - freerouting.json (priority 10): 0 fields changed
+2026-11-10 10:15:31.753 DEBUG    - DSN file: rev-a.dsn (priority 20): 6 fields changed
+2026-11-10 10:15:31.753 DEBUG    - Environment Variables (priority 55): 0 fields changed
+2026-11-10 10:15:31.753 DEBUG    - CLI Arguments (priority 60): 1 fields changed
+2026-11-10 10:15:31.753 DEBUG    - GUI Settings (priority 65): 0 fields changed
+2026-11-10 10:15:31.753 DEBUG  Settings merged successfully from 6 source(s)
+2026-11-10 10:15:32.154 INFO   New version available: v2.5.0
+2026-11-10 10:15:32.158 INFO   [CAD6D5\3435CD] Loading board file 'rev-a.dsn'...
+2026-11-10 10:15:32.163 DEBUG  Set DEFAULT clearance (all layers): 1500 (0.0375 mm) from DSN value 150.0
+2026-11-10 10:15:32.163 DEBUG  Set clearance (all layers): smd_smd = 375 (0.009375 mm), classes [2,2]
+2026-11-10 10:15:32.163 DEBUG  Set default trace width (all layers): DSN=200.0 → board=2000 (0.05 mm)
