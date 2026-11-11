@@ -79,7 +79,7 @@ Numbers and reasoning in `docs/research/README.md`, R-01. First camera: Panasoni
 - BRD-01 Rev A's outline and mounting follow the working envelope in `docs/prompts/fable-board-rev-a.md`. The new 3D head is then designed around the board (R-06).
 - BRD-02 All SMD on top, assembled by JLC with Economic PCBA, so no part may be Standard Only; connectors at the board edges.
 - BRD-03 Layers follow from the thermal and routing need of DRV-05. Proposal: 4 layers.
-- BRD-04 **At most 85×65 mm** (owner, 2026-11-10), smaller only when heat, routing and probing do not suffer. When a feature and size conflict, CTL-03 sets what goes first and the choice is reported to the owner.
+- BRD-04 **At most 100×80 mm** (owner, 2026-11-10, raised from 85×65 mm the same day: the board lies in the base, not in the head), smaller only when heat, routing and probing do not suffer. When a feature and size conflict, CTL-03 sets what goes first and the choice is reported to the owner.
 
 ## Firmware (FW)
 

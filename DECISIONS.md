@@ -4,6 +4,116 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev A: what was done with the blind review
+
+The review is `hardware/review/BLIND_REVIEW.md`: no KRITIEK finding, five BELANGRIJK. `hardware/review/HANDLED.md` lists every finding, the small ones too.
+
+**B1, the 3.3 V output on one 0.2 mm track and one via: fixed.** Six vias and 0.5 mm tracks now. Checked on the board: `+3V3` vias at L102.2, C112.1 and C113.1, track widths 0.5 mm.
+
+**B2, the W5500 crystal tracks: partly fixed, the rest accepted.** `ETH_XI`, the oscillator's input, now runs on the top layer only, 2.4 mm from pin 30 to the crystal and 3.7 mm on to R802 and C810. A `+3V3` track that ran between the crystal's pads is gone. `ETH_XO`, the driven end, is down from about 36 mm and five vias to about 22 mm and three, and no longer passes the 5 V regulator. A shorter way does not exist without moving parts: pin 31 is shut in on the top layer between the tracks of pins 30 and 33, and the inner layer and the bottom under the crystal carry the SPI and chip-select lines.
+*Why accepted:* the calculation gives about 3 pF of extra capacitance on XO (three vias at 0.4 pF, 11.5 mm on inner layer 2, 6 mm on the bottom, 4 mm on top), which moves the load the crystal sees from 12 pF to between 11 and 12.5 pF: under 15 ppm of pull at the usual 10 to 15 ppm/pF, against the 50 ppm Ethernet allows. XO is the low-impedance end of the oscillator; the sensitive end is the short one.
+*Reversal trigger:* the link does not come up or drops packets in bring-up step 7.1b. Then Rev B turns the crystal a quarter and puts it beside pins 30 and 31.
+
+**B3, the TVS D102 has no JLC footprint to check its rotation against: accepted with two checks.** The placement file carries KiCad's own angle for it. KiCad's `D_SMB` has pad 1 as the cathode; how JLC's library draws this part is not known, so the angle is not verified. It is the first line of the JLC preview checklist in the pull request, and bring-up step 0.3b measures the diode's direction before any supply is connected. A reversed TVS costs turning one SMB part by hand.
+*Reversal trigger:* none; a later revision takes a part number that JLC's library knows.
+
+**B4, the sensor ports only suit SPI with the clock resting low: accepted as a stated limit.** One pin both enables the buffer and selects the sensor, so a clock that rests high rises at the port as chip select falls. `specs/modules/sensing.md` ENC-05 now says so, and the bring-up checklist has step 5.2b. The reviewer names AS5047 and AS5048A as sensors with the clock resting low, and MT6835 as one with the clock resting high. *Alternatives:* a pull-up footprint per port or a separate enable pin; both need a pin or parts the board has no room for at this stage, and no sensor has been chosen that needs them.
+*Reversal trigger:* the rig (R-T2) chooses a sensor that needs the clock high at rest and does not accept mode 0 timing. Then Rev B gives the buffer its own enable.
+
+**B5, four axes at 1.5 A RMS continuously run hot: accepted, as `calc/thermal.py` already said.** The reviewer's own calculation comes to a junction at 100 to 125 °C in a closed base. The board has nine vias under each driver, a bare copper window under each for a heat bar, a fan output, and standstill current reduction is a firmware setting. Bring-up steps 4.4 and 4.8 read the temperatures before the board goes into the base.
+*Reversal trigger:* step 4.8 shows a driver over 100 °C at the currents the head really uses, with the heat bar fitted.
+---
+
+## 2026-11-10 — Rev A: the board grows to 100 × 80 mm
+
+**Decision (owner, in chat):** The board may be 100 × 80 mm instead of 85 × 65 mm. It lies in the base, not in the head, where the first size came from. The RJ45 jack and the supply inlet sit in the base wall. The four M3 holes stay 4 mm from the edges in each corner.
+
+**Alternatives considered:** staying at 85 × 65 mm with a router that pushes tracks aside and a redesigned driver cell (tried: 39 to 62 connections stayed open in six routing runs); six layers on the old size; dropping CAN (about 2 % of the area, and not where the congestion was).
+
+**Why:** On 85 × 65 mm the parts' courtyards filled 73 % of the board, top side only, with two signal layers. On 100 × 80 mm they fill 50 %. The calculation from the brief's envelope (base 160 mm inside, motor 42 × 42 mm at 55.7 mm, board 1 mm from the motor) leaves 19.7 mm from the corners beside the motor to the wall and 11.9 mm from the far corners; the middle of each free edge has about 30 mm.
+
+**Reversal trigger:** something along the base wall (screw bosses, the bearing seat, the jacks in the wall) needs more than the room the corners leave; then the far corners are cut off at an angle before the board shrinks.
+
+---
+
+## 2026-11-10 — Rev A: the Ethernet jack is off the board
+
+**Decision:** The W5500 and all of its circuit stay on the board, but the RJ45 jack does not: J801 is a 7-pin header for a short lead to a jack with magnetics in the housing wall. The CAN connector stays.
+
+**Alternatives considered:** the HR911105A on the board, as the brief asked first; a transformer on the board with a 4-wire header behind it; dropping CAN as well.
+
+**Reasoning:** counted by courtyard area, everything on 85 x 65 mm with parts on one side came to about 76 % of the area where parts can go, which leaves no room to route. The brief names the jack as the first thing to go (CTL-03). The header costs a tenth of the jack's area. A transformer on the board would have been the cleaner electrical cut, but its pin order could not be checked against a maker's sheet in this run.
+
+**Reversal trigger:** a later revision gets a larger outline or parts on both sides; then the jack returns to the board.
+
+---
+
+## 2026-11-10 — Rev A: one chip select per driver and per sensor, no daisy chain
+
+**Decision:** The four drivers and four sensor ports each have their own chip select from a dual 2-to-4 decoder (two address lines, two strobes). The drivers are not daisy-chained.
+
+**Alternatives considered:** the TMC5240 daisy chain with one chip select, which `docs/research/README.md` called possibly the best part; a 4-to-16 decoder that also selects the W5500.
+
+**Reasoning:** a chain makes every access four times as long and lets one dead driver take the other three off the bus, on a prototype whose job is to be measured. Four separate writes at 4 MHz start four axes within about 40 microseconds of each other, by calculation (4 x 40 bits), which a camera head cannot show. Two strobes keep the decoder free of glitches when the address changes. The W5500 keeps a plain chip select, because Espressif's driver expects one.
+
+**Reversal trigger:** the rig shows that axes must start within microseconds; then the chain is a board change, not a firmware one.
+
+---
+
+## 2026-11-10 — Rev A: slow signals on an I/O expander, the stop on direct pins
+
+**Decision:** The ESP32-C6's 22 pins carry the SPI bus, chip selects, I2C, RS-485, CAN, USB, the fan, the supply reading, the boot button, and the two signals that stop motors: `DRV_ENN` and the expander's interrupt. DIAG0 and DIAG1 of all axes, the Ethernet interrupt and reset, the status LED and the camera outputs are on a PCAL6416A. No pin is spare.
+
+**Alternatives considered:** DIAG wired together on one direct pin, which fails when one axis uses DIAG0 as a step output; an expander without an interrupt mask, which would flood the MCU with interrupts in that case.
+
+**Reasoning:** the driver stops its own motor on a stall or a home switch, in the chip. What the MCU needs fast is a way to cut power, and that is `DRV_ENN` on a direct pin, pulled up so the bridges are off at reset. The same pin gates the buffer of the external driver ports, so it stops those too.
+
+**Reversal trigger:** firmware needs a DIAG edge faster than an I2C read, about 0.1 ms.
+
+---
+
+## 2026-11-10 — Rev A: sensor ports on their own buffered bus, 3.3 V only
+
+**Decision:** Each sensor port gets its own buffered clock and data-out, switched on only while a sensor is selected, and its data-in passes a buffer that opens only for that port. The ports are 3.3 V only. The home input shares the 7-pin connector.
+
+**Alternatives considered:** the sensor cable directly on the bus that the drivers and Ethernet share; a solder jumper for 5 V sensors.
+
+**Reasoning:** the brief asks to keep the long cable from loading the shared bus. Buffers do that, and gating them keeps Ethernet's clock edges out of a cable that runs beside motor wires. A 5 V option would need 5 V signal levels as well: a 3.3 V clock does not reach a 5 V sensor's input-high level.
+
+**Reversal trigger:** R-T2 chooses a sensor that needs 5 V or another bus.
+
+---
+
+## 2026-11-10 — Rev A: the board alone carries about 1 A per axis continuously
+
+**Decision:** The board gets nine vias and a bare ground window on the bottom under each driver, the fan output and temperature readings. It is not claimed to carry 1.5 A on all four axes in still air.
+
+**Alternatives considered:** a larger board; a dedicated heat-sink footprint; leaving it to the datasheet's 2.1 A figure.
+
+**Reasoning:** `hardware/calc/thermal.py` puts four axes at 1.5 A at about 120 C board temperature in still air, past what a printed housing and the chip allow; about 1.0 A on four axes, or 1.35 A on two, is the limit. The earlier estimate in `docs/research/README.md` counted the drivers only, cold, on a board with nothing else on it. With a metal bar on the windows or moving air the same calculation allows 1.5 A and more. Nothing here is measured.
+
+**Reversal trigger:** the bring-up run (step 4.4 and 4.8) shows the calculation is far off, either way.
+
+---
+
+## 2026-11-10 — Rev A: smaller choices made in layout
+
+**Decision:**
+- Motor connector pins are A1, A2, B2, B1: coil B mirrored, because that is the order the driver's pins leave the chip.
+- Motor, sensor, CAN and fan connectors are top entry and may stand inside the board; side-entry connectors are on the three free edges.
+- No reset button: the chip resets over USB. A test point on EN remains.
+- No ESD capacitors on the motor outputs: they did not fit. The motor housings must be grounded instead.
+- Fuses are soldered, not in holders.
+- The two bulk capacitors are ordinary aluminium electrolytics on purpose: their resistance damps a hot-plug.
+
+**Alternatives considered:** each of these the other way round; see `specs/modules/` and `hardware/BUILD_NOTES.md`.
+
+**Reasoning:** space on 85 x 65 mm with parts on one side, and tracks that do not cross.
+
+**Reversal trigger:** an ESD reset on the rig brings the output capacitors back first.
+
+---
+
 ## 2026-11-10 — Rev A is designed in one run by Fable 5.2, before the rig results
 
 **Decision:** One Fable 5.2 session takes Rev A from requirements to files ready to order, from `docs/prompts/fable-board-rev-a.md`, without waiting for the rig. It uses the leading candidates, at most 85×65 mm, JLC Economic PCBA, a W5500 with RJ45, and two open-drain camera outputs. Gate 1 for this build is the owner's approval of that prompt. The order gate is unchanged, and only the owner orders.

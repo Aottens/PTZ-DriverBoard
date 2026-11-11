@@ -1,0 +1,10 @@
+(fp_lib_table
+	(version 7)
+	(lib
+		(name "ptz")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/ptz.pretty")
+		(options "")
+		(descr "PTZ driver board")
+	)
+)
