@@ -8,11 +8,11 @@ The research questions in `docs/research/README.md` stay open: the rig can still
 
 ```
  11-17 V ─ J101 ─ P-FET (reverse) ─┬─ fuse T 5 A ─ VM ─ TVS, 4 × 100 µF ─► 4 driver sockets ─► motors M1..M4
-                                   └─ fuse T 1 A ─ 5 V module (SIP-3) ─ diode ─ +5V
+                                   └─ fuse T 1 A ─ TVS ─ 5 V module (SIP-3) ─ diode ─ +5V
  +5V ─┬─► MCU module's 5V pin (its own USB feeds the same net through the module's diodes)
       ├─ regulator ─ +3V3      multiplexer, Ethernet module, drivers' logic supply, pull-ups
       ├─ regulator ─ +3V3_SNS ─ jumper (or +5V) ─ V_SNS ─► sensor ports, home plugs, spare port
-      └─ jumper (or VM) ─► fan
+      └─► fan header (5 V only), switched in its minus lead
 
  ESP32-S3-DevKitC-1U on sockets (28 pins used, none spare; firmware/include/pins.h is the one place they are assigned)
   ├─ SPI ─┬─ 4 × driver socket (TMC2240), each behind three solder jumpers and with its own select line
@@ -28,7 +28,7 @@ The research questions in `docs/research/README.md` stay open: the rig can still
 Per axis: a socket for a StepStick driver module, a motor connector, a sensor port on its own multiplexer channel
 with pull-ups chosen by solder jumper and an ESD array, and a home input with a clamp.
 
-What JLC assembles is 108 small SMD parts on 24 BOM lines. What the owner buys and fits: the MCU, driver and
+What JLC assembles is 115 small SMD parts on 24 BOM lines. What the owner buys and fits: the MCU, driver and
 Ethernet modules, the 5 V regulator, two fuses, four capacitors, and every connector (`hardware/ASSEMBLY.md`).
 
 ## What stops a motor

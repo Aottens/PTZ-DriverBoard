@@ -4,7 +4,7 @@ A driver board for PTZ camera heads and its firmware, designed together: one pri
 
 ## Status
 Rev B of the board is designed and checked, and ready for a JLC quote: a cheap two-layer carrier for plug-in
-drivers, MCU and Ethernet, estimated at €62 to €78 for five assembled boards. It is not ordered and not measured.
+drivers, MCU and Ethernet, estimated at €63 to €80 for five assembled boards. It is not ordered and not measured.
 Rev A, which would have cost almost €400, is under the git tag `rev-a`. There is no firmware yet.
 The test rig for the mechanics is modelled, not printed.
 Plan in `BACKLOG.md`, handoff in `STATE.md`, decisions in `DECISIONS.md`.

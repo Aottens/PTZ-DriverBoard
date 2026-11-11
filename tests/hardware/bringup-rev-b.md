@@ -12,25 +12,28 @@ connecting. The board comes from JLC with its SMD parts only; the steps say when
 
 - [ ] 0.1 Look at the board next to `hardware/fab/render_top.png`: every SMD part present, no bridges on U701 (the
       24-pin chip) and on the five six-pin ESD arrays (U301, U401, U501, U601, U702).
-- [ ] 0.2 **Polarity as in the JLC preview list in the pull request:** the stripe of both tantalum capacitors C111
-      and C114 (the stripe is the plus) is on the pad marked on the silkscreen; D101 (TVS) has its band towards the
-      north edge; D102 has its band towards the west.
+- [ ] 0.2 **Polarity as in the JLC preview list in the pull request:** the stripe of the six tantalum capacitors
+      (three beside each 3.3 V regulator: C111, C116, C117 and C114, C118, C119; the stripe is the plus) is on the
+      side the render shows; D101 (TVS) has its band towards the north edge; D102 has its band towards the west.
 - [ ] 0.3 **TVS direction.** Multimeter on diode test: red lead on `GND`, black on `VM` reads 0.5 to 0.8 V; leads
-      swapped reads open. If it is the other way round, D101 is fitted reversed: turn it before going on.
+      swapped reads open. If it is the other way round, D101 is fitted reversed: turn it before going on. The same
+      for D103, the second TVS beside the 5 V module: red on `GND`, black on the module's `IN` pad.
 - [ ] 0.4 Resistance to `GND`: `5V` above 1 kΩ, `3V3` above 500 Ω, `VSNS` above 500 Ω, `VIN` open (above 100 kΩ),
       `VM` above 50 kΩ (R103 and R104 are 110 kΩ).
 - [ ] 0.5 Solder jumpers as delivered: the twelve `SPI` jumpers closed; in each `PU` pair the bridged one closed
-      and the other open; `VSNS` on the `3V3` side; `FAN V` on the `5V` side.
+      and the other open; `VSNS` on the `3V3` side.
 
 ## 1. Logic supply, current-limited (POW-01, POW-02, POW-03, POW-07, POW-08)
 
-Solder J101, F102 (T 1 A, or its holder with the fuse in) and U101 (the 5 V module; pin 1 at `IN`). **Not yet:**
+Solder J101, F102 (T 1 A, or its holder with the fuse in) and U101 (the 5 V module, a Traco TSR 1-2450 or Mornsun
+K7805-1000R3; pin 1 at `IN`). **Not yet:**
 F101, the capacitors, the sockets.
 
 - [ ] 1.1 **Reverse polarity first, on purpose:** supply at 12 V, limit 50 mA, plus and minus swapped on J101.
       Expected: under 1 mA, `VIN` stays below 0.3 V. Switch off.
 - [ ] 1.2 Correct polarity, 12 V, limit 100 mA. Expected: 10 to 30 mA. If the supply sits in its limit, switch off.
-- [ ] 1.3 `VIN` within 0.1 V of the supply. `5V` 4.6 to 4.9 V (the module's 5.0 V less D102). `3V3` 3.23 to 3.37 V.
+      In this section switch the lab supply on with the board connected; do not plug a live lead into J101.
+- [ ] 1.3 `VIN` within 0.1 V of the supply. `5V` 4.5 to 4.9 V (the module's 5.0 V less D102). `3V3` 3.23 to 3.37 V.
       `VSNS` 3.23 to 3.37 V. `VM` below 0.1 V: F101 is not fitted.
 - [ ] 1.4 Raise the supply slowly to 17 V: the current falls a little, the three rails do not move. Back to 12 V.
 - [ ] 1.5 Lower the supply to 11 V: the rails hold.
@@ -69,8 +72,10 @@ A test program that prints the ADC readings and pin states.
 - [ ] 4.1 `VM_SENSE` (GPIO1): supply voltage divided by 11: 1.09 V at 12 V, 1.55 V at 17 V. Pull F101: it reads 0.
 - [ ] 4.2 `NTC_SENSE` (GPIO2): about 1.65 V at 25 °C; it falls when you warm RT801 (marked `NTC`) with a finger.
 - [ ] 4.3 `ENN` reads 3.3 V while the module's RST button is held, and whenever firmware does not drive it low.
-- [ ] 4.4 `DIAG` reads 0 V with no driver plugged in.
+- [ ] 4.4 `DIAG` (GPIO3) reads 0 V with no driver plugged in.
 - [ ] 4.5 `RST` falls below 0.5 V while the module's RST button is held, and returns to 3.3 V.
+- [ ] 4.6 Download mode still works with everything soldered: hold BOOT, tap RST, and the computer sees the ROM's
+      serial port. GPIO46 carries DIR2 and must be low for this; nothing on the board pulls it up.
 
 ## 5. Sensor ports and home inputs (ENC-01 to ENC-08)
 
@@ -106,7 +111,8 @@ Solder the driver sockets (2 × 8 pins and the 2-pin piece each) and the motor c
       and `EN` corners are printed on the board and on the module.
 - [ ] 7.2 One TMC2240 module in `DRIVER 1`, no motor. Current rises by under 50 mA. Firmware reads its
       IOIN register (0x04) over SPI with `DRV1_CS` (GPIO13): the version field is neither 0x00 nor 0xFF.
-- [ ] 7.3 Set DIAG0 to push-pull, active high; force a fault flag (or stall test later): `DIAG` goes to about 3 V.
+- [ ] 7.3 Set DIAG0 to push-pull, active high (`diag0_pushpull` in GCONF: as an open-drain output it cannot raise
+      the shared line); force a fault flag (or stall test later): `DIAG` goes to about 3 V.
 - [ ] 7.4 Motor on `M1`, current set to 0.3 A, limit of the supply 1 A, `ENN` low: the motor holds, and turns on
       step pulses (GPIO12 step, GPIO11 direction). `ENN` high: it is free.
 - [ ] 7.5 Repeat 7.2 to 7.4 for sockets 2, 3 and 4, then with all four modules in. Read all four over SPI in turn:
@@ -119,7 +125,8 @@ Solder the driver sockets (2 × 8 pins and the 2-pin piece each) and the motor c
 
 ## 8. Fan (AUX-03)
 
-- [ ] 8.1 `FAN` pin 1 carries about 4.7 V. With GPIO45 low the fan is off; high, it runs; PWM changes its speed.
+- [ ] 8.1 `FAN` pin 1 carries about 4.6 V: the output is for a 5 V fan of at most 0.2 A, never one for the supply
+      voltage. With GPIO45 low the fan is off; high, it runs; PWM changes its speed.
 - [ ] 8.2 The fan stays off while the module's RST button is held.
 
 ## 9. In the base

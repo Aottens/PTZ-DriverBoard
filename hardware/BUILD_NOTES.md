@@ -79,20 +79,47 @@ four-layer board, git tag `rev-a`); they stay because the tools and the habits a
 40. **A calculation should be allowed to overturn a part.** The first sensor-supply regulator limited a short to
     100 mA, which looked fine until the product with 4.6 V was set against its 0.25 W package. Three SOT-23 FETs in
     parallel looked fine until the fuse's let-through was set against them. Both are in `calc/power.py` now.
+41. **A module that is soldered in has no room under it.** A module on 8.5 mm sockets leaves 2.1 mm for parts
+    under it; the Ethernet module, soldered in for its height, leaves none. The first placement had ten parts
+    there. `check_board.py` now holds a rule per module: how high a part under it may be, and for this one, none.
+42. **An option nobody asked for is a liability.** The fan jumper to the motor supply looked like a free knob; it
+    put an output on a 5 A fuse behind a 0.5 mm track. The blind review found it, and the PRD had never asked.
+43. **Sum the capacitance a small regulator module must charge.** These modules name a largest capacitive load
+    (220 to 680 µF here), and a board collects 22 µF and 100 µF parts quickly. The sum is in `calc/power.py`; it
+    ruled one module out.
+44. **Keep the fault line off the strapping pins.** A pin that must be low to enter download mode may carry a
+    direction signal, not a line that a plugged-in module can hold high.
+45. **A router that necks a supply track keeps the neck.** Freerouting and `complete.py` both lay the whole
+    connection at the width that passed the tightest spot. `tools/widen.py` sets every such piece to full width,
+    lets DRC name the ones that do not fit, and steps only those down.
+46. **Show the output of every step in a build script.** `run.sh` once sent `board.py finish` to `/dev/null`, so a
+    silkscreen that could not place a name stopped the build with nothing on the screen.
+47. **Write the pin table to a file, and filter it by footprint, not by value.** `fab/jlc_pins.py` chose polar
+    capacitors by the text "100 µF"; when the tantalums became 10 µF they dropped out of the table unnoticed.
+48. **On two layers, lay the ground before the signals.** A router sees a pour as space it may cut, and a bus
+    between two rows of modules cuts both pours from edge to edge: the first two routings left 4 mm of ground
+    between the drivers and everything else, and DRC cannot see that. The ground that must stay whole is now a set
+    of tracks in `placement.py`, and `tools/groundcut.py` measures what joins two groups of pads (max-flow on a
+    raster of the copper).
+49. **A wide track ends in a half circle.** A 3 mm bridge that stopped 2 mm from a pin row shorted to a pin with
+    its round end. Count half the width beyond every end point.
+50. **Protect each branch behind its own fuse.** A TVS behind the motor fuse does nothing for the logic branch
+    while that fuse is out, which is exactly how a careful first power-up is done.
+51. **Empty the zip before filling it.** `zip -r` adds to an archive that exists, so two files the script no
+    longer made stayed in the Gerber zip.
+52. **A second blind review finds different things.** The first reviewer read parts and heights, the second
+    measured copper. Neither repeated the other.
 
 ## How the routed board was made (2026-11-11)
 
 From `hardware/`, with `KP` the KiCad Python from `CLAUDE.md`. Freerouting is not repeatable, so a rerun gives
 another board; the steps are.
 
-1. `sh route/run.sh 20`: `board.py place` (the log must say "180 footprints placed"), `board.py dsn`, Freerouting
-   headless with 20 passes (under a minute), `board.py ses`, `board.py finish`, `complete.py 4`. The run that made
-   this board ended with "round 2: 0 unconnected, 0 violations".
+1. `sh route/run.sh 20`: `board.py place` (the log must say "186 footprints placed"), `board.py dsn`, Freerouting
+   headless with 20 passes (about a minute), `board.py ses`, `board.py finish`, `complete.py 4`, `widen.py`. The
+   board in this repository is the third routing: each blind review moved parts or added copper.
 2. `$KP check_board.py` and `$KP check_fit.py`.
 
-Done by hand on this board afterwards, with a few lines of pcbnew each, and not in any script:
-- the VIN track at Q101's source was 1.2 mm wide for 4.7 mm; it is 3.0 mm now, as `placement.TRACKS` has it for a
-  new board;
-- the 0.38 mm necks of `+3V3` and `V_SNS` were widened to 0.5 mm, except two segments beside JP702 that are
-  0.45 mm (0.2 mm to its pad);
-- `board.py finish` was run again after the pull-up jumpers' names on the silkscreen changed.
+Done by hand on this board afterwards, with a few lines of pcbnew, and not in any script:
+- three signal tracks (`SPI_MISO`, `SPI_SCK`, `STEP2`) that Freerouting laid 0.0025 mm too close to a jumper pad
+  were made 0.24 mm wide instead of 0.25 mm.

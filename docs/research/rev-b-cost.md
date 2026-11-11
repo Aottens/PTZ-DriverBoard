@@ -9,24 +9,25 @@ The numbers come from `hardware/calc/cost.py`; rerun it to refresh them. It is a
 
 ## The JLC order: five boards, assembled
 
-Source of the parts list: `hardware/fab/jlc/ptz-driver_bom.csv`: 24 lines, 108 parts and 268 solder joints per board.
+Source of the parts list: `hardware/fab/jlc/ptz-driver_bom.csv`: 24 lines, 115 parts and 282 solder joints per board.
 
 | Item | Low | High | Source |
 | --- | --- | --- | --- |
 | Five bare boards, 2 layers, 100 × 80 mm | $2.00 | $7.00 | `[schatting]` |
 | Setup fee | $8.18 | $8.18 | `[page]` |
 | Stencil | $1.53 | $1.53 | `[page]` |
-| SMT joints, 1340 × $0.0016 | $2.14 | $2.14 | `[page]`, joints counted from the placement file |
+| SMT joints, 1410 × $0.0016 | $2.26 | $2.26 | `[page]`, joints counted from the placement file |
 | Extended loading, 3 lines × $3.07 | $9.21 | $9.21 | `[page]` |
-| Parts for five boards | $19.25 | $19.25 | `[api]`, price for one piece |
+| Parts for five boards | $20.54 | $20.54 | `[api]`, price for one piece |
 | Shipping to the Netherlands | $15.00 | $25.00 | `[schatting]` |
-| **Subtotal** | **$57.31** | **$72.31** | |
-| With 21 % VAT | $69.35 | $87.50 | `[schatting]` |
-| **In euros, at 0.892** | **€62** | **€78** | ECB rate of 2026-11-10 |
+| **Subtotal** | **$58.72** | **$73.72** | |
+| With 21 % VAT | $71.05 | $89.20 | `[schatting]` |
+| **In euros, at 0.892** | **€63** | **€80** | ECB rate of 2026-11-10 |
 
-The calculation shows this fits COST-01 with about €22 to spare at the high end. Against the estimate from the
-planned list it rose by €3: a second 3.3 V regulator with its tantalum capacitor for the sensor supply, and one ESD
-array per port instead of one per two. That is inside the €5 that COST-03 allows without asking.
+The calculation shows this fits COST-01 with about €20 to spare at the high end. Against the estimate from the
+planned list it rose by €5: a second 3.3 V regulator for the sensor supply, one ESD array per port instead of one
+per two, and after the two blind reviews six small tantalum capacitors in place of two large ones, a pull-down
+on each step line and a second TVS. That is inside the €5 that COST-03 allows without asking.
 
 What the estimate cannot know: the bare-board price JLC shows for this order, the shipping method, and whether JLC
 rounds small parts up to a minimum quantity. The first two are the two `[schatting]` rows; the third could add a
@@ -62,7 +63,7 @@ For one head. A price with a link was read on that shop's page on 2026-11-11; `[
 | ESP32-S3-DevKitC-1U-N8R8 | €20.00 | [TinyTronics](https://www.tinytronics.nl/en/development-boards/microcontroller-boards/with-wi-fi/espressif-esp32-s3-devkitc-1u-n8r8-8mb-flash-8mb-psram), in stock. The N8 the PRD prefers is end of life; the board takes either |
 | Four BIGTREETECH TMC2240 V1.0 modules, with heat sink | 4 × €9.75 = €39.00 | [TinyTronics](https://www.tinytronics.nl/en/mechanics-and-actuators/motor-controllers-and-drivers/stepper-motor-controllers-and-drivers/bigtreetech-tmc2240-motor-driver-module-v1.0), in stock. TMC2209s already owned can start |
 | W5500 module, WIZ850io compatible | €9.00 | [TinyTronics](https://www.tinytronics.nl/en/communication-and-signals/ethernet/modules/w5500-ethernet-module-wiz850io-compatible), in stock. A clone: its pin order is the shop's claim. WIZnet's own is $22.12 at [DigiKey](https://www.digikey.com/en/products/detail/wiznet/WIZ850IO/8789619), out of stock that day |
-| 5 V regulator RECOM R-78E5.0-1.0 | €4.00 + VAT | [DigiKey](https://www.digikey.nl/en/products/detail/recom-power/R-78E5-0-1-0/4930585), in stock |
+| 5 V regulator Traco TSR 1-2450 | €5.57 + VAT | [DigiKey](https://www.digikey.nl/en/products/detail/traco-power/TSR-1-2450/9383780), in stock. Not the cheaper RECOM R-78E5.0-1.0: it may charge 220 µF at most, less than the board and its modules hold (`calc/power.py`) |
 | Four AS5600 boards | 4 × €3.00 = €12.00 | [TinyTronics](https://www.tinytronics.nl/en/sensors/magnetic-field/as5600-magnetic-angle-sensor-encoder-module). No shop page for an MT6701 board could be opened |
 | Fuse T 5 A, radial | €0.76 + VAT | [DigiKey](https://www.digikey.nl/nl/products/detail/conquer/MST-5A-250V/16928153) (Conquer MST; check its 5.08 mm pitch in the sheet). No page for a T 1 A fuse could be opened: Schurter 0034.6615 is the part |
 | Two TR5 fuse holders, Schurter 0031.7601 | SEK 9.50 each | [Electrokit](https://www.electrokit.com/en/fuse-holder-microfuse-tr5-6.3a-pcb); or solder the fuses in |

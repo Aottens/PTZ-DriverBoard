@@ -4,6 +4,56 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev B: what was done with the blind review
+
+The first review is `hardware/review/BLIND_REVIEW.md`: no KRITIEK finding, three BELANGRIJK, all three fixed.
+`hardware/review/HANDLED.md` lists every finding, the small ones too, and the second review of the changed board.
+
+**B1, parts under the soldered-in Ethernet module: fixed.** Nothing stands under it now; `check_board.py` checks it.
+
+**B2, the fan output on VM was not short-proof: fixed by taking the option away.** The fan output is 5 V only. A
+fan for the supply voltage would need a fuse of its own, and the PRD asks for one fan output, not for two voltages.
+*Reversal trigger:* a 5 V fan cannot cool the four drivers on the rig; then a later revision gets a fused 12 V output.
+
+**B3, the 5 V module and what it must charge: fixed, and the choice of module narrowed.** The board's own
+capacitance on the logic rails went from about 320 µF to 113 µF; with the plugged-in modules the estimate is about
+230 µF. The Traco TSR 1-2450 (470 µF) and the Mornsun K7805-1000R3 (680 µF) take that; the RECOM R-78E5.0-1.0
+(220 µF) does not and is ruled out in the spec, in `ASSEMBLY.md` and on the silkscreen. The AMS1117 regulators keep
+30 µF of tantalum at their outputs, above the 22 µF their data sheet asks for.
+
+**The second review, of the board after those fixes** (`BLIND_REVIEW_2.md`): no KRITIEK, three BELANGRIJK.
+- *B1, the ground of the motor half hung on 4 mm of copper: fixed.* The signals between the MCU module and the
+  sockets cut both pours across the board. Ground is now laid as tracks before routing, on the bottom: a spine
+  north of the MCU module's pin row from that module's ground pins to the supply connector, and four bridges north
+  to ground pins of the sockets. `tools/groundcut.py` gives 14.0 mm of copper to the supply connector and 10.0 mm
+  to the MCU module, from 4.2 mm for both; BRD-13 asks 8 and `check_board.py` checks it. It is a measure of
+  geometry, not of noise: whether SPI is clean beside running motors is bring-up step 7.6.
+- *B2, no surge clamp on the logic branch with the motor fuse out: fixed.* A second SMBJ18A (D103) on `VIN_L`, and
+  the gate divider at half the input instead of 0.6. *Alternative:* moving the one TVS in front of both fuses, which
+  leaves a failed TVS without a fuse.
+- *B3, 26 to 32 mm between the Ethernet jack and the wall: accepted.* The head does not exist; the base gets a hole
+  in line with the jack or a coupler in the wall with a short lead (`hardware/ASSEMBLY.md`, RB-05). Turning the
+  module a quarter would point the jack at the pan motor or at the drivers. *Reversal trigger:* the base's CAD
+  model cannot give either.
+The board changed after this second review and has had no third one: ERC, DRC, the netlist check and the ground
+measurement are what cover those last changes.
+
+**Accepted small findings, with the reason:**
+- *K1, `+3V3` has about 1.25 V above the regulator where its data sheet asks 1.3 V at 0.8 A.* The load is 0.17 A,
+  where the drop-out is about 1.1 V; the calculation leaves it in regulation. Bring-up steps 1.3, 3.2 and 6.1 measure
+  it. *Reversal trigger:* `+3V3` under 3.2 V with the Ethernet module sending; then D102 becomes a part with a lower
+  drop, or U102 a regulator with a lower drop-out in the same package.
+- *K3, the TMC2240's DIAG0 is open drain by default.* Firmware sets `diag0_pushpull`; DRV-05 and bring-up 7.3 say so.
+- *K6, no reset of the multiplexer apart from the MCU's.* No pin is left; firmware can clock a stuck sensor free.
+- *K8, ground pins sit solid in the copper.* Thermal spokes left pins on a single spoke on this two-layer board;
+  the owner solders with a second more heat.
+- *K9 to K12, fit and edge distances:* stated in `ASSEMBLY.md` and in the pull request's flags.
+- *K14, a shorted sensor cable restarts the MCU for as long as the short lasts.* Nothing is damaged, which is what
+  POW-03 asks. A resettable fuse per port would be a fourth and fifth Extended line. *Reversal trigger:* a sensor
+  cable that shorts in use.
+
+---
+
 ## 2026-11-11 — Rev B: what the one-run build decided
 
 Made by the Rev B build session (RB-02) inside the approved PRD; the owner sees them in the pull request. Each can
@@ -43,7 +93,7 @@ calculation: the base's height is the tightest number in the fit check, and the 
 
 **With USB plugged in while the supply is on, USB and the board's regulator share the logic load.** Both reach
 `+5V` through a Schottky diode, so the higher of the two feeds it: a USB port may then see up to about 0.65 A, or
-0.85 A with a 5 V fan running. Moving the fan to the regulator's side of its diode was not worth a new track
+0.85 A with the fan running. Moving the fan to the regulator's side of its diode was not worth a new track
 across the board. *Reversal trigger:* a USB port that cuts out during bench work with the supply on.
 
 ---

@@ -6,7 +6,7 @@ This file is the handoff: where we are, what is next, what waits. It is not a lo
 
 ## Current focus
 **Rev B of the board is designed and ready for a JLC quote** (RB-02, PR #5): a two-layer carrier of 100 × 80 mm for
-plug-in drivers, MCU and Ethernet. The estimate for five assembled boards is €62 to €78, of the €100 in COST-01
+plug-in drivers, MCU and Ethernet. The estimate for five assembled boards is €63 to €80, of the €100 in COST-01
 (`docs/research/rev-b-cost.md`). Nothing is ordered and nothing is measured.
 
 Rev A is under the git tag `rev-a`; `hardware/` now holds Rev B.
@@ -32,6 +32,6 @@ The research phase goes on beside it: findings in `docs/research/README.md`. The
 
 ## Owner decisions open
 - The remaining **[OPEN]** lines in `specs/PRD.md`.
-- Which 5 V regulator module and which W5500 module to buy: three and two are named, with what differs.
+- Which 5 V regulator module and which W5500 module to buy: two of each are named, with what differs.
 - Confirm owned: lab supply to 17 V with a current limit, 1/4" camera bolt, ball-end hex key. Which 14-140 mm: 265 g or 460 g.
 - The repository is public without a licence, so all rights stay reserved until one is added.
