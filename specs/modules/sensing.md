@@ -1,69 +1,73 @@
-# Module spec: position sensing (ENC)
+# Module spec: position sensing (ENC), Rev B
 
-Status: **written in the Rev A one-run build (2026-11-10); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-a.md`.**
-Grows out of ENC-01..04 in `specs/PRD.md`.
+Status: **written in the Rev B one-run build (2026-11-11); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-b.md`.**
+Grows out of ENC-01..06 in `specs/PRD.md`. Nets and references here are the contract that `hardware/check_netlist.py` checks.
+Rev A's version of this file is under the git tag `rev-a`.
 
-Each axis has one port for a small remote sensor board on SPI, or for a home switch. The sensor cable never sees the bus that the drivers and Ethernet share: it gets its own buffered copy of clock and data, and only while a sensor is selected.
+## What it does
 
 ```
-SPI_SCK, SPI_MOSI ─► U701 (74LVC244, outputs on only while CS_SNS_EN_N is low) ─► 33 Ω ─► port n
-CS_SNSn (decoder) ───────────────────────────────────────────────────────────────► 33 Ω ─► port n
-SPI_MISO ◄── U702 (74LVC125, gate n open only while CS_SNSn is low) ◄── 100 Ω ◄── port n
-HOMEn_IN (port) ── 10k pull-up, 22k series, 1 nF, clamp diodes ──► REFL of the axis driver
+MCU I2C_SDA / I2C_SCL ── U701 TCA9548A ─┬─ channel 0..3 ─ 100 Ω ─ J303 … J603   sensor port 1..4
+   (4.7 kΩ to +3V3)       address 0x70  └─ channel 4 ──── 100 Ω ─ J701          spare header (AUX-01)
+V_SNS = +3V3_SNS (as delivered) or +5V, by JP101: supply and pull-ups of all five ports
+MCU HOMEn ── 10 kΩ ── HOMEn_IN ── J302 … J602                                   home input 1..4
 ```
 
-## Parts and datasheets
+The AS5600 has one fixed I2C address (0x36, datasheet v1-06) and the MT6701 defaults to 0x06 (datasheet Rev 0.1), so
+each sensor sits alone behind its own channel of the multiplexer. Axis n has its references in the hundreds a = n + 2.
 
-| Ref | Part | LCSC | Datasheet read |
-| --- | --- | --- | --- |
-| J302, J402, J502, J602 | JST BM07B-GHS-TBT, 7 pins, 1.25 mm, SMD, top entry, with latch | C378970 | JST GH series |
-| U701 | SN74LVC244APWR, octal buffer, TSSOP-20 | C7668 | TI SCAS414AG, June 2026 |
-| U702 | SN74LVC125APWR, quad buffer with separate enables, TSSOP-14 | C7813 | TI SCAS290T, September 2024 |
-| D301, D401, D501, D601 | BAT54S, two Schottky diodes in series, SOT-23 | C7420333 | Pin 1 anode, pin 2 cathode, pin 3 the common point |
-| F701 | 0.2 A PTC, 0603 | C20785 | SMD0603P020TF |
+## Parts
+
+| Ref | Part | LCSC | Fitted by | Datasheet read |
+| --- | --- | --- | --- | --- |
+| U701 | TCA9548APWR, 8-channel I2C switch, TSSOP-24 | C130026 (Extended) | JLC | TI SCPS207H, September 2024, pin table |
+| U702, U703, U704 | SRV05-4, four-line ESD array, SOT-23-6 | C7420376 (Preferred) | JLC | see `hardware/datasheets/README.md` |
+| D302 … D602 | BAV99, two diodes in series, SOT-23 | C2500 | JLC | Nexperia BAV99: 1 anode, 2 cathode, 3 common |
+| J303, J403, J503, J603 | JST B4B-PH-K-S, 4 pins, 2.0 mm, top entry | none | owner | |
+| J302, J402, J502, J602 | JST B3B-PH-K-S, 3 pins, 2.0 mm, top entry | none | owner | |
+| J701 | Pin header 1×4, 2.54 mm | none | owner | |
+| resistors and capacitors | 0603, values in the criteria | Basic | JLC | |
+| JP304 … JP605, JP701, JP702 | Solder jumpers, two pads | none | bare copper | |
 
 ## Acceptance criteria
 
-- **ENC-01** One sensor port per axis, on SPI. A port carries its own clock, data out, data in and chip select, so any SPI sensor that runs on 3.3 V fits by configuration (AS5047P, MT6701, TLE5012B and AS5048A all do, by their datasheets' supply ranges; none is on this board).
-- **ENC-02** The pinout is the same on all four ports: 1 = `+3V3_SNS`, 2 = `GND`, 3 = SCK, 4 = MOSI, 5 = MISO, 6 = CS (active low), 7 = HOME.
-- **ENC-03** One home or limit input per axis, on pin 7. It has a 10 kΩ pull-up to `+3V3`, so a switch to `GND` works with two wires, and reaches the driver's REFL pin through 22 kΩ with 1 nF to `GND` and clamp diodes to `GND` and `+3V3` (datasheet p59). The driver stops the motor on it by itself. By calculation in `hardware/calc/power.py`, 24 V on this pin puts under 1 mA into the clamp.
-- **ENC-04** Cable integrity over the longest run is a bench test on the rig (R-T2) and is **not** proven by this build. What the board does for it: ENC-05 and ENC-06.
-- **ENC-05** The sensor cables are isolated from the main bus. U701 drives each port's SCK and MOSI separately, and its outputs are off unless `CS_SNS_EN_N` is low; 100 kΩ pull-downs hold the lines then. U702 lets only the selected port's MISO onto `SPI_MISO`. **Limit of Rev A (blind review, B4):** `CS_SNS_EN_N` switches the buffer on and selects the sensor on the same edge, and a port's clock rests low through 100 kΩ while the buffer is off. A sensor selected with the bus clock resting high (SPI mode 2 or 3) therefore sees a rising clock edge as its chip select falls. Firmware runs the sensor ports with the clock resting low (mode 0 or 1); a sensor that only documents mode 3 must be shown on the bench to accept mode 0 timing before it is chosen, and that test belongs to R-T2.
-- **ENC-06** Every signal to a port has a series resistor at the driving end (33 Ω on clock and data out, 100 Ω on chip select and data in), to damp the cable and to limit the current into a short. Chip select idles high for as long as the board is on, so its resistor alone must keep a short to ground under the decoder's 50 mA limit (SN74LVC139A, absolute maximum continuous output current): 3.3 V / 100 Ω = 33 mA; 33 Ω gave about 60 mA (blind review, K5).
-- **ENC-07** The port supply `+3V3_SNS` is `+3V3` through F701, shared by the four ports, with 4.7 µF after it. Ports are 3.3 V only: with a 5 V sensor the 3.3 V clock would not reach its input-high level.
+- **ENC-01 Multiplexer.** U701: pin 24 `+3V3`, pin 12 `GND`, C701 (100 nF) across them; pins 1, 2 and 21 (A0, A1,
+  A2) to `GND`, so its address is 0x70; pin 23 `I2C_SDA`, pin 22 `I2C_SCL`; pin 3 (RESET, active low, no pull-up
+  inside) on `PERIPH_RST_N` (CTL-06). R701 and R702 (4.7 kΩ) pull `I2C_SDA` and `I2C_SCL` to `+3V3`. Channel k is
+  on pins SDk / SCk: channel 0 = pins 4 / 5, 1 = 6 / 7, 2 = 8 / 9, 3 = 10 / 11, 4 = 13 / 14. Channels 5, 6 and 7
+  (pins 15 to 20) are not connected.
+- **ENC-02 Sensor ports.** Port n is on channel n − 1: `MUXn_SDA` and `MUXn_SCL`. Ja03 has the same pin order on
+  all axes: 1 = `V_SNS`, 2 = `GND`, 3 = `SNSn_SDA`, 4 = `SNSn_SCL`. Ra04 (100 Ω) joins `MUXn_SDA` to `SNSn_SDA`
+  and Ra05 (100 Ω) joins `MUXn_SCL` to `SNSn_SCL`: they take the edge off a long cable and limit what a discharge
+  can push into U701.
+- **ENC-03 Home inputs.** Ja02: 1 = `V_SNS` (for a hall sensor), 2 = `GND`, 3 = `HOMEn_IN`. Ra02 (10 kΩ) pulls
+  `HOMEn_IN` to `+3V3`, so a switch to ground reads low. Ra03 (10 kΩ) joins `HOMEn_IN` to `HOMEn`, which goes to
+  the MCU and has Ca03 (10 nF) to `GND` and Da02 as a clamp: pin 1 `GND`, pin 2 `+3V3`, pin 3 `HOMEn`. With 17 V
+  on the pin, the calculation in `hardware/calc/power.py` gives 1.3 mA into the clamp and 19 mW in Ra02.
+- **ENC-04** The longest sensor cable is proven on the rig (R-T2), not here. What the board gives that test:
+  ENC-05, ENC-06 and a test point on the bus.
+- **ENC-05 Pull-ups per port, by solder jumper.** Each port has two pairs of pull-ups from its SDA and SCL lines
+  on the connector side (`SNSn_SDA`, `SNSn_SCL`):
+  - Ra06 and Ra07 (4.7 kΩ) to `PUn_A`, which JPa04 joins to `V_SNS`: closed as delivered;
+  - Ra08 and Ra09 (2.2 kΩ) to `PUn_B`, which JPa05 joins to `V_SNS`: open as delivered.
 
-## Connections, per axis
-
-n = axis 1 to 4, a = 3 to 6.
-
-| Ref | Value | Connections |
-| --- | --- | --- |
-| Ja02 | BM07B-GHS-TBT | 1 = `+3V3_SNS`, 2 = `GND`, 3 = `SNSn_SCK`, 4 = `SNSn_MOSI`, 5 = `SNSn_MISO`, 6 = `SNSn_CS`, 7 = `HOMEn_IN`; mounting pads = `GND` |
-| Ra07 | 33R | `SNS_SCKn_B`, `SNSn_SCK` |
-| Ra08 | 33R | `SNS_MOSIn_B`, `SNSn_MOSI` |
-| Ra09 | 100R | `CS_SNSn`, `SNSn_CS` |
-| Ra10 | 100R | `SNSn_MISO`, `SNSn_MISO_B` |
-| Ra11 | 100k | `SNSn_SCK`, `GND` |
-| Ra12 | 100k | `SNSn_MOSI`, `GND` |
-| Ra13 | 100k | `SNSn_MISO_B`, `GND` |
-| Ra05 | 10k | `HOMEn_IN`, `+3V3` |
-| Ra06 | 22k | `HOMEn_IN`, `HOMEn` |
-| Ca12 | 1 nF | `HOMEn`, `GND` |
-| Da01 | BAT54S | common (pin 3) = `HOMEn`, anode (pin 1) = `GND`, cathode (pin 2) = `+3V3` |
-
-`HOMEn` goes to REFL of driver Ua01 (`specs/modules/drive.md`).
-
-## Connections, shared
-
-| Ref | Value | Connections |
-| --- | --- | --- |
-| U701 | SN74LVC244A | VCC = `+3V3`; GND = `GND`; 1OE and 2OE = `CS_SNS_EN_N`; 1A1..1A4 = `SPI_SCK`; 1Y1..1Y4 = `SNS_SCK1_B`..`SNS_SCK4_B`; 2A1..2A4 = `SPI_MOSI`; 2Y1..2Y4 = `SNS_MOSI1_B`..`SNS_MOSI4_B` |
-| U702 | SN74LVC125A | VCC = `+3V3`; GND = `GND`; 1OE..4OE = `CS_SNS1`..`CS_SNS4`; 1A..4A = `SNS1_MISO_B`..`SNS4_MISO_B`; 1Y..4Y = `SPI_MISO` |
-| C701, C702 | 100 nF | `+3V3`, `GND` |
-| F701 | 0.2 A PTC | `+3V3`, `+3V3_SNS` |
-| C704 | 4.7 µF | `+3V3_SNS`, `GND` |
-| R702 | 100k | `SPI_MISO`, `GND` |
+  That gives none, 4.7 kΩ, 2.2 kΩ or 1.5 kΩ per port. Sensor boards often carry their own pull-ups; then JPa04 is
+  cut. The bus clock is a firmware setting.
+- **ENC-06 Supply of the ports.** `V_SNS` is `+3V3_SNS` as delivered, from its own regulator, so a short on a
+  sensor cable does not take down the logic supply (POW-08). JP101 can move `V_SNS` to `+5V`: the multiplexer then
+  translates, since each side has its own pull-ups (TCA9548A datasheet, voltage translation). With `V_SNS` on 5 V
+  a short on a sensor cable does take down `+5V`.
+- **ENC-07 ESD.** Every line that leaves the board on a sensor port has a channel of an SRV05-4 at its connector:
+  U702 holds `SNS1_SDA`, `SNS1_SCL`, `SNS2_SDA`, `SNS2_SCL` on pins 1, 3, 4, 6 in that order; U703 the same for
+  ports 3 and 4; U704 holds `AUX_SDA` and `AUX_SCL` on pins 1 and 3, with pins 4 and 6 not connected. On each,
+  pin 2 is `GND` and pin 5 is `V_SNS`. The home inputs are protected by their resistors and clamp (ENC-03), which
+  also survive a steady 17 V; an SRV05-4 would not.
+- **ENC-08 Spare channel (AUX-01).** J701: 1 = `V_SNS`, 2 = `GND`, 3 = `AUX_SDA`, 4 = `AUX_SCL`, on channel 4
+  (`MUX5_SDA`, `MUX5_SCL`) through R703 and R704 (100 Ω). Pull-ups as on a sensor port: R705 and R706 (4.7 kΩ) to
+  `PU5_A` with JP701 closed, R707 and R708 (2.2 kΩ) to `PU5_B` with JP702 open.
 
 ## Not verified in this build
 
-No sensor has been read through these ports. Cable length, read errors next to a running motor and the best clock rate are for R-T2 and the bring-up checklist.
+- Which sensor board the head will use, and whether it has pull-ups, is open until the rig (R-T2). The MT6701
+  datasheet that could be downloaded is Rev 0.1; its address can be reprogrammed.
+- The SRV05-4's pin order is from the part's datasheet as linked by LCSC; its rotation is on the JLC preview checklist.

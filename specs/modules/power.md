@@ -1,111 +1,106 @@
-# Module spec: power (POW)
+# Module spec: power (POW), Rev B
 
-Status: **written in the Rev A one-run build (2026-11-10); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-a.md`.**
+Status: **written in the Rev B one-run build (2026-11-11); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-b.md`.**
 Grows out of POW-01..06 in `specs/PRD.md`. Nets and references here are the contract that `hardware/check_netlist.py` checks.
+Rev A's version of this file is under the git tag `rev-a`.
 
 ## What it does
 
 ```
-J101 ─ VIN_RAW ─ Q101 (reverse polarity) ─ VIN ─┬─ F101 7 A ─ VM ── drivers, bulk capacitors, TVS, VM_SENSE
-                                               └─ F102 1.5 A ─ VIN_L ─ U101 buck ─ +5V ─┬─ external driver ports, fan
-                                                                                       └─ D104 ─┐
-                                                              USB-C VBUS ─────────────── D105 ─┴─ VSYS ─ U102 buck ─ +3V3
+J101 ─ VIN_RAW ─ Q101 (reverse polarity) ─ VIN ─┬─ F101 T 5 A ─ VM ── four driver sockets, C101..C104, TVS D101, VM_SENSE
+                                               └─ F102 T 1 A ─ VIN_L ─ U101 5 V module ─ +5V_REG ─ D102 ─ +5V
++5V ─┬─ MCU module (its 5V pin; USB feeds the same net through the module's own diodes)
+     ├─ U102 ─ +3V3      multiplexer, Ethernet module, VIO of the drivers, pull-ups
+     ├─ U103 ─ +3V3_SNS ─ JP101 ─ V_SNS   the five cabled I2C ports and the home connectors
+     └─ JP801 ─ fan
 ```
 
-## Parts and datasheets
+The 5 V regulator is a plug-in part like the other modules: a three-pin switching regulator in the 7805 pin order,
+soldered by the owner. An on-board buck would need an inductor that JLC only has as an Extended part, and a layout
+of its own that nobody can measure in this build; the module is certified by its maker and costs about as much as
+that Extended line.
 
-| Ref | Part | LCSC | Datasheet read |
-| --- | --- | --- | --- |
-| J101 | JST B2P-VH, 2 pins, 3.96 mm, through-hole, with latch | C160315 | JST VH series; pin 1 marked on the housing |
-| Q101 | AOD4185, P-channel, -40 V, 15 mΩ at -10 V, TO-252 | C400894 | Alpha & Omega, Rev 4.2, June 2024 |
-| D101 | BZT52C12 class zener, 12 V, SOD-123 | C12747 | LRC LBZT52C12T1G |
-| D102 | SMBJ24A, unidirectional TVS, 600 W | C7470946 | Stand-off 24 V, breakdown 26.7 to 29.5 V, clamp 38.9 V at 15.4 A |
-| F101 | Littelfuse 0452007.MRL, 7 A slow, 2410 | C72975 | Littelfuse 452 series |
-| F102 | Littelfuse 046601.5NRHF, 1.5 A fast, 1206, 63 V | C187598 | Littelfuse 466 series |
-| C101, C102 | 220 µF 50 V aluminium electrolytic, 10 × 10.2 mm | C970698 | Chosen for its ESR, which damps a hot-plug (POW-02) |
-| U101 | TPS54360DDAR, 60 V 3.5 A buck, HSOP-8 | C44377 | TI SLVSBB4G, June 2018 |
-| D103 | SS36 class Schottky, 60 V 3 A, SMA | see BOM | Catch diode of U101 |
-| L101 | 22 µH shielded, about 7 × 7 mm, Isat ≥ 3 A | C128694 | SMMS0630-220M |
-| U102 | TLV62569DBVR, 5.5 V 2 A buck, SOT-23-5 | C141836 | TI SLVSDM0, revised October 2017 |
-| L102 | 2.2 µH shielded, 4 × 4 mm, Isat ≥ 2.5 A | C408335 | Sunlord MWSA0402S-2R2MT |
-| D104, D105 | B5819W, 40 V 1 A Schottky, SOD-123 | C8598 | |
+## Parts
+
+| Ref | Part | LCSC | Fitted by | Datasheet read |
+| --- | --- | --- | --- | --- |
+| J101 | JST B2P-VH, 2 pins, 3.96 mm, with latch, 10 A | none | owner | JST VH series |
+| Q101 | AOD4185, P-channel, −40 V, 20 mΩ at −4.5 V, TO-252 | C400894 (Extended) | JLC | Alpha & Omega Rev 4.2, June 2024; 1 gate, 2 (tab) drain, 3 source |
+| R101 | 150 kΩ 0603 | C22807 | JLC | |
+| R102 | 100 kΩ 0603 | C25803 | JLC | |
+| F101 | Radial fuse 5.08 mm (TR5 type), time-lag 5 A, or its holder | none | owner | Schurter MST 250: 250 V AC, 63 V DC |
+| F102 | Radial fuse 5.08 mm, time-lag 1 A, or its holder | none | owner | same |
+| D101 | SMBJ18A, unidirectional TVS, 600 W, SMB | C19077573 (Preferred) | JLC | Hongjiacheng Rev 1.1: stand-off 18 V, breakdown 20.0 to 22.1 V, clamp 29.2 V at 20.55 A; band = cathode |
+| C101 … C104 | 220 µF 35 V aluminium electrolytic, radial, Ø 8 mm, 3.5 mm pitch | none | owner | chosen for its ESR, which damps a hot-plug |
+| C105 | 10 µF 50 V 1206 | C13585 | JLC | |
+| C106, C109, C112 | 100 nF 50 V 0603 | C14663 | JLC | |
+| U101 | 5 V, 1 A switching regulator, SIP-3, pins 1 = in, 2 = ground, 3 = out | none | owner | RECOM R-78K5.0-1.0 (Rev 6-2025), Mornsun K7805-1000R3, Traco TSR 1-2450 |
+| D102 | SS34 Schottky, 40 V 3 A, SMA | C8678 | JLC | MDD Rev 2024A5; band = cathode |
+| C107, C108 | 22 µF 25 V 0805 | C45783 | JLC | |
+| U102 | AMS1117-3.3, SOT-223 | C6186 | JLC | Advanced Monolithic Systems: 1 ground, 2 and tab out, 3 in |
+| C110 | 10 µF 25 V 0805 | C15850 | JLC | |
+| C111 | 100 µF 6.3 V tantalum, case B | C16133 | JLC | AVX TAJB107K006RNJ; the AMS1117 sheet asks for tantalum of 22 µF or more |
+| U103 | XC6206P332MR, 3.3 V 200 mA, SOT-23 | C5446 | JLC | Torex ETR0305_004b: 1 ground, 2 out, 3 in |
+| C113, C114 | 1 µF 50 V 0603 | C15849 | JLC | |
+| JP101 | Solder jumper, three pads, 1-2 closed by a copper bridge | none | bare copper | |
+| R103 | 100 kΩ 0603 | C25803 | JLC | |
+| R104 | 10 kΩ 0603 | C25804 | JLC | |
+| C115 | 100 nF 50 V 0603 | C14663 | JLC | |
 
 ## Acceptance criteria
 
-- **POW-01** One DC input on J101, a locking JST VH header: pin 1 = `VIN_RAW` (plus), pin 2 = `GND`. Nominal 12 to 24 V; the board runs from 10.8 to 25.2 V (24 V + 5 %). The upper limit keeps the supply below D102's lowest breakdown voltage of 26.7 V.
+- **POW-01** One DC input on J101: pin 1 = `VIN_RAW` (plus), pin 2 = `GND`. The board runs from 11 to 17 V: a 12 V
+  supply, or a D-Tap lead from a V-mount battery, 16.8 V when full. 17 V stays 3 V below D101's lowest breakdown
+  voltage of 20.0 V.
 - **POW-02** The board survives:
-  - **a. Reverse polarity** to -30 V: Q101 sits in the plus line with its drain at `VIN_RAW` and its source at `VIN`, its gate at `RP_GATE`, pulled to `GND` by R101 (100 kΩ) and clamped to the source by D101 (cathode at `VIN`).
-  - **b. A hot-plug spike:** C101 and C102 damp the ring of the supply cable, and D102 clamps `VM` (cathode at `VM`, anode at `GND`). `hardware/calc/power.py` shows the peak.
-  - **c. A short on any output connector** to `GND` or to its neighbour pin, per connector in the table under *Outputs and what limits them*.
-- **POW-03** Motor and logic supply are fused separately: F101 between `VIN` and `VM`, F102 between `VIN` and `VIN_L`. Nothing but F101, F102, Q101, D101 and the test point TP901 connects to `VIN`.
-- **POW-04** The margin from the highest voltage `VM` can reach to the TMC5240's 41 V absolute maximum is calculated in `hardware/calc/power.py` for: the TVS clamp at its rated pulse, a hot-plug, and a motor driven by hand or decelerating. Every part on `VM`, `VIN` and `VIN_L` is rated for at least 50 V, except D102.
-- **POW-05** USB alone powers logic only. `VBUS` reaches `VSYS` through D105 (anode at `VBUS`) and nothing else; `+5V` reaches `VSYS` through D104 (anode at `+5V`). So USB cannot feed `+5V`, `VM` or the host.
-- **POW-06** Firmware reads the motor supply: `VM_SENSE` is `VM` divided by 11 (R110 100 kΩ from `VM`, R111 10 kΩ and C114 100 nF to `GND`) on an ADC pin. A blown F101 reads as 0 V.
-- **POW-07** `+5V` is 4.97 V ± 4 % from U101 (R106 + R112 over R107), sized for 1.5 A. Its under-voltage lock-out starts the converter above about 9.2 V and stops it below about 8.1 V (R102, R103), by calculation.
-- **POW-08** `+3V3` is 3.3 V ± 3 % from U102, fed from `VSYS`. The budget is 0.8 A peak; D104 and D105 limit the feed to 1 A.
-- **POW-09** The supply current is budgeted in `hardware/calc/power.py` for each rail and for the input at 12 V and 24 V, and the fuses, connector and copper are rated above it.
-- **POW-10** Every rail has a test point (AUX-05) and its nominal voltage on the silkscreen.
+  - **a. Reverse polarity** to −30 V: Q101 is in the plus line with its drain at `VIN_RAW` and its source at
+    `VIN`, its gate at `RP_GATE`. R101 (150 kΩ) from `RP_GATE` to `VIN` and R102 (100 kΩ) from `RP_GATE` to `GND`
+    give it 0.6 × the input as gate drive: 6.6 V at 11 V, 10.2 V at 17 V, and 17.5 V at the TVS clamp, inside
+    its ±20 V. Reversed, the gate sits at the source and the FET blocks.
+  - **b. A hot-plug spike:** C101 to C104 damp the ring of the supply lead and D101 clamps `VM` (cathode `VM`,
+    anode `GND`). `hardware/calc/power.py` gives the peak.
+  - **c. A short on any output connector** to `GND` or to its neighbour pin, per connector in the table below.
+- **POW-03** Motor and logic supply are fused separately: F101 between `VIN` and `VM`, F102 between `VIN` and
+  `VIN_L`. Nothing but Q101, R101, F101, F102 and test point TP801 connects to `VIN`. Both fuses are plug-in parts.
+- **POW-04 Margin at 17 V**, in `hardware/calc/power.py`: the TVS clamp at its rated pulse, a hot-plug, and the
+  energy a decelerating or hand-turned head returns, against the limits in DRV-09 (TMC2209: 29 V operating, 32 V
+  absolute; TMC2240: 36 V and 41 V). One bulk capacitor per driver socket, C101 to C104, from `VM` to `GND`,
+  each within 12 mm of its socket's pad 9 (BRD-06). Every part on `VIN_RAW`, `VIN`, `VM` and `VIN_L` is rated for
+  at least 35 V, except D101.
+- **POW-05 USB alone** powers the logic and never the motors. The MCU module feeds USB power to its `5V` pin
+  through its own Schottky diodes D1 and D7 (Espressif schematic V1.1), so with USB alone `+5V` carries about
+  4.6 V and both 3.3 V regulators run. D102 (anode `+5V_REG`, cathode `+5V`) keeps that voltage out of U101, as
+  RECOM asks ("add a blocking diode to Vout if current can flow backwards into the output"), and so out of
+  `VIN_L`, `VIN` and `VM`. The same two diodes on the module keep `+5V` from the USB host.
+- **POW-06** Firmware reads the motor supply: `VM_SENSE` is `VM` divided by 11 (R103 100 kΩ from `VM`, R104
+  10 kΩ and C115 100 nF to `GND`) on an ADC1 pin: 1.00 V at 11 V, 1.55 V at 17 V. A blown F101 reads 0 V.
+- **POW-07** `+5V_REG` is 5 V from U101: pin 1 `VIN_L`, pin 2 `GND`, pin 3 `+5V_REG`. C105 and C106 from `VIN_L`
+  to `GND`; C107 from `+5V_REG` to `GND`; C108 and C109 from `+5V` to `GND`. `+5V` is `+5V_REG` less D102's
+  drop, about 4.6 V at full load by calculation; the budget is 0.85 A peak of the regulator's 1 A.
+- **POW-08** `+3V3` is 3.3 V from U102 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3`), with C110 at its input
+  and C111 (plus on `+3V3`) and C112 at its output. It feeds the multiplexer, the Ethernet module, the drivers'
+  VIO and the pull-ups, not the MCU: the MCU module has its own regulator.
+  `+3V3_SNS` is 3.3 V from U103 (pin 3 `+5V`, pin 1 `GND`, pin 2 `+3V3_SNS`), with C113 at its input and C114
+  at its output. JP101 chooses `V_SNS`, the supply of every cabled sensor and home connector: pad 2 is `V_SNS`,
+  pad 1 is `+3V3_SNS` (closed as delivered), pad 3 is `+5V`.
+- **POW-09 Budget**, in `hardware/calc/power.py`: `+3V3` at most 0.25 A, `+3V3_SNS` at most 0.12 A of 0.2 A,
+  `+5V` at most 0.85 A, and the input current with four axes at 1.5 A below F101's 5 A.
 
-## Connections
+## Outputs and what limits them (POW-02c)
 
-Pins by name, as the datasheet names them.
-
-| Ref | Value | Connections |
-| --- | --- | --- |
-| J101 | B2P-VH | 1 = `VIN_RAW`, 2 = `GND` |
-| Q101 | AOD4185 | D = `VIN_RAW`, S = `VIN`, G = `RP_GATE` |
-| D101 | 12 V zener | K = `VIN`, A = `RP_GATE` |
-| R101 | 100k | `RP_GATE`, `GND` |
-| F101 | 7 A | `VIN`, `VM` |
-| F102 | 1.5 A | `VIN`, `VIN_L` |
-| D102 | SMBJ24A | K = `VM`, A = `GND` |
-| C101, C102 | 220 µF 50 V | + = `VM`, - = `GND` |
-| U101 | TPS54360 | VIN = `VIN_L`, EN = `BUCK_EN`, RT/CLK = `BUCK_RT`, FB = `BUCK_FB`, COMP = `BUCK_COMP`, GND and thermal pad = `GND`, SW = `BUCK_SW`, BOOT = `BUCK_BOOT` |
-| C103, C104 | 4.7 µF 50 V | `VIN_L`, `GND` |
-| C105 | 100 nF 50 V | `VIN_L`, `GND` |
-| C106 | 100 nF 50 V | `BUCK_BOOT`, `BUCK_SW` |
-| R102 | 330k | `VIN_L`, `BUCK_EN` |
-| R103 | 47k | `BUCK_EN`, `GND` |
-| R104 | 220k | `BUCK_RT`, `GND` |
-| R105 | 4.7k | `BUCK_COMP`, `BUCK_COMP_RC` |
-| C107 | 22 nF | `BUCK_COMP_RC`, `GND` |
-| C108 | 100 pF | `BUCK_COMP`, `GND` |
-| D103 | 60 V 3 A Schottky | K = `BUCK_SW`, A = `GND` |
-| L101 | 22 µH | `BUCK_SW`, `+5V` |
-| C109, C110 | 22 µF 25 V | `+5V`, `GND` |
-| R106 | 47k | `+5V`, `BUCK_FB_MID` |
-| R112 | 5.1k | `BUCK_FB_MID`, `BUCK_FB` |
-| R107 | 10k | `BUCK_FB`, `GND` |
-| D104 | B5819W | A = `+5V`, K = `VSYS` |
-| D105 | B5819W | A = `VBUS`, K = `VSYS` |
-| U102 | TLV62569 | VIN = `VSYS`, EN = `VSYS`, GND = `GND`, SW = `SW3V3`, FB = `FB3V3` |
-| C111 | 4.7 µF 16 V | `VSYS`, `GND` |
-| L102 | 2.2 µH | `SW3V3`, `+3V3` |
-| C112, C113 | 10 µF 10 V | `+3V3`, `GND` |
-| R108 | 100k | `+3V3`, `FB3V3` |
-| R109 | 22k | `FB3V3`, `GND` |
-| C115 | 22 pF | `+3V3`, `FB3V3` |
-| R110 | 100k | `VM`, `VM_SENSE` |
-| R111 | 10k | `VM_SENSE`, `GND` |
-| C114 | 100 nF | `VM_SENSE`, `GND` |
-
-The values around U101 (R102 to R107, R112, C107, C108, L101) come from the datasheet equations worked out in `hardware/calc/power.py`.
-
-`VM_SENSE` goes to the MCU pin that `firmware/include/pins.h` names `PIN_VM_SENSE`.
-
-## Outputs and what limits them
-
-| Connector pin | Source | A short to GND gives |
-| --- | --- | --- |
-| Motor outputs J301 to J601 | TMC5240 bridges | The driver's own over-current protection switches the bridge off (datasheet p79, p81) |
-| `+3V3_SNS` on J302 to J602 | `+3V3` through F701, 0.2 A PTC | The PTC trips; `+3V3` may dip and reset the MCU, nothing is damaged |
-| `+3V3_I2C` on J202 | `+3V3` through F201, 0.2 A PTC | The same |
-| `+5V_EXT` on J303 to J603 | `+5V` through F702, 0.2 A PTC | The PTC trips |
-| `FAN_V` on J902 | `+5V` or `VM` through F901, 0.5 A 30 V PTC | The PTC trips |
-| Signal outputs to sensor and external driver ports | 74LVC244, 74AHCT244 through 33 Ω and 220 Ω | The series resistor limits the current to below the buffer's rating |
-| RS-485 and CAN lines | Transceivers | Their own short-circuit limit (SP3485, SN65HVD230 datasheets) |
-| Tally, record, fan switch | Open drain | No current: these only sink |
+| Connector | Pins that can be shorted | What limits the current | Calculated |
+| --- | --- | --- | --- |
+| J301 … J601 motor | phase to `GND`, phase to phase | the driver module's own short protection (TMC2240 datasheet p1; TMC2209 datasheet p1) | on the module |
+| J303 … J603, J701 sensor | `V_SNS` to `GND` | U103's foldback, about 100 mA into a short (Torex sheet); with JP101 on 5 V, U101's protection | 0.5 W in U103 |
+| same | SDA or SCL to `GND` or `V_SNS` | pull-ups of 1.5 kΩ at least, 100 Ω to the multiplexer | under 4 mA |
+| J302 … J602 home | signal to `GND` (its normal use) or to `V_SNS` | 10 kΩ pull-up and 10 kΩ series | under 1 mA |
+| J801 fan | `FAN_V` to `GND`, `FAN_V` to `FAN_N` | on 5 V: U101's protection; on `VM`: F101 | see AUX-03 |
 
 ## Not verified in this build
 
-Everything here is by calculation and datasheet. The rails, the reverse-polarity path, the fuses and the ride-through of a short are checked by the owner in `tests/hardware/bringup-rev-a.md`.
+- Nothing is measured. The hot-plug calculation rests on assumed values for the lead's inductance and the
+  capacitors' ESR, which are named in `calc/power.py`.
+- Which 5 V module the owner buys is open; the three named ones share pin order and pitch. RECOM states the
+  back-feed rule; Mornsun says its part may not be used "with output in parallel", which D102 also answers.
+- On USB alone `+3V3` is fed from about 4.6 V through a regulator that needs up to 1.3 V at full load; at the
+  0.25 A here the calculation leaves it in regulation, but with a weak USB port it can sag towards 3.1 V.

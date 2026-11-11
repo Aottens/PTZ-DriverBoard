@@ -1,64 +1,50 @@
-# Module spec: camera and other I/O (CAM, AUX)
+# Module spec: other I/O (AUX), Rev B
 
-Status: **written in the Rev A one-run build (2026-11-10); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-a.md`.**
-Grows out of CAM-02 and AUX-01..05 in `specs/PRD.md`.
+Status: **written in the Rev B one-run build (2026-11-11); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-b.md`.**
+Grows out of AUX-01..05 in `specs/PRD.md`. Nets and references here are the contract that `hardware/check_netlist.py` checks.
+Rev A's version of this file is under the git tag `rev-a`. The camera outputs (CAM), RS-485 and CAN are struck from the PRD.
 
-## Parts and datasheets
+## Parts
 
-| Ref | Part | LCSC | Datasheet read |
-| --- | --- | --- | --- |
-| Q901, Q902, Q903 | AO3422, N-channel, 55 V 2.1 A, logic level, SOT-23 | C37130 | Alpha & Omega, Rev 2.1, March 2024; pin 1 gate, 2 source, 3 drain |
-| J901 | JST SM04B-GHS-TB, 4 pins | C189895 | JST GH series |
-| J902 | JST B2B-XH-A, 2 pins, through-hole, top entry | C158012 | JST XH series |
-| D901 | B5819W Schottky, SOD-123 | C8598 | |
-| F901 | 0.5 A 30 V PTC, 1812 | C269128 | |
-| D201 | Everlight 19-237/R6GHBHC-A01/2T, RGB LED, common anode, 1.6 × 1.6 mm | C60105 | Pin order from JLC's own library part: 1 red, 2 green, 3 blue cathode, 4 common anode. The maker's drawing did not load; a wrong order only swaps colours |
+| Ref | Part | LCSC | Fitted by | Datasheet read |
+| --- | --- | --- | --- | --- |
+| Q801 | AO3400A, N-channel, 30 V, SOT-23 | C20917 | JLC | Alpha & Omega; 1 gate, 2 source, 3 drain |
+| D801 | B5819W Schottky, SOD-123 | C8598 | JLC | |
+| R801 | 100 Ω 0603 | C22775 | JLC | |
+| R802 | 100 kΩ 0603 | C25803 | JLC | |
+| JP801 | Solder jumper, three pads, 1-2 closed by a copper bridge | none | bare copper | |
+| J801 | Pin header 1×2, 2.54 mm | none | owner | |
+| RT801 | NTC 10 kΩ 1 %, B 3950, 0603 | C2892547 (Extended) | JLC | KNTC0603/10KF3950 |
+| R803 | 10 kΩ 0603 | C25804 | JLC | |
+| C801 | 100 nF 50 V 0603 | C14663 | JLC | |
+| TP801 … TP816 | Test point, 1.5 mm bare pad | none | bare copper | |
+| H1 … H4 | Mounting hole, 3.2 mm | none | | |
 
 ## Acceptance criteria
 
-- **CAM-02** Two open-drain outputs on one connector, for tally and record trigger. J901: 1 = tally, 2 = record, 3 and 4 = `GND`. Each is the drain of an AO3422 whose gate is an expander pin with 100 kΩ to `GND`, so both are off at reset. Rated 55 V; by calculation in `hardware/calc/power.py` each sinks 0.5 A with under 0.2 V drop.
-- **AUX-01** A spare I2C port, J202, with the pin order of Qwiic and STEMMA QT: 1 = `GND`, 2 = 3.3 V, 3 = SDA, 4 = SCL (`specs/modules/control.md`).
-- **AUX-02** A status RGB LED, D201, on three expander pins (low = on), so firmware can keep it dark during a show; and a user button, SW201, which is also the boot button.
-- **AUX-03** One switched output for a fan, J902: 1 = `FAN_V` (plus), 2 = `FAN_N` (switched to `GND`). An AO3422 on a direct MCU pin for PWM, off at reset through 100 kΩ on its gate, with a diode across the fan. Solder jumper JP901 picks the fan supply: `+5V` as delivered, or `VM`. F901 limits it.
-- **AUX-04** Firmware reads the board temperature from U204 on I2C, placed between the drivers (`specs/modules/control.md`). Each driver also reports its own chip temperature over SPI.
-- **AUX-05** A test point on every rail and bus: `VIN`, `VM`, `+5V`, `VSYS`, `+3V3`, `GND` (two); `SPI_SCK`, `SPI_MOSI`, `SPI_MISO` and both decoder strobes; `I2C_SDA`, `I2C_SCL`, `XINT_N`; `DRV_ENN`; `CAN_TX`, `CAN_RX`; `RS485_TX`, `RS485_RX`; `EN`; the spare expander pin. Pads of at least 1.0 mm, on the top side, each named on the silkscreen.
+- **AUX-01** The spare multiplexer channel is on header J701: `specs/modules/sensing.md`, ENC-08.
+- **AUX-02** The board has no LED of its own: the RGB LED on the MCU module is the status light, and firmware
+  keeps it dark during a show. On board v1.1 it is on GPIO38, which the board leaves alone (CTL-08).
+- **AUX-03 Fan output.** J801: 1 = `FAN_V` (plus), 2 = `FAN_N` (switched minus). Q801 switches `FAN_N` to `GND`:
+  drain `FAN_N`, source `GND`, gate `FAN_G`. R801 (100 Ω) joins `FAN_PWM` from the MCU to `FAN_G`; R802 (100 kΩ)
+  pulls `FAN_G` to `GND`, so the fan is off while the MCU is in reset, and GPIO45 reads low at reset as it must
+  (CTL-08). D801 across the fan: anode `FAN_N`, cathode `FAN_V`. JP801 chooses the fan's supply: pad 2 is
+  `FAN_V`, pad 1 is `+5V` (closed as delivered), pad 3 is `VM`. On `VM` the output is protected by fuse F101
+  only; on `+5V` by the regulator's own short-circuit protection.
+- **AUX-04 Board temperature.** RT801 from `NTC_SENSE` to `GND`, R803 (10 kΩ) from `NTC_SENSE` to `+3V3`, C801
+  (100 nF) from `NTC_SENSE` to `GND`; `NTC_SENSE` goes to an ADC1 pin. RT801 stands next to the row of drivers.
+  The reading is `+3V3 × R / (R + 10 kΩ)`: 1.65 V at 25 °C, by calculation 0.54 V at 70 °C.
+- **AUX-05 Test points**, one bare pad each, named on the silkscreen:
 
-## Connections
+  | Ref | Net | Ref | Net |
+  | --- | --- | --- | --- |
+  | TP801 | `VIN` | TP809 | `SPI_MOSI` |
+  | TP802 | `VM` | TP810 | `SPI_MISO` |
+  | TP803 | `+5V` | TP811 | `I2C_SDA` |
+  | TP804 | `+3V3` | TP812 | `I2C_SCL` |
+  | TP805 | `V_SNS` | TP813 | `DRV_ENN` |
+  | TP806 | `GND` | TP814 | `DIAG_OR` |
+  | TP807 | `GND` | TP815 | `PERIPH_RST_N` |
+  | TP808 | `SPI_SCK` | TP816 | `MCU_3V3` |
 
-| Ref | Value | Connections |
-| --- | --- | --- |
-| Q901 | AO3422 | G = `TALLY`, S = `GND`, D = `TALLY_OD` |
-| Q902 | AO3422 | G = `REC`, S = `GND`, D = `REC_OD` |
-| R901 | 100k | `TALLY`, `GND` |
-| R902 | 100k | `REC`, `GND` |
-| J901 | SM04B-GHS-TB | 1 = `TALLY_OD`, 2 = `REC_OD`, 3 = `GND`, 4 = `GND`; mounting pads = `GND` |
-| Q903 | AO3422 | G = `FAN_G`, S = `GND`, D = `FAN_N` |
-| R903 | 100R | `FAN_PWM`, `FAN_G` |
-| R904 | 100k | `FAN_G`, `GND` |
-| D901 | B5819W | A = `FAN_N`, K = `FAN_V` |
-| JP901 | 3-pad solder jumper, 1-2 bridged | 1 = `+5V`, 2 = `FAN_SRC`, 3 = `VM` |
-| F901 | 0.5 A PTC | `FAN_SRC`, `FAN_V` |
-| J902 | B2B-XH-A | 1 = `FAN_V`, 2 = `FAN_N` |
-| D201 | RGB LED | common anode = `+3V3`; red cathode = `LED_R_K`; green cathode = `LED_G_K`; blue cathode = `LED_B_K` |
-| R213 | 1k | `LED_R_K`, `LED_R_N` |
-| R214 | 220R | `LED_G_K`, `LED_G_N` |
-| R215 | 220R | `LED_B_K`, `LED_B_N` |
-
-Test points, one pad each:
-
-| Ref | Net | Ref | Net | Ref | Net |
-| --- | --- | --- | --- | --- | --- |
-| TP901 | `VIN` | TP908 | `SPI_SCK` | TP915 | `CS_DRV_EN_N` |
-| TP902 | `VM` | TP909 | `SPI_MOSI` | TP916 | `CS_SNS_EN_N` |
-| TP903 | `+5V` | TP910 | `SPI_MISO` | TP917 | `SPARE` |
-| TP904 | `VSYS` | TP911 | `I2C_SDA` | TP918 | `CAN_TX` |
-| TP905 | `+3V3` | TP912 | `I2C_SCL` | TP919 | `CAN_RX` |
-| TP906 | `GND` | TP913 | `DRV_ENN` | TP920 | `RS485_TX` |
-| TP907 | `GND` | TP914 | `XINT_N` | TP921 | `RS485_RX` |
-| | | | | TP922 | `EN` |
-
-H1 to H4 are the four mounting holes; they have no pins and no net.
-
-## Not verified in this build
-
-LED colours and brightness, the fan output under PWM, and the camera's response to tally and record are for `tests/hardware/bringup-rev-a.md`.
+- **AUX-06** Four mounting holes H1 to H4, not connected to any net.

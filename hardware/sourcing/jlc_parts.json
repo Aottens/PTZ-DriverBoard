@@ -1,0 +1,262 @@
+{
+ "C130026": {
+  "describe": "-40\u2103~+85\u2103 1.65V~5.5V 2uA 400Kbps 80uA I2C\u3001SMBus Power-up/reset configuration TSSOP-24 Interface - Specialized ROHS",
+  "lcsc": "C130026",
+  "library": "Extended",
+  "maker": "Texas Instruments",
+  "mpn": "TCA9548APWR",
+  "package": "TSSOP-24",
+  "price": 0.8206,
+  "stock": 20110
+ },
+ "C13585": {
+  "describe": "10uF 50V X5R \u00b110% 1206 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C13585",
+  "library": "Basic",
+  "maker": "Samsung Electro-Mechanics",
+  "mpn": "CL31A106KBHNNNE",
+  "package": "1206",
+  "price": 0.1269,
+  "stock": 3533442
+ },
+ "C14663": {
+  "describe": "100nF 50V X7R \u00b110% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C14663",
+  "library": "Basic",
+  "maker": "YAGEO",
+  "mpn": "CC0603KRX7R9BB104",
+  "package": "0603",
+  "price": 0.0058,
+  "stock": 35654549
+ },
+ "C15849": {
+  "describe": "1uF 50V X5R \u00b110% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C15849",
+  "library": "Basic",
+  "maker": "Samsung Electro-Mechanics",
+  "mpn": "CL10A105KB8NNNC",
+  "package": "0603",
+  "price": 0.0112,
+  "stock": 12206837
+ },
+ "C15850": {
+  "describe": "10uF 25V X5R \u00b110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C15850",
+  "library": "Basic",
+  "maker": "Samsung Electro-Mechanics",
+  "mpn": "CL21A106KAYNNNE",
+  "package": "0805",
+  "price": 0.0314,
+  "stock": 8257578
+ },
+ "C16133": {
+  "describe": "-55\u2103~+125\u2103 1.7\u03a9@100kHz 100uF 6.3V \u00b110% CASE-B-3528-21(mm) Tantalum Capacitors ROHS",
+  "lcsc": "C16133",
+  "library": "Basic",
+  "maker": "--",
+  "mpn": "TAJB107K006RNJ",
+  "package": "CASE-B-3528-21(mm)",
+  "price": 0.2513,
+  "stock": 600781
+ },
+ "C19077573": {
+  "describe": "-55\u2103~+150\u2103 18V 20.55A@10/1000us 22.1V 29.2V 5uA 600W@10/1000us IEC 61000-4-2 TVS Unidirectional DO-214AA(SMB) ESD and Surge Protection (TVS/ESD) ROHS",
+  "lcsc": "C19077573",
+  "library": "Preferred",
+  "maker": "hongjiacheng",
+  "mpn": "SMBJ18A",
+  "package": "DO-214AA(SMB)",
+  "price": 0.0494,
+  "stock": 14795
+ },
+ "C20917": {
+  "describe": "-55\u2103~+150\u2103 1 N-channel 1.45V 1.4W 30V 48m\u03a9@2.5V 5.7A 50pF 630pF 75pF 7nC@10V N-Channel SOT-23 MOSFETs ROHS",
+  "lcsc": "C20917",
+  "library": "Basic",
+  "maker": "Alpha & Omega Semicon",
+  "mpn": "AO3400A",
+  "package": "SOT-23",
+  "price": 0.0801,
+  "stock": 936909
+ },
+ "C21190": {
+  "describe": "-55\u2103~+155\u2103 100mW 1k\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C21190",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF1001T5E",
+  "package": "0603",
+  "price": 0.0017,
+  "stock": 26227038
+ },
+ "C22775": {
+  "describe": "-55\u2103~+155\u2103 100mW 100\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C22775",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF1000T5E",
+  "package": "0603",
+  "price": 0.0021,
+  "stock": 8677762
+ },
+ "C22807": {
+  "describe": "-55\u2103~+155\u2103 100mW 150k\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C22807",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF1503T5E",
+  "package": "0603",
+  "price": 0.0017,
+  "stock": 692953
+ },
+ "C23140": {
+  "describe": "-55\u2103~+155\u2103 100mW 33\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C23140",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF330JT5E",
+  "package": "0603",
+  "price": 0.0024,
+  "stock": 3475892
+ },
+ "C23162": {
+  "describe": "-55\u2103~+155\u2103 100mW 4.7k\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C23162",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF4701T5E",
+  "package": "0603",
+  "price": 0.0028,
+  "stock": 14985025
+ },
+ "C2500": {
+  "describe": "1 Pair Series Connection 1.25V@150mA 100V 215mA 250mW 4A 4ns 500nA@80V SOT-23 Switching Diodes ROHS",
+  "lcsc": "C2500",
+  "library": "Basic",
+  "maker": "Nexperia",
+  "mpn": "BAV99,215",
+  "package": "SOT-23",
+  "price": 0.0111,
+  "stock": 1086810
+ },
+ "C25803": {
+  "describe": "-55\u2103~+155\u2103 100k\u03a9 100mW 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C25803",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF1003T5E",
+  "package": "0603",
+  "price": 0.0029,
+  "stock": 15342193
+ },
+ "C25804": {
+  "describe": "-55\u2103~+155\u2103 100mW 10k\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C25804",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF1002T5E",
+  "package": "0603",
+  "price": 0.0022,
+  "stock": 43968405
+ },
+ "C2892547": {
+  "describe": "-40\u2103~+125\u2103 0.8mm 0.8mm 1.6mm 100mW 10k\u03a9 1mW/\u2103 310uA 3987K 3987K 5s \u00b11% \u00b11% 0603 NTC Thermistors ROHS",
+  "lcsc": "C2892547",
+  "library": "Extended",
+  "maker": "KUU",
+  "mpn": "KNTC0603/10KF3950",
+  "package": "0603",
+  "price": 0.03,
+  "stock": 106141
+ },
+ "C400894": {
+  "describe": "-55\u2103~+175\u2103 1 P-Channel 15m\u03a9@10V 190pF 2.55nF 280pF 3V 40A 40V 55nC@10V 62.5W P-Channel TO-252(DPAK) MOSFETs ROHS",
+  "lcsc": "C400894",
+  "library": "Extended",
+  "maker": "Alpha & Omega Semicon",
+  "mpn": "AOD4185",
+  "package": "TO-252(DPAK)",
+  "price": 0.3724,
+  "stock": 53597
+ },
+ "C4190": {
+  "describe": "-55\u2103~+155\u2103 100mW 2.2k\u03a9 75V Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0603 Chip Resistor - Surface Mount ROHS",
+  "lcsc": "C4190",
+  "library": "Basic",
+  "maker": "UNI-ROYAL(Uniroyal Elec)",
+  "mpn": "0603WAF2201T5E",
+  "package": "0603",
+  "price": 0.0018,
+  "stock": 4845271
+ },
+ "C45783": {
+  "describe": "22uF 25V X5R \u00b120% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C45783",
+  "library": "Basic",
+  "maker": "Samsung Electro-Mechanics",
+  "mpn": "CL21A226MAQNNNE",
+  "package": "0805",
+  "price": 0.1055,
+  "stock": 3760967
+ },
+ "C5446": {
+  "describe": "-40\u2103~+85\u2103@(Ta) 1 1uA 200mA 3.3V 6V Fixed Over Current Protection Positive SOT-23-3L Voltage Regulators - Linear, Low Drop Out (LDO) Regulators ROHS",
+  "lcsc": "C5446",
+  "library": "Basic",
+  "maker": "Torex Semicon",
+  "mpn": "XC6206P332MR-G",
+  "package": "SOT-23-3L",
+  "price": 0.1261,
+  "stock": 485755
+ },
+ "C57112": {
+  "describe": "10nF 50V X7R \u00b110% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C57112",
+  "library": "Basic",
+  "maker": "FH (Guangdong Fenghua Advanced Tech)",
+  "mpn": "0603B103K500NT",
+  "package": "0603",
+  "price": 0.0103,
+  "stock": 5469737
+ },
+ "C6186": {
+  "describe": "-40\u2103~+125\u2103 0.003%Vout 1 1.1V@(800mA) 15V 1A 3.3V 5mA 72dB@(120Hz) Fixed Over Current Protection\u3001Short Circuit Protection\u3001Thermal shutdown Positive SOT-223 Voltage Regulators - Linear, Low Drop Out (LDO) Regulators ROHS",
+  "lcsc": "C6186",
+  "library": "Basic",
+  "maker": "Advanced Monolithic Systems",
+  "mpn": "AMS1117-3.3",
+  "package": "SOT-223",
+  "price": 0.1938,
+  "stock": 1502957
+ },
+ "C7420376": {
+  "describe": "-55\u2103~+150\u2103 15V 1pF 4A 5V 5uA 6V 80W ESD Four channels IEC 61000-4-2\u3001IEC 61000-4-5 Unidirectional SOT-23-6L ESD and Surge Protection (TVS/ESD) ROHS",
+  "lcsc": "C7420376",
+  "library": "Preferred",
+  "maker": "hongjiacheng",
+  "mpn": "SRV05-4",
+  "package": "SOT-23-6L",
+  "price": 0.085,
+  "stock": 308443
+ },
+ "C8598": {
+  "describe": "1A 40V 600mV@1A 9A Independent SOD-123 Schottky Diodes ROHS",
+  "lcsc": "C8598",
+  "library": "Basic",
+  "maker": "Jiangsu Changjing Electronics Technology Co., Ltd.",
+  "mpn": "B5819W SL",
+  "package": "SOD-123",
+  "price": 0.0262,
+  "stock": 380062
+ },
+ "C8678": {
+  "describe": "-55\u2103~+125\u2103 3A 40V 500uA@40V 550mV@3A Independent SMA(DO-214AC) Schottky Diodes ROHS",
+  "lcsc": "C8678",
+  "library": "Basic",
+  "maker": "MDD(Microdiode Semiconductor)",
+  "mpn": "SS34",
+  "package": "SMA(DO-214AC)",
+  "price": 0.035,
+  "stock": 2828384
+ }
+}

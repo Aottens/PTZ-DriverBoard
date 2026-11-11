@@ -1,67 +1,99 @@
-# Module spec: motor drive (DRV)
+# Module spec: motor drive (DRV), Rev B
 
-Status: **written in the Rev A one-run build (2026-11-10); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-a.md`.**
-Grows out of DRV-01..06 in `specs/PRD.md`.
+Status: **written in the Rev B one-run build (2026-11-11); gate 1 is the owner's approval of `docs/prompts/fable-board-rev-b.md`.**
+Grows out of DRV-01..06 in `specs/PRD.md`. Nets and references here are the contract that `hardware/check_netlist.py` checks.
+Rev A's version of this file is under the git tag `rev-a`.
 
-Four identical axis cells. Axis n = 1 to 4; its parts carry references in the hundreds a = 3, 4, 5, 6 (axis 1 = 3xx, axis 4 = 6xx). The board does not know which axis is pan: that is configuration (CORE-01).
+## What it does
 
-## Parts and datasheets
+Four sockets, one per axis, each for a driver module in StepStick format that the owner buys and plugs in. The board
+gives each module its motor supply, 3.3 V for its logic, a motor connector, step and direction from the MCU, and a
+place on the driver bus. Axis n = 1 pan, 2 tilt, 3 zoom, 4 focus; its references are in the hundreds a = n + 2
+(axis 1 = 3xx … axis 4 = 6xx).
 
-| Ref | Part | LCSC | Datasheet read |
+## The socket, and the modules it is drawn for
+
+A StepStick is 15.24 × 20.32 mm with two rows of eight pins, 2.54 mm pitch, the rows 12.7 mm apart. Seen from the
+top with the motor supply pin at the top right, the left row is L1 to L8 from the top and the right row R1 to R8.
+The modules this board is drawn for carry two more pins in the top row, between L1 and R1: X1 one pitch from L1 and
+X2 two pitches from L1.
+
+| Socket pad | Position | BIGTREETECH TMC2240 V1.0 (default) | BIGTREETECH TMC2209 V1.3 | FYSETC TMC2209 V3.1 | Net on the board |
+| --- | --- | --- | --- | --- | --- |
+| 1 | L1 | EN | EN | EN | `DRV_ENN` |
+| 2 | L2 | MOSI | MS1 | MS1 | `DRVn_SDI` |
+| 3 | L3 | CLK (the SPI clock) | MS2 | MS2 | `DRVn_SCK` |
+| 4 | L4 | CS | RX (PDN_UART) | TX (1 kΩ to PDN_UART) | `DRVn_CSP` |
+| 5 | L5 | MISO | TX (not connected) | RX (PDN_UART) | `DRVn_SDO` |
+| 6 | L6 | CLK (clock input, 10 kΩ to ground on the module) | CLK (20 kΩ to ground) | CLK (not connected) | not connected |
+| 7 | L7 | STEP | STEP | STEP | `STEPn` |
+| 8 | L8 | DIR | DIR | DIR | `DIRn` |
+| 9 | R1 | VM | VM | VM | `VM` |
+| 10 | R2 | GND | GND | GND | `GND` |
+| 11 | R3 | B1 | A2 | A2 | `Mn_1` |
+| 12 | R4 | B2 | A1 | A1 | `Mn_2` |
+| 13 | R5 | A2 | B1 | B1 | `Mn_3` |
+| 14 | R6 | A1 | B2 | B2 | `Mn_4` |
+| 15 | R7 | VIO | VIO | VIO | `+3V3` |
+| 16 | R8 | GND | GND | GND | `GND` |
+| 17 | X1 | AIN | INDEX | INDEX | not connected |
+| 18 | X2 | DIAG0 | DIAG | DIAG | `DIAGn` |
+
+Sources, all in `hardware/datasheets/README.md`: BIGTREETECH's TMC2240 V1.0 manual (pin drawing p5, size drawing p4)
+and schematic; BIGTREETECH's TMC2209 V1.3 schematic and size drawing; FYSETC's TMC2209 V3.1 schematic and readme;
+TMC2240 datasheet Rev 2 (11/23); TMC2209 datasheet Rev 1.09. A FYSETC S2240 V2.0 has the same sixteen pins except
+L6 (`TYPE`, 10 kΩ to VIO there) and its DIAG0 on a four-pad header whose order could not be read: it works in the
+socket without its DIAG signal.
+
+## Parts
+
+| Ref | Part | LCSC | Fitted by |
 | --- | --- | --- | --- |
-| U301, U401, U501, U601 | TMC5240ATJ+T, TQFN-32 5 × 5 mm | C7494373 | Analog Devices 19-101625C, Rev 1, 4/24; pin table p15-18 |
-| J301, J401, J501, J601 | JST B4B-XH-A, 4 pins, 2.5 mm, through-hole, top entry | C144395 | JST XH series |
-| J303, J403, J503, J603 | JST SM04B-GHS-TB, 4 pins, 1.25 mm, SMD, side entry, with latch | C189895 | JST GH series |
-| U703 | SN74AHCT244PWR, octal buffer, TSSOP-20 | C484743 | TI SCLS228O, July 2024 |
-| F702 | 0.2 A PTC, 0603 | C20785 | SMD0603P020TF |
-
-TMC5240 pins used here, TQFN-32 (datasheet p16-18): 1 IREF, 2 AIN, 3 VDD1V8, 4 AGND, 5 VCC_IO, 6 ENCN, 7 ENCB, 8 ENCA, 9 DRV_ENN, 10 UART_EN, 11 DIAG0, 12 DIAG1/SW, 13 OV, 14 CPI, 15 CPO, 16 VCP, 17 VS, 18 OUT1B, 19 OUT2B, 20 VS, 21 VS, 22 OUT2A, 23 OUT1A, 24 VS, 25 SLEEPN, 26 CSN, 27 SCK, 28 SDI, 29 SDO, 30 CLK, 31 REFL, 32 REFR, exposed pad GND.
+| A301, A401, A501, A601 | Socket for the driver module: 2 × 1×8 and 1×2 female header, 2.54 mm | none | owner |
+| J301, J401, J501, J601 | JST B4B-XH-A, 4 pins, 2.5 mm, top entry | none | owner |
+| C301 … C601 | 100 nF 50 V 0603 | C14663 | JLC |
+| C302 … C602 | 100 nF 50 V 0603 | C14663 | JLC |
+| R301 … R601 | 1 kΩ 0603 | C21190 | JLC |
+| D301 … D601 | B5819W Schottky, SOD-123 | C8598 | JLC |
+| JP301 … JP603 | Solder jumper, two pads, closed by a copper bridge | none | bare copper |
 
 ## Acceptance criteria
 
-- **DRV-01** Four axes, each a TMC5240 with its own motor connector. Motor connector pin 1 = OUT1A, 2 = OUT2A (coil A), 3 = OUT2B, 4 = OUT1B (coil B). Coil B is mirrored because that is the order in which the driver's pins leave the chip, so the four tracks do not cross.
-- **DRV-02** Each driver is set up from firmware over SPI: UART_EN and CLK are tied to `GND` (SPI, internal clock), SCK, SDI and SDO are on the shared bus, and each CSN has its own decoder output `CS_DRVn`. SDO is three-state (datasheet p16), so the four share `SPI_MISO` directly.
-- **DRV-03** No trimmers. IREF has 12 kΩ 1 % to `GND`, which gives the full 3 A peak range; firmware picks the range and scales the current (datasheet p46-47).
-- **DRV-04** DIAG0 and DIAG1 of every axis reach the MCU: each has a 10 kΩ pull-up to `+3V3` and goes to the I/O expander, whose interrupt `XINT_N` is on a direct MCU pin (`specs/modules/control.md`, CTL-09). The driver stops the motor itself on a stall or a home input; the MCU's own stop is DRV-07.
-- **DRV-05** Thermal, by calculation in `hardware/calc/thermal.py` with its assumptions written down. **The calculation does not support all four axes at 1.5 A RMS continuously in still air:** it gives a board of about 120 °C and junctions past the 125 °C limit. In still air the continuous limit is about 1.0 A on all four axes, or about 1.35 A on two axes with the other two at 0.3 A; the board, at 80 °C for a printed housing (MEC-06), is reached before the chip. With moving air or a metal spreader the same calculation allows 1.5 A and more. So the board provides: at least 9 vias under each exposed pad into the ground planes; a bare ground-copper window on the bottom under each driver, the four in one row, to press a metal spreader against (BRD-11); the fan output (AUX-03); and temperature readings for firmware to limit current (AUX-04). Checked in `hardware/check_board.py`.
-- **DRV-06** Each axis has an external driver port: pin 1 = `+5V_EXT`, 2 = STEP, 3 = DIR, 4 = `GND`. STEP and DIR are the driver's DIAG0 and DIAG1 (datasheet p60-61), buffered to 5 V by U703 through 220 Ω. U703's outputs are enabled by `DRV_ENN`, so the direct stop pin also stops an external driver's steps.
-- **DRV-07** `DRV_ENN` is one direct MCU pin to all four drivers and to U703, pulled up to `+3V3` by R701 (10 kΩ), so the bridges are off until firmware drives it low.
-- **DRV-08** Supply decoupling as the datasheet's application circuit (p20, p166): per driver two 100 nF and one 10 µF, all 50 V, from `VM` to `GND`; 1 µF from VCP to `VM`; 22 nF 50 V between CPI and CPO; 4.7 µF from VDD1V8 to `GND` (the datasheet asks for 2.2 µF or larger); 100 nF on VCC_IO. The 440 µF bulk is shared (POW).
-- **DRV-09** Unused pins are tied off: AIN, ENCA, ENCB, ENCN and REFR to `GND`; OV left open. SLEEPN goes to `VM` through 100 kΩ, because it may not exceed VS + 0.3 V (datasheet p10) and `+3V3` is present on USB power when `VM` is not.
-- **DRV-10** Struck in layout: the optional 470 pF capacitors on the motor outputs (datasheet p167, against ESD from a belt drive in a plastic housing) did not fit between driver and connector. Instead the motor housings must be tied to the board's `GND`, which the datasheet names as the first measure; `hardware/ASSEMBLY.md` says how.
-
-## Connections, per axis
-
-n = axis 1 to 4, a = 3 to 6.
-
-| Ref | Value | Connections |
-| --- | --- | --- |
-| Ua01 | TMC5240ATJ | VS (4 pins) = `VM`; VCC_IO = `+3V3`; AGND and exposed pad = `GND`; VDD1V8 = `An_1V8`; VCP = `An_VCP`; CPO = `An_CPO`; CPI = `An_CPI`; IREF = `An_IREF`; SLEEPN = `An_SLEEPN`; AIN, CLK, UART_EN, ENCA, ENCB, ENCN, REFR = `GND`; OV = not connected; CSN = `CS_DRVn`; SCK = `SPI_SCK`; SDI = `SPI_MOSI`; SDO = `SPI_MISO`; DRV_ENN = `DRV_ENN`; DIAG0 = `DIAG0_n`; DIAG1/SW = `DIAG1_n`; REFL = `HOMEn`; OUT1A = `Mn_A1`; OUT2A = `Mn_A2`; OUT1B = `Mn_B1`; OUT2B = `Mn_B2` |
-| Ja01 | B4B-XH-A | 1 = `Mn_A1`, 2 = `Mn_A2`, 3 = `Mn_B2`, 4 = `Mn_B1` |
-| Ja03 | SM04B-GHS-TB | 1 = `+5V_EXT`, 2 = `STEPn_O`, 3 = `DIRn_O`, 4 = `GND`; mounting pads = `GND` |
-| Ca01, Ca02 | 100 nF 50 V | `VM`, `GND` |
-| Ca03 | 10 µF 50 V | `VM`, `GND` |
-| Ca04 | 1 µF 50 V | `An_VCP`, `VM` |
-| Ca05 | 22 nF 50 V | `An_CPI`, `An_CPO` |
-| Ca06 | 4.7 µF | `An_1V8`, `GND` |
-| Ca07 | 100 nF | `+3V3`, `GND` |
-| Ra01 | 12k | `An_IREF`, `GND` |
-| Ra02 | 100k | `An_SLEEPN`, `VM` |
-| Ra03 | 10k | `DIAG0_n`, `+3V3` |
-| Ra04 | 10k | `DIAG1_n`, `+3V3` |
-| Ra14 | 220R | `STEPn_B`, `STEPn_O` |
-| Ra15 | 220R | `DIRn_B`, `DIRn_O` |
-
-## Connections, shared
-
-| Ref | Value | Connections |
-| --- | --- | --- |
-| U703 | SN74AHCT244 | VCC = `+5V`; GND = `GND`; 1OE and 2OE = `DRV_ENN`; 1A1..1A4 = `DIAG0_1`..`DIAG0_4`; 1Y1..1Y4 = `STEP1_B`..`STEP4_B`; 2A1..2A4 = `DIAG1_1`..`DIAG1_4`; 2Y1..2Y4 = `DIR1_B`..`DIR4_B` |
-| C703 | 100 nF | `+5V`, `GND` |
-| F702 | 0.2 A PTC | `+5V`, `+5V_EXT` |
-| C705 | 1 µF | `+5V_EXT`, `GND` |
-| R701 | 10k | `DRV_ENN`, `+3V3` |
+- **DRV-01** Four sockets A301, A401, A501 and A601, wired per pad as in the table above. Pad 9 is `VM`, pads 10 and
+  16 are `GND`, pad 15 is `+3V3`. Nothing else on the board is powered from a socket.
+- **DRV-02 Driver bus.** The default module, a TMC2240, is on the SPI bus through three solder jumpers per socket,
+  closed as delivered: JPa01 joins `DRVn_SDI` to `SPI_MOSI`, JPa02 joins `DRVn_SCK` to `SPI_SCK`, JPa03 joins
+  `DRVn_SDO` to `SPI_MISO`. Each socket has its own select line from the MCU: `DRVn_CS` reaches `DRVn_CSP` through
+  Ra01 (1 kΩ). For a TMC2209 module the owner cuts the three jumpers of that socket; its MS1 and MS2 are then pulled
+  low inside the chip (UART address 0) and `DRVn_CS` is its one-wire UART line, with Ra01 as the series resistor the
+  TMC2209 datasheet asks for (Rev 1.09, p20). TMC2240 and TMC2209 modules can be mixed.
+- **DRV-03** No trimmer and no current-setting part is on the board: current, microsteps and chopper mode go over
+  the driver bus (the modules carry their own reference resistor).
+- **DRV-04 Enable.** `DRV_ENN` goes from the MCU to pad 1 of all four sockets and has R203 (10 kΩ) to `+3V3`, so
+  the bridges are off while the MCU is in reset. High = off (TMC2240 datasheet p16, TMC2209 datasheet p9).
+- **DRV-05 Stall and fault.** Pad 18 of each socket (`DIAGn`) goes through Da01 (anode at `DIAGn`) to the shared
+  line `DIAG_OR`, which has R205 (10 kΩ) to `GND` and goes to the MCU. Firmware sets the TMC2240's DIAG0 to
+  push-pull, active high (`diag0_pushpull`, datasheet p57); the TMC2209's DIAG is active high as it comes (p9). A
+  TMC2240 that has not been configured holds DIAG0 low, which the diode blocks. Firmware finds the axis over the
+  driver bus. *(PRD DRV-04, proposal: one shared line.)*
+- **DRV-06 Step and direction.** `STEPn` and `DIRn` go straight from the MCU to pads 7 and 8.
+- **DRV-07 Motor connector.** Ja01 pins 1 to 4 are `Mn_1` to `Mn_4`, in the order of socket pads 11 to 14. Pins 1
+  and 2 are one coil and pins 3 and 4 the other, on every module in the table; which coil is called A differs per
+  module, and only decides the direction of rotation, which is a firmware setting.
+- **DRV-08 Decoupling.** Ca01 (100 nF) from `VM` to `GND` at pad 9, Ca02 (100 nF) from `+3V3` to `GND` at pad 15.
+  One bulk capacitor per socket is in `specs/modules/power.md` (POW-04).
+- **DRV-09 Limits.** `VM` stays inside both drivers' ratings, by the calculation in `hardware/calc/power.py`:
+  TMC2240 4.5 to 36 V, absolute maximum 41 V (datasheet p9); TMC2209 5.5 to 29 V, absolute maximum 32 V
+  (datasheet p75). `+3V3` is inside both drivers' VCC_IO range (2.2 to 5.5 V and 3.0 to 5.25 V).
+- **DRV-10 Thermal.** The modules carry their own heat sinks. The sockets stand in one row with the modules 0.68 mm
+  apart, so air can pass along the row from the fan (AUX-03); nothing taller than 2 mm stands under a module. The
+  height of module and heat sink is checked in `hardware/check_fit.py` (BRD-07).
 
 ## Not verified in this build
 
-Motion, noise, StealthChop tuning, stall detection and the real driver temperature need the board and a motor: `tests/hardware/bringup-rev-a.md`. Whether a given external driver accepts 5 V signals through 220 Ω depends on that driver.
+- No module was at hand: the pad table is from the makers' drawings and schematics, read on 2026-11-11.
+- Neither datasheet says whether VCC_IO may be present while VS is absent, which is the state on USB power alone.
+  Printer boards with these modules are used that way; the bring-up checklist reads the currents in that state first.
+- The TMC2240 datasheet calls SDO a three-state output and shows the release time after CSN; it does not state in
+  words that SDO is high-impedance while CSN is high. Four drivers and the W5500 share `SPI_MISO` on that reading.
+- Heat-sink height is not in BIGTREETECH's documents; `check_fit.py` assumes 12 mm.

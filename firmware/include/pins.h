@@ -1,71 +1,65 @@
-// Pin assignments of the PTZ driver board, Rev A. The single source for pins.
+// Pin assignments of the PTZ driver board, Rev B. The single source for pins.
 //
 // hardware/tools/circuit.py builds the schematic from this file and hardware/check_netlist.py checks the
 // netlist against it, so firmware and board cannot disagree. Change a pin here and nowhere else.
 //
-// Format, one per line and parsed by those scripts:  #define <KIND>_<NET> <number>
-//   PIN_<NET> n   net <NET> is on ESP32-C6 GPIO n
-//   XP_<NET>  n   net <NET> is on I/O expander U203 (PCAL6416A, I2C 0x20) bit n: 0-7 = P0_0-P0_7, 8-15 = P1_0-P1_7
-// A net ending in _N is active low.
+// Format, one per line and parsed by those scripts:  #define PIN_<NET> <gpio>
+// The MCU is an ESP32-S3-DevKitC-1U on headers. A net ending in _N is active low.
+//
+// Rules behind this table (specs/modules/control.md, CTL-08):
+//  - GPIO35, 36, 37 are not used: on boards with octal memory (N8R8, N16R8) they belong to the module.
+//  - GPIO38 and GPIO48 carry the board's RGB LED (v1.1 and v1.0); GPIO38 is left free, GPIO48 gets a slow input.
+//  - GPIO0 (BOOT), GPIO19/20 (USB) and GPIO44 (driven by the USB-UART bridge) are not used.
+//  - GPIO43 prints the ROM's boot log, so it only reads a home input, behind a 10 k resistor.
+//  - GPIO45 must be low at reset: it drives the fan switch, whose gate has a pull-down.
+//  - Analog inputs are on ADC1 (GPIO1 to 10), which works with WiFi on.
 #pragma once
 
-// SPI bus (SPI2 on its IO_MUX pins): drivers, Ethernet and, through buffers, the sensor ports
-#define PIN_SPI_SCK 6
-#define PIN_SPI_MOSI 7
-#define PIN_SPI_MISO 2
+// Header J1, from the antenna end towards USB -------------------------------------------------
 
-// Chip selects. Drivers and sensors hang on a dual 2-to-4 decoder (U202): put the axis index 0-3 on
-// CS_A1:CS_A0, then pull one strobe low. Both strobes have pull-ups, so nothing is selected at reset.
-#define PIN_CS_A0 4
-#define PIN_CS_A1 5
-#define PIN_CS_DRV_EN_N 0
-#define PIN_CS_SNS_EN_N 1
-#define PIN_ETH_CS_N 14
+// SPI bus shared by the four driver sockets (TMC2240, mode 3) and the Ethernet module (W5500)
+#define PIN_SPI_MOSI 4
+#define PIN_SPI_SCK 5
+#define PIN_SPI_MISO 6
 
-// Motor enable for all four drivers and the external driver ports. High = off; pulled up on the board.
-#define PIN_DRV_ENN 20
+// Axis 4 (focus)
+#define PIN_DIR4 7
+#define PIN_STEP4 15
+#define PIN_DRV4_CS 16
+// Axis 3 (zoom)
+#define PIN_DIR3 17
+#define PIN_STEP3 18
+#define PIN_DRV3_CS 8
+// Axis 2 (tilt)
+#define PIN_DIR2 3
+// Stall or fault of any driver, high = active. Ask the drivers over their bus which one.
+#define PIN_DIAG_OR 46
+#define PIN_STEP2 9
+#define PIN_DRV2_CS 10
+// Axis 1 (pan)
+#define PIN_DIR1 11
+#define PIN_STEP1 12
+#define PIN_DRV1_CS 13
 
-// I2C: expander U203 (0x20), temperature sensor U204 (0x48), spare port J202
-#define PIN_I2C_SDA 8
-#define PIN_I2C_SCL 18
-#define PIN_XINT_N 19
+// Motor enable for all four drivers. High = off; pulled up on the board and on every module.
+#define PIN_DRV_ENN 14
 
-// RS-485 (UART0 pins; the ROM prints boot messages on TX, the transceiver is in receive then)
-#define PIN_RS485_TX 16
-#define PIN_RS485_RX 17
-#define PIN_RS485_DE 23
+// Header J3, from the antenna end towards USB -------------------------------------------------
 
-// CAN (TWAI)
-#define PIN_CAN_TX 21
-#define PIN_CAN_RX 22
-
-// Analog: motor supply after its fuse, divided by 11 (100k / 10k). ADC1 channel 3.
-#define PIN_VM_SENSE 3
-
+// Home inputs, low = switch closed. HOME4 shares its pin with the ROM's boot log (see above).
+#define PIN_HOME4 43
+// Motor supply after its fuse, divided by 11 (100k / 10k). ADC1 channel 0.
+#define PIN_VM_SENSE 1
+// Board temperature: 10k NTC to ground, 10k to 3.3 V. ADC1 channel 1.
+#define PIN_NTC_SENSE 2
+// Ethernet module
+#define PIN_ETH_CS_N 42
+#define PIN_ETH_INT_N 41
+// I2C to the multiplexer (TCA9548A at 0x70): channel 0-3 = sensor port 1-4, channel 4 = spare header
+#define PIN_I2C_SDA 40
+#define PIN_I2C_SCL 39
 // Fan output, high = on
-#define PIN_FAN_PWM 15
-
-// Boot strap and user button, low = pressed
-#define PIN_BOOT 9
-
-// USB (fixed by the chip)
-#define PIN_USB_DN 12
-#define PIN_USB_DP 13
-
-// I/O expander U203
-#define XP_DIAG0_1 0
-#define XP_DIAG0_2 1
-#define XP_DIAG0_3 2
-#define XP_DIAG0_4 3
-#define XP_DIAG1_1 4
-#define XP_DIAG1_2 5
-#define XP_DIAG1_3 6
-#define XP_DIAG1_4 7
-#define XP_ETH_INT_N 8
-#define XP_ETH_RST_N 9
-#define XP_LED_R_N 10
-#define XP_LED_G_N 11
-#define XP_LED_B_N 12
-#define XP_TALLY 13
-#define XP_REC 14
-#define XP_SPARE 15
+#define PIN_FAN_PWM 45
+#define PIN_HOME3 48
+#define PIN_HOME2 47
+#define PIN_HOME1 21
