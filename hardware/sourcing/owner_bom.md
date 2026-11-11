@@ -28,8 +28,9 @@ ordering. `owner_bom_lcsc.csv` holds the LCSC lines for LCSC's BOM tool. The oth
 | [C131334](https://www.lcsc.com/product-detail/C131334.html) | B4B-PH-K-S(LF)(SN) | JST | Sensor connector on the board, JST B4B-PH-K-S | 4 | 10 | 0.0458 | 0.46 | 72070 | J303, J403, J503, J603 |
 | [C111514](https://www.lcsc.com/product-detail/C111514.html) | PHR-4 | JST | Its plug housing, JST PHR-4 | 4 | 50 | 0.0168 | 0.84 | 58400 | J303, J403, J503, J603 |
 | [C42431788](https://www.lcsc.com/product-detail/C42431788.html) | PZ2.54-1X40P-H25 | JXTCONN | Pin header 1×40, to cut: spare I2C port and fan | 1 | 5 | 0.2244 | 1.12 | 2930 | J701, J801 |
+| [C2992391](https://www.lcsc.com/product-detail/C2992391.html) | K7805-1000R3 | YLPTEC | 5 V regulator, YLPTEC's K7805-1000R3 (8 to 36 V in, 680 µF load; sheet V1.00 06/2013), and a spare. The certified one is a Traco TSR 1-2450: none at LCSC, €18 shipping at DigiKey | 2 | 2 | 2.3751 | 4.75 | 10998 | U101 |
 
-19 lines, $17.76 before shipping and tax. *Order* is *Needed* rounded up to LCSC's minimum and pack size.
+20 lines, $22.51 before shipping and tax. *Order* is *Needed* rounded up to LCSC's minimum and pack size.
 The crimp contacts need a crimping tool for JST XH, PH and VH contacts.
 
 The two fuses are Littelfuse 382 parts, the TR5 fuses LCSC had in stock. Their data sheet states no DC rating;
@@ -44,5 +45,4 @@ DigiKey (`docs/research/rev-b-cost.md`). LCSC had 25 of the 5 A fuse: the line m
 | U.FL to SMA bulkhead lead and a 2.4 GHz antenna: no shop page was read | 1 | to find |
 | W5500 module, WIZ850io compatible, €9.00 at TinyTronics (a clone: check its pin order). WIZnet's own is LCSC C134462 | 1 | [shop page](https://www.tinytronics.nl/en/communication-and-signals/ethernet/modules/w5500-ethernet-module-wiz850io-compatible) |
 | BIGTREETECH TMC2240 V1.0 driver module with heat sink, €9.75 at TinyTronics | 4 | [shop page](https://www.tinytronics.nl/en/mechanics-and-actuators/motor-controllers-and-drivers/stepper-motor-controllers-and-drivers/bigtreetech-tmc2240-motor-driver-module-v1.0) |
-| 5 V regulator Traco TSR 1-2450, €5.57 + VAT at DigiKey. LCSC had none in stock; the parts LCSC sells as K7805-1000R3 are other makers' and their data sheets were not read | 1 | [shop page](https://www.digikey.nl/en/products/detail/traco-power/TSR-1-2450/9383780) |
 | AS5600 sensor board, €3.00 at TinyTronics, one per axis | 4 | [shop page](https://www.tinytronics.nl/en/sensors/magnetic-field/as5600-magnetic-angle-sensor-encoder-module) |

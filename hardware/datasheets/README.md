@@ -47,7 +47,7 @@ Each was read from the datasheet that LCSC links on the part's page, because the
 
 | Part | What was read |
 | --- | --- |
-| 5 V regulator, SIP-3 | RECOM R-78K5.0-1.0 (Rev 6-2025), R-78E5.0-1.0 (Rev 3/2016), Mornsun K7805-1000R3 (2021.01.8-A/3), Traco TSR 1-2450 (20 June 2018), Murata OKI-78SR-5/1.5-W36 |
+| 5 V regulator, SIP-3 | RECOM R-78K5.0-1.0 (Rev 6-2025), R-78E5.0-1.0 (Rev 3/2016), Mornsun K7805-1000R3 (2021.01.8-A/3), YLPTEC K7805-1000R3 (V1.00, 06/2013, from LCSC C2992391), Traco TSR 1-2450 (20 June 2018), Murata OKI-78SR-5/1.5-W36 |
 | Radial fuses, 5.08 mm | Schurter MST 250 (rated 63 V DC); Littelfuse 382 (no DC rating in its sheet); Bel RST |
 | JST connectors | JST's series pages ePH, eXH and eVH: current ratings and mounted heights. The drawings per part number did not load |
 

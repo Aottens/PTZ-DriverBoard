@@ -97,7 +97,7 @@ C_PLUGGED = {"MCU module: 22 at its regulator's input, 22 and 10 behind it (esti
              "four sensor boards at 2 each and a display (estimate)": 13.0}
 c_on = sum(C_BOARD.values()) + sum(C_PLUGGED.values())
 print(f"what U101 charges at switch-on (POW-07): {sum(C_BOARD.values()):.0f} uF on the board + {sum(C_PLUGGED.values()):.0f} uF plugged in (estimates) = {c_on:.0f} uF")
-for name, limit in (("Mornsun K7805-1000R3", 680), ("Traco TSR 1-2450", 470), ("RECOM R-78E5.0-1.0", 220)):
+for name, limit in (("YLPTEC K7805-1000R3", 680), ("Mornsun K7805-1000R3", 680), ("Traco TSR 1-2450", 470), ("RECOM R-78E5.0-1.0", 220)):
     print(f"  {name}: limit {limit} uF, {'fits with ' + format(limit / c_on, '.1f') + ' times to spare' if limit >= 1.5 * c_on else 'no margin: not the module to buy'}")
 assert c_on <= 470 / 1.5
 V_D102 = 0.45                    # V at about 1 A: SS34, 0.55 V max at 3 A (MDD Rev 2024A5); a reading of its curve
