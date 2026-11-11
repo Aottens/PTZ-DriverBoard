@@ -54,7 +54,9 @@ From the owner's Rev A brief and the size entry of 2026-11-10 in `DECISIONS.md`.
   - the antenna connector on the MCU module is free above;
   - no two boxes overlap, and a screwdriver reaches each mounting screw from above.
 - **BRD-08 Assembly** is written out in `hardware/ASSEMBLY.md`: what the owner solders and in which order, the
-  order of mounting and plugging, and which tool reaches which bolt.
+  order of mounting and plugging, and which tool reaches which bolt. What the owner buys is a list made from the
+  schematic, `hardware/sourcing/owner_bom.md`: every part without an LCSC field is on it with its mating plug,
+  contacts or socket, or `sourcing/owner_bom.py` stops.
 - **BRD-09 Silkscreen.** Top: a name at every connector, socket, fuse, jumper and test point; pin 1 at every
   connector and socket; plus, minus and the voltage range at the supply input; the fuse ratings; which way round
   each module goes; board name, revision and date. Bottom: the pin order of every connector and what each jumper

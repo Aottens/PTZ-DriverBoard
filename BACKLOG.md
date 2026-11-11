@@ -78,6 +78,7 @@ Covers S2-01 to S3-03 below. The research questions and slice 1 stay open: the r
 | RB-03 | The owner uploads `hardware/fab/` to JLC, finds the quote at most €100, ticks the preview checklist of PR #5 and the stock of every line, and orders. | COST-01, BRD-02, BRD-12 | S | todo |
 | RB-04 | The owner's current-limited bring-up run of Rev B passes, section by section, while the through-hole parts and modules go on. | POW, DRV, ENC, CTL, AUX | M | gate3: `tests/hardware/bringup-rev-b.md` |
 | RB-05 | The base of the head gives the board what `hardware/ASSEMBLY.md` asks: 25 mm of height, openings for USB and the Ethernet jack, the antenna bulkhead, an air path along the drivers. | BRD-01, BRD-07, MEC-01 | M | todo |
+| RB-06 | `hardware/sourcing/owner_bom.py` makes the owner's shopping list from the schematic: every part JLC does not assemble, with plugs, contacts and sockets, LCSC numbers, stock and prices, and a CSV for LCSC's BOM tool. | BRD-08 | S | done (2026-11-11, #6) |
 
 ## Slice 4 — bring-up and firmware
 
