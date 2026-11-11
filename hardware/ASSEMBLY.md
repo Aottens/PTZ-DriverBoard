@@ -25,7 +25,8 @@ tool or plug that cannot reach is a design error: change the base or the board, 
 | antenna | U.FL to SMA bulkhead lead, 2.4 GHz antenna | 1 | The module's connector is first-generation U.FL (Espressif datasheet v1.8, 10.2) |
 | sensors | MT6701 or AS5600 board | up to 4 | Which one is the rig's question (R-T2) |
 
-Shop links are in the pull request and in `docs/research/rev-b-cost.md`.
+The shopping list with part numbers, quantities and shop links is `hardware/sourcing/owner_bom.md`, made from the
+schematic by `sourcing/owner_bom.py`; its LCSC lines are in `sourcing/owner_bom_lcsc.csv` for LCSC's BOM tool.
 
 ## Soldering, in the order the bring-up checklist asks for it
 

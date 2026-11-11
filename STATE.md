@@ -17,8 +17,8 @@ The research phase goes on beside it: findings in `docs/research/README.md`. The
 ## Next
 1. The owner reviews and merges PR #5, then uploads `hardware/fab/ptz-driver_gerbers.zip` and the two files in
    `hardware/fab/jlc/` to JLC for the real quote, ticks the preview checklist in the PR, and orders (RB-03).
-2. The owner buys the modules and through-hole parts for one head: list in `hardware/ASSEMBLY.md`, shop links in
-   `docs/research/rev-b-cost.md`.
+2. The owner buys the modules and through-hole parts for one head: `hardware/sourcing/owner_bom.md`, with
+   `owner_bom_lcsc.csv` to upload at LCSC (rerun `owner_bom.py --refresh` for stock on the day).
 3. Bring-up from `tests/hardware/bringup-rev-b.md`, soldering section by section (RB-04).
 4. Rig: the owner prints `pulley_120T`, `fit_seat` and `fit_shaft` and orders the parts in `specs/modules/rig.md`;
    then R-TR, the rig firmware and its checklists.
