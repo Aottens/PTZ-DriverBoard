@@ -74,7 +74,10 @@ Covers S2-01 to S3-03 below. The research questions and slice 1 stay open: the r
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
 | RB-01 | The owner approves the Rev B PRD and the cost estimate in `docs/research/rev-b-cost.md` (gate 1). | COST-01..03, CORE-01 | S | done (2026-11-11) |
-| RB-02 | One Fable 5.2 session delivers one PR with Rev B's specs, checks, KiCad project, JLC files, a redone cost estimate within COST-01 and a handled blind review, from `docs/prompts/fable-board-rev-b.md`. | COST, POW, DRV, ENC, CTL, AUX, BRD | XL | todo |
+| RB-02 | One Fable 5.2 session delivers one PR with Rev B's specs, checks, KiCad project, JLC files, a redone cost estimate within COST-01 and a handled blind review, from `docs/prompts/fable-board-rev-b.md`. | COST, POW, DRV, ENC, CTL, AUX, BRD | XL | done (2026-11-11, #5) |
+| RB-03 | The owner uploads `hardware/fab/` to JLC, finds the quote at most €100, ticks the preview checklist of PR #5 and the stock of every line, and orders. | COST-01, BRD-02, BRD-12 | S | todo |
+| RB-04 | The owner's current-limited bring-up run of Rev B passes, section by section, while the through-hole parts and modules go on. | POW, DRV, ENC, CTL, AUX | M | gate3: `tests/hardware/bringup-rev-b.md` |
+| RB-05 | The base of the head gives the board what `hardware/ASSEMBLY.md` asks: 25 mm of height, openings for USB and the Ethernet jack, the antenna bulkhead, an air path along the drivers. | BRD-01, BRD-07, MEC-01 | M | todo |
 
 ## Slice 4 — bring-up and firmware
 

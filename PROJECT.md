@@ -15,4 +15,4 @@ A new head with different mechanics needs a configuration change only: no new bo
 - Earlier designs in `docs/history/` and the firmware in `../PTZ-head` are reference only.
 
 ## Stack
-KiCad 10 with KiCAD-MCP-Server, kicad-happy and Freerouting; JLCPCB with SMD assembly; ESP32-C6 and C++ firmware.
+KiCad 10 with KiCAD-MCP-Server, kicad-happy and Freerouting; JLCPCB with SMD assembly; an ESP32-S3 module and C++ firmware.

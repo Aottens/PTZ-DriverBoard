@@ -1,41 +1,43 @@
 # PTZ driver board — Architecture
 
-This describes **Rev A as designed** (2026-11-10, `hardware/`). The firmware part is still a proposal.
+This describes **Rev B as designed** (2026-11-11, `hardware/`): a two-layer carrier board for plug-in modules. The
+firmware part is still a proposal. Rev A, with its drivers on the board, is under the git tag `rev-a`.
 The research questions in `docs/research/README.md` stay open: the rig can still overturn a part choice.
 
 ## Blocks
 
 ```
- 12-24 V ─ J101 ─ P-FET (reverse) ─┬─ 7 A fuse ─ VM ─ TVS, 2 × 220 µF ─► 4 × TMC5240 ─► motors M1..M4
-                                   └─ 1.5 A fuse ─ buck ─ +5V ─┬─► external driver ports, fan
-                                                               └─ diode ─┐
- USB-C ─ VBUS ───────────────────────────────────────────────── diode ─┴─ VSYS ─ buck ─ +3V3 ─► logic
+ 11-17 V ─ J101 ─ P-FET (reverse) ─┬─ fuse T 5 A ─ VM ─ TVS, 4 × 100 µF ─► 4 driver sockets ─► motors M1..M4
+                                   └─ fuse T 1 A ─ TVS ─ 5 V module (SIP-3) ─ diode ─ +5V
+ +5V ─┬─► MCU module's 5V pin (its own USB feeds the same net through the module's diodes)
+      ├─ regulator ─ +3V3      multiplexer, Ethernet module, drivers' logic supply, pull-ups
+      ├─ regulator ─ +3V3_SNS ─ jumper (or +5V) ─ V_SNS ─► sensor ports, home plugs, spare port
+      └─► fan header (5 V only), switched in its minus lead
 
- ESP32-C6-MINI-1U (22 pins, all used; firmware/include/pins.h is the one place they are assigned)
-  ├─ SPI ─┬─ 4 × TMC5240, one chip select each ─┐
-  │       ├─ W5500 ─ header J801 ─► off-board  │  chip selects for drivers and sensors come from
-  │       │          RJ45 jack with magnetics   │  a dual 2-to-4 decoder: two address lines, two strobes
-  │       └─ buffers ─► 4 sensor ports S1..S4 ──┘
-  ├─ DRV_ENN ─► all four drivers and the external-port buffer (pulled up: off at reset)
-  ├─ I2C ─┬─ PCAL6416A expander: DIAG0/1 × 4, Ethernet INT/RST, RGB LED, tally, record
-  │       ├─ TMP1075 board temperature
-  │       └─ spare port (Qwiic pin order)
-  ├─ expander interrupt (direct pin)
-  ├─ UART ─► SP3485 ─► RS-485            ├─ TWAI ─► SN65HVD230 ─► CAN
-  ├─ ADC ◄─ VM / 11                      ├─ PWM ─► fan switch
-  └─ USB serial/JTAG, boot button
+ ESP32-S3-DevKitC-1U on sockets (28 pins used, none spare; firmware/include/pins.h is the one place they are assigned)
+  ├─ SPI ─┬─ 4 × driver socket (TMC2240), each behind three solder jumpers and with its own select line
+  │       └─ WIZ850io Ethernet module (W5500, own RJ45 jack)
+  ├─ STEP, DIR × 4 ─► driver sockets                 ├─ DRV_ENN ─► all four (pulled up: off at reset)
+  ├─ DIAG_OR ◄─ diode-OR of the four drivers' DIAG   ├─ HOME × 4 ◄─ protected inputs
+  ├─ I2C ─ TCA9548A ─┬─ channel 0..3 ─► sensor ports S1..S4 (AS5600 or MT6701 boards)
+  │                  └─ channel 4 ─► spare header
+  ├─ ADC ◄─ VM / 11, board thermistor                ├─ PWM ─► fan switch
+  └─ RST ─ diode ─► reset of multiplexer and Ethernet module
 ```
 
-Per axis: a TMC5240 that generates the motion itself, a motor connector, a sensor port (SPI, 3.3 V, with the home
-input on pin 7 going to the driver's REFL), and an external driver port that carries the driver's own STEP and DIR,
-buffered to 5 V and gated by `DRV_ENN`.
+Per axis: a socket for a StepStick driver module, a motor connector, a sensor port on its own multiplexer channel
+with pull-ups chosen by solder jumper and an ESD array, and a home input with a clamp.
+
+What JLC assembles is 115 small SMD parts on 24 BOM lines. What the owner buys and fits: the MCU, driver and
+Ethernet modules, the 5 V regulator, two fuses, four capacitors, and every connector (`hardware/ASSEMBLY.md`).
 
 ## What stops a motor
 
-1. The driver, in the chip: a stall (StallGuard) or the home input. No MCU involved.
-2. The MCU: `DRV_ENN` high, on a direct pin. This also cuts the steps to an external driver.
-3. Nothing drives the bridges at reset: `DRV_ENN` is pulled up, the chip selects are pulled up.
-The expander's interrupt is on a direct pin too, so firmware can act before it has read which input changed.
+1. The MCU: `DRV_ENN` high, on a direct pin, to all four drivers.
+2. Nothing drives the bridges at reset: `DRV_ENN` is pulled up on the board and on every module.
+3. A stall or fault of any driver raises `DIAG_OR`; firmware asks the drivers over SPI which one.
+Unlike Rev A's TMC5240, these drivers do not stop a motor on a home input by themselves: the MCU makes the step
+pulses, so the watchdog and the limits are firmware's (FW-07).
 
 ## Firmware layers (proposal)
 
@@ -59,4 +61,4 @@ The expander's interrupt is on a direct pin too, so firmware can act before it h
 ## Dependencies
 
 Tools, not shipped: KiCad 10, Freerouting, PlatformIO. The KiCad MCP server and kicad-happy are configured but the
-Rev A build did not need them: schematic and board are written by the scripts in `hardware/tools/`.
+board builds did not need them: schematic and board are written by the scripts in `hardware/tools/`.

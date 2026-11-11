@@ -4,6 +4,100 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev B: what was done with the blind review
+
+The first review is `hardware/review/BLIND_REVIEW.md`: no KRITIEK finding, three BELANGRIJK, all three fixed.
+`hardware/review/HANDLED.md` lists every finding, the small ones too, and the second review of the changed board.
+
+**B1, parts under the soldered-in Ethernet module: fixed.** Nothing stands under it now; `check_board.py` checks it.
+
+**B2, the fan output on VM was not short-proof: fixed by taking the option away.** The fan output is 5 V only. A
+fan for the supply voltage would need a fuse of its own, and the PRD asks for one fan output, not for two voltages.
+*Reversal trigger:* a 5 V fan cannot cool the four drivers on the rig; then a later revision gets a fused 12 V output.
+
+**B3, the 5 V module and what it must charge: fixed, and the choice of module narrowed.** The board's own
+capacitance on the logic rails went from about 320 µF to 113 µF; with the plugged-in modules the estimate is about
+230 µF. The Traco TSR 1-2450 (470 µF) and the Mornsun K7805-1000R3 (680 µF) take that; the RECOM R-78E5.0-1.0
+(220 µF) does not and is ruled out in the spec, in `ASSEMBLY.md` and on the silkscreen. The AMS1117 regulators keep
+30 µF of tantalum at their outputs, above the 22 µF their data sheet asks for.
+
+**The second review, of the board after those fixes** (`BLIND_REVIEW_2.md`): no KRITIEK, three BELANGRIJK.
+- *B1, the ground of the motor half hung on 4 mm of copper: fixed.* The signals between the MCU module and the
+  sockets cut both pours across the board. Ground is now laid as tracks before routing, on the bottom: a spine
+  north of the MCU module's pin row from that module's ground pins to the supply connector, and four bridges north
+  to ground pins of the sockets. `tools/groundcut.py` gives 14.0 mm of copper to the supply connector and 10.0 mm
+  to the MCU module, from 4.2 mm for both; BRD-13 asks 8 and `check_board.py` checks it. It is a measure of
+  geometry, not of noise: whether SPI is clean beside running motors is bring-up step 7.6.
+- *B2, no surge clamp on the logic branch with the motor fuse out: fixed.* A second SMBJ18A (D103) on `VIN_L`, and
+  the gate divider at half the input instead of 0.6. *Alternative:* moving the one TVS in front of both fuses, which
+  leaves a failed TVS without a fuse.
+- *B3, 26 to 32 mm between the Ethernet jack and the wall: accepted.* The head does not exist; the base gets a hole
+  in line with the jack or a coupler in the wall with a short lead (`hardware/ASSEMBLY.md`, RB-05). Turning the
+  module a quarter would point the jack at the pan motor or at the drivers. *Reversal trigger:* the base's CAD
+  model cannot give either.
+The board changed after this second review and has had no third one: ERC, DRC, the netlist check and the ground
+measurement are what cover those last changes.
+
+**Accepted small findings, with the reason:**
+- *K1, `+3V3` has about 1.25 V above the regulator where its data sheet asks 1.3 V at 0.8 A.* The load is 0.17 A,
+  where the drop-out is about 1.1 V; the calculation leaves it in regulation. Bring-up steps 1.3, 3.2 and 6.1 measure
+  it. *Reversal trigger:* `+3V3` under 3.2 V with the Ethernet module sending; then D102 becomes a part with a lower
+  drop, or U102 a regulator with a lower drop-out in the same package.
+- *K3, the TMC2240's DIAG0 is open drain by default.* Firmware sets `diag0_pushpull`; DRV-05 and bring-up 7.3 say so.
+- *K6, no reset of the multiplexer apart from the MCU's.* No pin is left; firmware can clock a stuck sensor free.
+- *K8, ground pins sit solid in the copper.* Thermal spokes left pins on a single spoke on this two-layer board;
+  the owner solders with a second more heat.
+- *K9 to K12, fit and edge distances:* stated in `ASSEMBLY.md` and in the pull request's flags.
+- *K14, a shorted sensor cable restarts the MCU for as long as the short lasts.* Nothing is damaged, which is what
+  POW-03 asks. A resettable fuse per port would be a fourth and fifth Extended line. *Reversal trigger:* a sensor
+  cable that shorts in use.
+
+---
+
+## 2026-11-11 — Rev B: what the one-run build decided
+
+Made by the Rev B build session (RB-02) inside the approved PRD; the owner sees them in the pull request. Each can
+be undone on a next revision; none changes a requirement.
+
+**The 5 V regulator, the two fuses and the four bulk capacitors are through-hole parts the owner solders.** JLC's
+fee-free libraries (351 Basic, about 1 200 Preferred) hold no power inductor, fuse, electrolytic capacitor,
+thermistor or P-channel power FET. A buck converter on the board would have been a fourth Extended line with a
+layout nobody can measure in this build; a three-pin 5 V switching module in the 7805 pin order is certified by
+its maker and is bought once instead of five times. *Alternative:* the XL1509 the PRD's part check names, with an
+Extended inductor. *Reversal trigger:* the owner wants nothing to solder but connectors; then the buck comes back
+at about €5 more per order.
+
+**Three Extended lines, at the PRD's limit:** the I2C multiplexer, the reverse-polarity FET (AOD4185) and the
+thermistor. Three small fee-free FETs in parallel were the first plan for reverse polarity; the calculation in
+`hardware/calc/power.py` shows they do not survive the current a 5 A time-lag fuse lets through.
+
+**The drivers and the Ethernet module share one SPI bus; every usable MCU pin is in use.** The N8 DevKitC the PRD
+prefers is end of life at Espressif, and the N16R8 that shops sell needs GPIO35 to 37 for its memory. Without
+those, without the pins of the module's own LED, USB and BOOT button, 28 pins are left, and 28 signals need one. A
+bus of its own for Ethernet would have taken three more. So: one bus; a select line per driver socket, which is
+also that socket's one-wire UART line when a TMC2209 is plugged in; three solder jumpers per socket that take a
+TMC2209's MS1, MS2 and second UART pin off the bus; one shared stall and fault line through diodes (PRD DRV-04,
+*proposal*); the multiplexer and the Ethernet module reset from the MCU's own reset line through a diode, because
+no pin is left for it. *Reversal trigger:* firmware needs a spare pin, or Ethernet traffic disturbs the drivers on
+the rig; then a later revision takes an I/O expander for the home inputs.
+
+**The sensor ports have their own 3.3 V regulator, an ESD array each, and a jumper to 5 V.** A short on a sensor
+cable then leaves the logic supply alone. The regulator is a second AMS1117, not a small 200 mA part: that one
+limits a short to 100 mA but has no thermal shutdown, and 0.46 W in a SOT-23 is twice its rating. The home inputs
+have a resistor and clamp instead of an ESD array, so they also survive a steady 17 V from a motor wire.
+
+**The board is 100 × 80 mm on two layers, and the Ethernet module is soldered in.** That is the size the envelope
+allows and JLC's cheapest size class. On ordinary sockets the Ethernet jack would stand 28 mm above the board,
+over the 25 mm the envelope gives. The driver modules, on sockets with a 12 mm heat sink, reach 24.6 mm by
+calculation: the base's height is the tightest number in the fit check, and the heat sink's height is an assumption.
+
+**With USB plugged in while the supply is on, USB and the board's regulator share the logic load.** Both reach
+`+5V` through a Schottky diode, so the higher of the two feeds it: a USB port may then see up to about 0.65 A, or
+0.85 A with the fan running. Moving the fan to the regulator's side of its diode was not worth a new track
+across the board. *Reversal trigger:* a USB port that cuts out during bench work with the supply on.
+
+---
+
 ## 2026-11-11 — Rev B's PRD is approved; homing comes from the encoders
 
 **Decision (owner, in chat):** The Rev B hardware and cost sections of `specs/PRD.md` are approved as written, the lines marked *(proposal)* included (gate 1). Pan and tilt need no homing move: their absolute encoders give the position at boot (FW-03). Zoom may home by stall against the ring's end, and a home input per axis stays as a fallback (ENC-03). How close a preset lands after a restart is measured on the rig (ENC-06, R-T2). Rev B is built by one Fable 5.2 session from `docs/prompts/fable-board-rev-b.md`, reusing the tools Rev A's session built.
