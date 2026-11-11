@@ -4,6 +4,30 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev B's PRD is approved; homing comes from the encoders
+
+**Decision (owner, in chat):** The Rev B hardware and cost sections of `specs/PRD.md` are approved as written, the lines marked *(proposal)* included (gate 1). Pan and tilt need no homing move: their absolute encoders give the position at boot (FW-03). Zoom may home by stall against the ring's end, and a home input per axis stays as a fallback (ENC-03). How close a preset lands after a restart is measured on the rig (ENC-06, R-T2). Rev B is built by one Fable 5.2 session from `docs/prompts/fable-board-rev-b.md`, reusing the tools Rev A's session built.
+
+**Alternatives considered:** stall homing on every axis, which by recollection is at best about one full step repeatable (0.24° at 7.5:1, against 0.005° in TGT-05) and runs the head into a stop in front of an audience; a home switch on every axis.
+
+**Reasoning:** no move at power-up suits a theatre, and the encoders are on the board anyway. The open risk is the encoder's repeatability after a restart: one count is 0.088° on the AS5600 and 0.022° on the MT6701, and how far averaging helps depends on noise, which only the rig shows.
+
+**Reversal trigger:** R-T2 shows presets after a restart landing too far off with either sensor; then pan and tilt get a hall sensor on the home input as a fine reference.
+
+---
+
+## 2026-11-11 — Rev A is not ordered; Rev B uses plug-in modules on a cheap board
+
+**Decision (owner, in chat):** Rev A is not ordered: the JLC quote came to almost €400 for five boards, too much for a hobby project. Rev B carries plug-in modules on a cheap board: four StepStick-format drivers (TMC2240 by default), an ESP32-S3-DevKitC-1U with its U.FL antenna led out to an SMA in the wall, a W5500 module with its own RJ45, and four I2C sensor ports behind a multiplexer for AS5600 or MT6701 boards. RS-485, CAN and the tally outputs are struck; Pelco-D and VISCA run over the network, Art-Net and sACN replace DMX. The fan output stays. The input takes 11 to 17 V, for a 12 V supply or D-Tap. One JLC order of five boards costs at most €100 (COST-01), with Basic parts wherever one does the job. This replaces the ESP32-C6-MINI-1U decision of 2026-11-10: the C6 drives only two steppers with hardware-generated steps, the S3 four.
+
+**Alternatives considered:** ordering Rev A; trimming Rev A (dropping CAN and RS-485 leaves the four TMC5240 drivers and most of the 42 Extended lines, which drove the price); the owner's Waveshare ESP32-C6 board; a W5500 directly on the board, which brings two Extended parts and the crystal layout the Rev A review worried about; keeping I2C sensors off a multiplexer, which fails because the AS5600 has one fixed address.
+
+**Reasoning:** the price was never a requirement, so Rev A grew without a brake. Plug-in modules move the expensive and hard parts off the JLC order, let the owner reuse the TMC2209 modules already in hand, and let each part be swapped without a new board. The estimate in `docs/research/rev-b-cost.md` comes to about €58 to €92 for the JLC order.
+
+**Reversal trigger:** the estimate redone before the order goes over €100; the rig shows I2C cannot carry the tilt sensor's cable (R-T2); or four axes with steps from the S3 are not smooth enough on the rig.
+
+---
+
 ## 2026-11-11 — Rev A: what was done with the blind review
 
 The review is `hardware/review/BLIND_REVIEW.md`: no KRITIEK finding, five BELANGRIJK. `hardware/review/HANDLED.md` lists every finding, the small ones too.
