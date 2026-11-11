@@ -21,7 +21,7 @@ each sensor sits alone behind its own channel of the multiplexer. Axis n has its
 | Ref | Part | LCSC | Fitted by | Datasheet read |
 | --- | --- | --- | --- | --- |
 | U701 | TCA9548APWR, 8-channel I2C switch, TSSOP-24 | C130026 (Extended) | JLC | TI SCPS207H, September 2024, pin table |
-| U702, U703, U704 | SRV05-4, four-line ESD array, SOT-23-6 | C7420376 (Preferred) | JLC | see `hardware/datasheets/README.md` |
+| U301, U401, U501, U601, U702 | SRV05-4, four-line ESD array, SOT-23-6 | C7420376 (Preferred) | JLC | Hongjiacheng Rev 2.1: I/O on 1, 3, 4, 6; 2 ground; 5 rail |
 | D302 … D602 | BAV99, two diodes in series, SOT-23 | C2500 | JLC | Nexperia BAV99: 1 anode, 2 cathode, 3 common |
 | J303, J403, J503, J603 | JST B4B-PH-K-S, 4 pins, 2.0 mm, top entry | none | owner | |
 | J302, J402, J502, J602 | JST B3B-PH-K-S, 3 pins, 2.0 mm, top entry | none | owner | |
@@ -48,8 +48,8 @@ each sensor sits alone behind its own channel of the multiplexer. Axis n has its
   ENC-05, ENC-06 and a test point on the bus.
 - **ENC-05 Pull-ups per port, by solder jumper.** Each port has two pairs of pull-ups from its SDA and SCL lines
   on the connector side (`SNSn_SDA`, `SNSn_SCL`):
-  - Ra06 and Ra07 (4.7 kΩ) to `PUn_A`, which JPa04 joins to `V_SNS`: closed as delivered;
-  - Ra08 and Ra09 (2.2 kΩ) to `PUn_B`, which JPa05 joins to `V_SNS`: open as delivered.
+  - Ra06 (from `SNSn_SDA`) and Ra07 (from `SNSn_SCL`), 4.7 kΩ, to `PUn_A`, which JPa04 joins to `V_SNS`: closed as delivered;
+  - Ra08 (from `SNSn_SDA`) and Ra09 (from `SNSn_SCL`), 2.2 kΩ, to `PUn_B`, which JPa05 joins to `V_SNS`: open as delivered.
 
   That gives none, 4.7 kΩ, 2.2 kΩ or 1.5 kΩ per port. Sensor boards often carry their own pull-ups; then JPa04 is
   cut. The bus clock is a firmware setting.
@@ -57,17 +57,21 @@ each sensor sits alone behind its own channel of the multiplexer. Axis n has its
   sensor cable does not take down the logic supply (POW-08). JP101 can move `V_SNS` to `+5V`: the multiplexer then
   translates, since each side has its own pull-ups (TCA9548A datasheet, voltage translation). With `V_SNS` on 5 V
   a short on a sensor cable does take down `+5V`.
-- **ENC-07 ESD.** Every line that leaves the board on a sensor port has a channel of an SRV05-4 at its connector:
-  U702 holds `SNS1_SDA`, `SNS1_SCL`, `SNS2_SDA`, `SNS2_SCL` on pins 1, 3, 4, 6 in that order; U703 the same for
-  ports 3 and 4; U704 holds `AUX_SDA` and `AUX_SCL` on pins 1 and 3, with pins 4 and 6 not connected. On each,
-  pin 2 is `GND` and pin 5 is `V_SNS`. The home inputs are protected by their resistors and clamp (ENC-03), which
+- **ENC-07 ESD.** Every line that leaves the board on a sensor port has a channel of an SRV05-4 right at its
+  connector, one part per port: Ua01 holds `SNSn_SDA` on pin 1 and `SNSn_SCL` on pin 3; U702 holds `AUX_SDA` on
+  pin 1 and `AUX_SCL` on pin 3. On each, pins 4 and 6 are not connected, pin 2 is `GND` and pin 5 is `V_SNS`. The home inputs are protected by their resistors and clamp (ENC-03), which
   also survive a steady 17 V; an SRV05-4 would not.
 - **ENC-08 Spare channel (AUX-01).** J701: 1 = `V_SNS`, 2 = `GND`, 3 = `AUX_SDA`, 4 = `AUX_SCL`, on channel 4
-  (`MUX5_SDA`, `MUX5_SCL`) through R703 and R704 (100 Ω). Pull-ups as on a sensor port: R705 and R706 (4.7 kΩ) to
-  `PU5_A` with JP701 closed, R707 and R708 (2.2 kΩ) to `PU5_B` with JP702 open.
+  (`MUX5_SDA`, `MUX5_SCL`) through R703 (SDA) and R704 (SCL), 100 Ω. Pull-ups as on a sensor port: R705 (SDA) and
+  R706 (SCL), 4.7 kΩ, to `PU5_A` with JP701 closed; R707 (SDA) and R708 (SCL), 2.2 kΩ, to `PU5_B` with JP702 open.
 
 ## Not verified in this build
 
 - Which sensor board the head will use, and whether it has pull-ups, is open until the rig (R-T2). The MT6701
   datasheet that could be downloaded is Rev 0.1; its address can be reprogrammed.
 - The SRV05-4's pin order is from the part's datasheet as linked by LCSC; its rotation is on the JLC preview checklist.
+  That sheet does not say how to wire pin 5 on a 3.3 V line; it is tied to the port's supply, as the original
+  part's maker (Semtech) allows.
+
+A solder jumper is two (or three) separate pads in the netlist, each on its own net, whether its bridge is closed
+or open: `PUn_A` and `V_SNS` stay two nets.

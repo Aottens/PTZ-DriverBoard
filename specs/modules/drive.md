@@ -55,7 +55,7 @@ socket without its DIAG signal.
 | C302 … C602 | 100 nF 50 V 0603 | C14663 | JLC |
 | R301 … R601 | 1 kΩ 0603 | C21190 | JLC |
 | D301 … D601 | B5819W Schottky, SOD-123 | C8598 | JLC |
-| JP301 … JP603 | Solder jumper, two pads, closed by a copper bridge | none | bare copper |
+| JP301 … JP303, and so on to JP601 … JP603 | Solder jumper, two pads, closed by a copper bridge; two nets in the netlist | none | bare copper |
 
 ## Acceptance criteria
 

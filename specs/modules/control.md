@@ -63,14 +63,14 @@ The module has 4.7 kΩ pull-ups on SCNn, INTn and RSTn (schematic V1.1). MISO is
 
 - **CTL-01 MCU socket.** A201 pad 21 (5V) is `+5V`; pads 22, 23, 43 and 44 are `GND`; pad 3 (RST) is `EN`; pads 1
   and 2 (3V3) are `MCU_3V3`, which goes to a test point and nowhere else: the board's 3.3 V comes from its own
-  regulators (POW-07), not from the module's. C201 and C202 sit across `+5V` and `GND` at the socket.
+  regulators (POW-08), not from the module's. C201 and C202 sit across `+5V` and `GND` at the socket.
 - **CTL-02** WiFi and ESP-NOW need nothing from the board. The antenna lead leaves the module upwards; the fit
   check keeps the space above its connector free (BRD-07).
 - **CTL-03 Ethernet.** A202: pads 1, 2 and 7 `GND`; pads 8 and 9 `+3V3`, with C203 and C204 to `GND`; pad 3
   `SPI_MOSI`, pad 4 `SPI_SCK`, pad 12 `SPI_MISO`; pad 5 `ETH_CS_N`, pad 6 `ETH_INT_N`, both to the MCU; pad 11
   `PERIPH_RST_N`; pad 10 not connected.
-- **CTL-05 SPI bus.** The MCU's `SPI_SCK_MCU` and `SPI_MOSI_MCU` reach `SPI_SCK` and `SPI_MOSI` through R201 and
-  R202 (33 Ω) at the socket. `SPI_MISO` goes straight to the MCU. On the bus are the Ethernet module and, through
+- **CTL-05 SPI bus.** The MCU's `SPI_SCK_MCU` and `SPI_MOSI_MCU` reach `SPI_SCK` and `SPI_MOSI` through R201 (clock) and
+  R202 (MOSI), 33 Ω, at the socket. `SPI_MISO` goes straight to the MCU. On the bus are the Ethernet module and, through
   their jumpers, the four driver sockets (DRV-02); every select line is pulled up, on the module or in the chip.
   The clock rate is a firmware setting: the TMC2240 takes at most 10 MHz (datasheet p12).
 - **CTL-06 Reset of the peripherals.** `PERIPH_RST_N` resets the multiplexer (U701 pin 3) and the Ethernet module

@@ -10,12 +10,11 @@ hardware/~*.lck
 *.lck
 
 # Datasheets are fetched for reading, not redistributed: hardware/datasheets/README.md lists sources and revisions
-hardware/datasheets/*.pdf
-hardware/datasheets/*.txt
+hardware/datasheets/*
+!hardware/datasheets/README.md
 __pycache__/
 
-# Routing by-products: the router log and the boards saved between steps
-hardware/route/en/
-hardware/route/rev-a_*.kicad_pcb
-!hardware/route/rev-a_input.kicad_pcb
-hardware/route/pushed.json
+# Routing by-products: the router's log and session, and the boards saved between steps
+hardware/route/*
+!hardware/route/run.sh
+!hardware/route/rev-b_input.kicad_pcb

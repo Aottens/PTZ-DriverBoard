@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "PTZ driver board")
-		(rev "A")
-		(date "2026-11-10")
+		(rev "B")
+		(date "2026-11-11")
 		(company "ptz-driver")
 	)
 	(lib_symbols)
@@ -27,7 +27,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "128b2c02-df10-5dc2-a53b-e952b0030142")
-		(property "Sheetname" "Power: input protection, 5 V and 3.3 V"
+		(property "Sheetname" "Power: input protection, 5 V module, 3.3 V rails"
 			(at 25.4 37.4 0)
 			(effects
 				(font
@@ -69,7 +69,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "9f2f6113-51df-52a1-993e-c7661459d00e")
-		(property "Sheetname" "MCU, chip selects, expander, USB, I2C"
+		(property "Sheetname" "MCU module, Ethernet module, SPI bus, reset"
 			(at 88.9 37.4 0)
 			(effects
 				(font
@@ -111,7 +111,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "3f847006-171a-5733-9a65-471d7fc5abd1")
-		(property "Sheetname" "Axis 1: driver, motor, sensor port, external driver port"
+		(property "Sheetname" "Axis 1: driver socket, motor, home input, sensor port"
 			(at 152.4 37.4 0)
 			(effects
 				(font
@@ -153,7 +153,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "872d6537-6ed3-5c2c-893a-e0c4c99f3e8d")
-		(property "Sheetname" "Axis 2: driver, motor, sensor port, external driver port"
+		(property "Sheetname" "Axis 2: driver socket, motor, home input, sensor port"
 			(at 215.9 37.4 0)
 			(effects
 				(font
@@ -195,7 +195,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "605d6f3e-dd0e-5d9d-adcd-e99b50feefaf")
-		(property "Sheetname" "Axis 3: driver, motor, sensor port, external driver port"
+		(property "Sheetname" "Axis 3: driver socket, motor, home input, sensor port"
 			(at 25.4 75.5 0)
 			(effects
 				(font
@@ -237,7 +237,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "69cd1a9b-a250-5f2f-bd83-19886061a8cb")
-		(property "Sheetname" "Axis 4: driver, motor, sensor port, external driver port"
+		(property "Sheetname" "Axis 4: driver socket, motor, home input, sensor port"
 			(at 88.9 75.5 0)
 			(effects
 				(font
@@ -278,8 +278,8 @@
 		(fill
 			(color 0 0 0 0)
 		)
-		(uuid "a3821dab-9f4f-5535-b7fd-c78231734644")
-		(property "Sheetname" "Buffers to the sensor and external driver ports"
+		(uuid "0316fca4-eef9-575d-8309-75ffe02670f3")
+		(property "Sheetname" "I2C multiplexer, ESD protection, spare port"
 			(at 152.4 75.5 0)
 			(effects
 				(font
@@ -288,7 +288,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "buffers.kicad_sch"
+		(property "Sheetfile" "sensors.kicad_sch"
 			(at 152.4 102.2 0)
 			(effects
 				(font
@@ -320,8 +320,8 @@
 		(fill
 			(color 0 0 0 0)
 		)
-		(uuid "a0bffdfc-07c2-59c1-8d7b-bfe1b98c7527")
-		(property "Sheetname" "Ethernet, RS-485, CAN"
+		(uuid "d34e41cc-d1fd-5a53-be8c-bb32b467a816")
+		(property "Sheetname" "Fan output, board temperature, test points, mounting"
 			(at 215.9 75.5 0)
 			(effects
 				(font
@@ -330,7 +330,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "comms.kicad_sch"
+		(property "Sheetfile" "io.kicad_sch"
 			(at 215.9 102.2 0)
 			(effects
 				(font
@@ -343,48 +343,6 @@
 			(project "ptz-driver"
 				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0"
 					(page "9")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 25.4 114.3)
-		(size 50.8 25.4)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "d34e41cc-d1fd-5a53-be8c-bb32b467a816")
-		(property "Sheetname" "Camera outputs, fan, test points, mounting"
-			(at 25.4 113.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "io.kicad_sch"
-			(at 25.4 140.3 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "ptz-driver"
-				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0"
-					(page "10")
 				)
 			)
 		)

@@ -31,7 +31,7 @@ that Extended line.
 | F101 | Radial fuse 5.08 mm (TR5 type), time-lag 5 A, or its holder | none | owner | Schurter MST 250: 250 V AC, 63 V DC |
 | F102 | Radial fuse 5.08 mm, time-lag 1 A, or its holder | none | owner | same |
 | D101 | SMBJ18A, unidirectional TVS, 600 W, SMB | C19077573 (Preferred) | JLC | Hongjiacheng Rev 1.1: stand-off 18 V, breakdown 20.0 to 22.1 V, clamp 29.2 V at 20.55 A; band = cathode |
-| C101 … C104 | 220 µF 35 V aluminium electrolytic, radial, Ø 8 mm, 3.5 mm pitch | none | owner | chosen for its ESR, which damps a hot-plug |
+| C101 … C104 | 100 µF 35 V aluminium electrolytic, radial, Ø 6.3 mm, 2.5 mm pitch | none | owner | one per driver; chosen for its ESR, which damps a hot-plug |
 | C105 | 10 µF 50 V 1206 | C13585 | JLC | |
 | C106, C109, C112 | 100 nF 50 V 0603 | C14663 | JLC | |
 | U101 | 5 V, 1 A switching regulator, SIP-3, pins 1 = in, 2 = ground, 3 = out | none | owner | RECOM R-78K5.0-1.0 (Rev 6-2025), Mornsun K7805-1000R3, Traco TSR 1-2450 |
@@ -40,12 +40,18 @@ that Extended line.
 | U102 | AMS1117-3.3, SOT-223 | C6186 | JLC | Advanced Monolithic Systems: 1 ground, 2 and tab out, 3 in |
 | C110 | 10 µF 25 V 0805 | C15850 | JLC | |
 | C111 | 100 µF 6.3 V tantalum, case B | C16133 | JLC | AVX TAJB107K006RNJ; the AMS1117 sheet asks for tantalum of 22 µF or more |
-| U103 | XC6206P332MR, 3.3 V 200 mA, SOT-23 | C5446 | JLC | Torex ETR0305_004b: 1 ground, 2 out, 3 in |
-| C113, C114 | 1 µF 50 V 0603 | C15849 | JLC | |
+| U103 | AMS1117-3.3, SOT-223 | C6186 | JLC | as U102; chosen for its thermal shutdown, see below the table |
+| C113 | 22 µF 25 V 0805 | C45783 | JLC | |
+| C114 | 100 µF 6.3 V tantalum, case B | C16133 | JLC | as C111 |
 | JP101 | Solder jumper, three pads, 1-2 closed by a copper bridge | none | bare copper | |
 | R103 | 100 kΩ 0603 | C25803 | JLC | |
 | R104 | 10 kΩ 0603 | C25804 | JLC | |
 | C115 | 100 nF 50 V 0603 | C14663 | JLC | |
+
+U103 was first a small XC6206 (200 mA, SOT-23). Its sheet gives 100 mA into a short and no thermal shutdown: with
+4.6 V across it that is 0.46 W in a package rated for 0.25 W. The AMS1117 limits at about 1.1 A and shuts down
+when it gets hot ("protected against short circuit and thermal overloads"), so a shorted sensor cable cannot
+damage it.
 
 ## Acceptance criteria
 
@@ -80,10 +86,11 @@ that Extended line.
 - **POW-08** `+3V3` is 3.3 V from U102 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3`), with C110 at its input
   and C111 (plus on `+3V3`) and C112 at its output. It feeds the multiplexer, the Ethernet module, the drivers'
   VIO and the pull-ups, not the MCU: the MCU module has its own regulator.
-  `+3V3_SNS` is 3.3 V from U103 (pin 3 `+5V`, pin 1 `GND`, pin 2 `+3V3_SNS`), with C113 at its input and C114
+  `+3V3_SNS` is 3.3 V from U103 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3_SNS`), with C113 at its input and C114 (plus on
+  `+3V3_SNS`)
   at its output. JP101 chooses `V_SNS`, the supply of every cabled sensor and home connector: pad 2 is `V_SNS`,
   pad 1 is `+3V3_SNS` (closed as delivered), pad 3 is `+5V`.
-- **POW-09 Budget**, in `hardware/calc/power.py`: `+3V3` at most 0.25 A, `+3V3_SNS` at most 0.12 A of 0.2 A,
+- **POW-09 Budget**, in `hardware/calc/power.py`: `+3V3` at most 0.25 A, `+3V3_SNS` at most 0.12 A,
   `+5V` at most 0.85 A, and the input current with four axes at 1.5 A below F101's 5 A.
 
 ## Outputs and what limits them (POW-02c)
@@ -91,7 +98,7 @@ that Extended line.
 | Connector | Pins that can be shorted | What limits the current | Calculated |
 | --- | --- | --- | --- |
 | J301 … J601 motor | phase to `GND`, phase to phase | the driver module's own short protection (TMC2240 datasheet p1; TMC2209 datasheet p1) | on the module |
-| J303 … J603, J701 sensor | `V_SNS` to `GND` | U103's foldback, about 100 mA into a short (Torex sheet); with JP101 on 5 V, U101's protection | 0.5 W in U103 |
+| J303 … J603, J701 sensor | `V_SNS` to `GND` | U103's current limit, 0.9 to 1.5 A, then its thermal shutdown; with JP101 on 5 V, U101's protection | up to 1.5 A from `+5V` until U103 shuts down: more than a 1 A module gives, so `+5V` may dip and the MCU restart |
 | same | SDA or SCL to `GND` or `V_SNS` | pull-ups of 1.5 kΩ at least, 100 Ω to the multiplexer | under 4 mA |
 | J302 … J602 home | signal to `GND` (its normal use) or to `V_SNS` | 10 kΩ pull-up and 10 kΩ series | under 1 mA |
 | J801 fan | `FAN_V` to `GND`, `FAN_V` to `FAN_N` | on 5 V: U101's protection; on `VM`: F101 | see AUX-03 |
