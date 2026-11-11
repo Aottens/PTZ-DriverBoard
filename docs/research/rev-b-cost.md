@@ -1,30 +1,36 @@
 # Rev B cost estimate (COST-01..03)
 
-First made on 2026-11-11 before any design (about €58 to €92). **Redone the same day from the planned parts
-list, before the schematic** (this version). It is redone once more from the real BOM at the end of the build.
-The numbers come from `hardware/calc/cost.py`; rerun it to refresh them.
+First made on 2026-11-11 before any design (about €58 to €92), redone the same day from the planned parts list
+before the schematic (€59 to €75), and **redone from the real BOM at the end of the build** (this version).
+The numbers come from `hardware/calc/cost.py`; rerun it to refresh them. It is an estimate until JLC's quote.
 
 **Tags:** `[page]` = read on jlcpcb.com on 2026-11-11. `[api]` = JLC's parts API that day
 (`hardware/sourcing/jlc_api.py`). `[schatting]` = Claude's estimate, not looked up; the JLC quote settles it.
 
 ## The JLC order: five boards, assembled
 
-Source of the parts list: `hardware/sourcing/planned_bom.csv`: 26 lines, 106 parts and 255 solder joints per board.
+Source of the parts list: `hardware/fab/jlc/ptz-driver_bom.csv`: 24 lines, 108 parts and 268 solder joints per board.
 
 | Item | Low | High | Source |
 | --- | --- | --- | --- |
-| Five bare boards, 2 layers, up to 100 × 100 mm | $2.00 | $7.00 | `[schatting]` |
+| Five bare boards, 2 layers, 100 × 80 mm | $2.00 | $7.00 | `[schatting]` |
 | Setup fee | $8.18 | $8.18 | `[page]` |
 | Stencil | $1.53 | $1.53 | `[page]` |
-| SMT joints, 1275 × $0.0016 | $2.04 | $2.04 | `[page]`, joints counted from the list |
+| SMT joints, 1340 × $0.0016 | $2.14 | $2.14 | `[page]`, joints counted from the placement file |
 | Extended loading, 3 lines × $3.07 | $9.21 | $9.21 | `[page]` |
-| Parts for five boards | $16.39 | $16.39 | `[api]`, price for one piece |
+| Parts for five boards | $19.25 | $19.25 | `[api]`, price for one piece |
 | Shipping to the Netherlands | $15.00 | $25.00 | `[schatting]` |
-| **Subtotal** | **$54.35** | **$69.35** | |
-| With 21 % VAT | $65.76 | $83.91 | `[schatting]` |
-| **In euros, at 0.892** | **€59** | **€75** | ECB rate of 2026-11-10 |
+| **Subtotal** | **$57.31** | **$72.31** | |
+| With 21 % VAT | $69.35 | $87.50 | `[schatting]` |
+| **In euros, at 0.892** | **€62** | **€78** | ECB rate of 2026-11-10 |
 
-The calculation shows this fits COST-01 with about €25 to spare at the high end.
+The calculation shows this fits COST-01 with about €22 to spare at the high end. Against the estimate from the
+planned list it rose by €3: a second 3.3 V regulator with its tantalum capacitor for the sensor supply, and one ESD
+array per port instead of one per two. That is inside the €5 that COST-03 allows without asking.
+
+What the estimate cannot know: the bare-board price JLC shows for this order, the shipping method, and whether JLC
+rounds small parts up to a minimum quantity. The first two are the two `[schatting]` rows; the third could add a
+dollar or two.
 
 ## How the parts were chosen (COST-02)
 
@@ -49,15 +55,20 @@ bought once, not five times).
 
 ## Bought separately
 
-Prices are for one head, not looked up one by one unless a source is given.
+For one head. A price with a link was read on that shop's page on 2026-11-11; `[schatting]` is not looked up.
 
-| Item | Estimate | Source |
+| Item | Price | Where |
 | --- | --- | --- |
-| Per head: ESP32-S3-DevKitC-1U (the N8 is end of life; the N16R8 fits too) | €15 to €20 | `[schatting]` |
-| Per head: four TMC2240 StepStick modules (TMC2209s already owned can start) | €40 to €55 | `[schatting]` |
-| Per head: W5500 module, WIZ850io or compatible | €9 to €22 | TinyTronics €9.00 (compatible), DigiKey $22.12 (WIZnet), both read 2026-11-11 |
-| Per head: four MT6701 or AS5600 boards | €8 to €16 | `[schatting]` |
-| Per head: 5 V regulator module, SIP-3 | €2 to €8 | LCSC: Mornsun K7805-1000R3 $2.16, Traco TSR 1-2450 $6.47, RECOM R-78K5.0-1.0 $7.83 |
-| Per head: U.FL-to-SMA lead and 2.4 GHz antenna | €5 to €10 | `[schatting]` |
-| Per board: headers, sockets, JST connectors, two fuses with holders, four capacitors | €8 to €12 | `[schatting]` |
-| **Per head** | **€87 to €143** | |
+| ESP32-S3-DevKitC-1U-N8R8 | €20.00 | [TinyTronics](https://www.tinytronics.nl/en/development-boards/microcontroller-boards/with-wi-fi/espressif-esp32-s3-devkitc-1u-n8r8-8mb-flash-8mb-psram), in stock. The N8 the PRD prefers is end of life; the board takes either |
+| Four BIGTREETECH TMC2240 V1.0 modules, with heat sink | 4 × €9.75 = €39.00 | [TinyTronics](https://www.tinytronics.nl/en/mechanics-and-actuators/motor-controllers-and-drivers/stepper-motor-controllers-and-drivers/bigtreetech-tmc2240-motor-driver-module-v1.0), in stock. TMC2209s already owned can start |
+| W5500 module, WIZ850io compatible | €9.00 | [TinyTronics](https://www.tinytronics.nl/en/communication-and-signals/ethernet/modules/w5500-ethernet-module-wiz850io-compatible), in stock. A clone: its pin order is the shop's claim. WIZnet's own is $22.12 at [DigiKey](https://www.digikey.com/en/products/detail/wiznet/WIZ850IO/8789619), out of stock that day |
+| 5 V regulator RECOM R-78E5.0-1.0 | €4.00 + VAT | [DigiKey](https://www.digikey.nl/en/products/detail/recom-power/R-78E5-0-1-0/4930585), in stock |
+| Four AS5600 boards | 4 × €3.00 = €12.00 | [TinyTronics](https://www.tinytronics.nl/en/sensors/magnetic-field/as5600-magnetic-angle-sensor-encoder-module). No shop page for an MT6701 board could be opened |
+| Fuse T 5 A, radial | €0.76 + VAT | [DigiKey](https://www.digikey.nl/nl/products/detail/conquer/MST-5A-250V/16928153) (Conquer MST; check its 5.08 mm pitch in the sheet). No page for a T 1 A fuse could be opened: Schurter 0034.6615 is the part |
+| Two TR5 fuse holders, Schurter 0031.7601 | SEK 9.50 each | [Electrokit](https://www.electrokit.com/en/fuse-holder-microfuse-tr5-6.3a-pcb); or solder the fuses in |
+| Four capacitors 100 µF 35 V, Rubycon 35PX100MEFC6.3X11 | 4 × €0.34 + VAT | [DigiKey](https://www.digikey.nl/nl/products/detail/rubycon/35PX100MEFC6-3X11/3134231) |
+| JST XH and PH housings, contacts and headers | 2 × €6.00 for the sets | TinyTronics: [XH set](https://www.tinytronics.nl/en/cables-and-connectors/connectors/jst-compatible/jst-xh-crimp-connector-and-housing-set), [PH set](https://www.tinytronics.nl/en/cables-and-connectors/connectors/jst-compatible/jst-ph-compatible-crimp-connector-and-housing-set), [board headers](https://www.tinytronics.nl/en/cables-and-connectors/connectors/jst-compatible). Compatible parts, not JST's own |
+| JST VH 2-pin header, housing and contacts | about €2 `[schatting]` | no shop page could be opened; B2P-VH and VHR-2N are the parts |
+| Female and male pin headers, 1×40 | 4 × €0.46 + €0.40 | TinyTronics: [female](https://www.tinytronics.nl/en/cables-and-connectors/connectors/pin-headers/female/40-pins-header-female), [male](https://www.tinytronics.nl/shop/en/cables-and-connectors/connectors/pin-headers/male/40-pins-header-male) |
+| U.FL to SMA bulkhead lead and a 2.4 GHz antenna | €5 to €10 `[schatting]` | no shop page could be opened; check SMA against RP-SMA |
+| **Per head** | **about €105 to €115** | |

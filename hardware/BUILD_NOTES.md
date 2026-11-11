@@ -1,6 +1,9 @@
-# Build notes, Rev A
+# Build notes
 
-What has to survive a long run. One lesson per entry, newest at the bottom.
+What has to survive a long run. One lesson per entry, newest at the bottom. Entries 1 to 25 are from Rev A (the
+four-layer board, git tag `rev-a`); they stay because the tools and the habits are the same. From 26 on: Rev B.
+
+## From Rev A
 
 1. **analog.com datasheets** do not load through curl or WebFetch. In the built-in browser they do, and pdf.js from cdnjs can be imported in the page to pull text per page (`import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs')`, then `getDocument({data})`).
 2. **JLC part pages:** WebFetch on `jlcpcb.com/partdetail/C<nr>` gives the PCBA Type but no stock. The same page in the built-in browser shows "In Stock" in its text after about 2 s.
@@ -26,22 +29,70 @@ What has to survive a long run. One lesson per entry, newest at the bottom.
 21. **Widening needs pieces.** A single long segment from a 0.25 mm pad to a connector can only be as wide as its narrowest spot. `board.py finish` cuts supply and motor segments into 0.5 mm pieces first and widens in two passes (to 0.6 mm, then to the class width), so neighbours share the room.
 22. **A footprint's silkscreen cannot be moved on the board** without a library mismatch in the DRC. When a neighbour's pad lies on a pin 1 mark, move the neighbour (`placement.SHIFT`).
 23. **An unplated hole wants 0.25 mm to copper**, not the 0.15 mm of a pad. Both the router grid and the widening needed the larger figure for the USB-C socket's locating holes.
-
-## How the routed board was made (2026-11-10)
-
-From `hardware/`, with `KP` the KiCad Python from `CLAUDE.md`. Freerouting is not repeatable, so a rerun gives another board; the steps are.
-
-1. `$KP tools/board.py place > place.log 2>&1`; the log must say "0 without a place".
-2. `$KP tools/complete.py fanout`: motor outputs, the drivers' bus, plane ties, pin-to-passive tracks and escape vias. Expect no "not routed" and no "no way out".
-3. `cp ptz-driver.kicad_pcb route/rev-a_input.kicad_pcb`, `$KP tools/board.py dsn route/rev-a.dsn`: two `(type power)` layers, the pre-routes as `(type protect)`.
-4. In `route/`: `java -Djava.awt.headless=true -jar ~/.kicad-mcp/freerouting.jar -de rev-a.dsn -do rev-a.ses -mp 14 --gui.enabled=false`, about half an hour, as a background job.
-5. `cp route/rev-a_input.kicad_pcb ptz-driver.kicad_pcb`, `$KP tools/board.py ses route/rev-a.ses`, `$KP tools/board.py finish`.
-6. `$KP tools/complete.py 6`, again until "0 unconnected" with no bad items left; then `$KP tools/complete.py prune` and two more rounds.
-7. `$KP tools/board.py finish`, then `$KP check_board.py` and `$KP check_fit.py`.
-
-Done by hand on this board, between steps 6 and 7, and not in any script: the +3V3 via in front of U801's crystal pin and ETH_XI's detour under the chip were taken out and routed again by step 6; each driver's B1 output was moved 0.1 mm away from the VCP capacitor, and the +5V track on inner layer 2 0.1 mm away from a via, so both reach their width. C804/C808 and the small shifts of C201 and the IREF resistors were also made on the routed board; these are in `placement.py`, so a new placement has them from the start.
-
-After the blind review (2026-11-11), also by hand on the routed board: the detours of `ETH_XI` and `ETH_XO` and a `+3V3` track between the crystal's pads were taken out; `ETH_XI` and a `+3V3` via beside C806 were laid by hand, `ETH_XO` by a round of `complete.py`; `$KP tools/complete.py more` added the vias of `placement.MORE_VIAS`; the ground via under R601 moved 0.15 mm. Then steps 6 and 7 again.
-
 24. **A plane tie has no length limit, and that bit.** A round tied a 3.3 V pin to its plane with a 7 mm track between the crystal's pads, because the near spots were taken; it also laid the same track once per open end. A round now removes doubled tracks. Look at every long supply track after routing; a plane tie longer than a few millimetres is a sign that a via spot is missing.
 25. **Review the routing of the two crystal pins by eye before the blind review does.** The router closed them last and worst.
+
+## From Rev B
+
+26. **Count the cost before the parts, and count JLC's three libraries.** JLC has 351 Basic parts and about 1 200
+    flagged Preferred; neither carries the $3.07 loading fee on Economic PCBA. `sourcing/jlc_api.py` reads the same
+    JSON the parts page uses (`.../smtGood/selectSmtComponentList`), with `componentLibraryType: "base"` or
+    `preferredComponentFlag: true` as a filter, so the whole fee-free list can be pulled once and searched. No
+    fuse, electrolytic, power inductor, thermistor or P-channel power FET is on it: decide early which of those the
+    owner solders as a through-hole part.
+27. **A part JLC assembles is bought five times, a part the owner solders once.** Moving the regulator, the fuses
+    and the bulk capacitors off the JLC order saved their Extended fees and four of every five parts.
+28. **The PCBA Type is not in the parts API.** It is only on `jlcpcb.com/partdetail/<number>`, which WebFetch reads.
+29. **The N8 DevKitC is end of life.** Espressif's user guide marks it so; the N16R8 is what shops sell, and its
+    octal memory takes GPIO35 to 37. A pin table that avoids them fits both. Read the ordering table of a dev
+    board before trusting the PRD's variant.
+30. **A module is a footprint with a drawing behind it.** Rows, spacing, which end is pin 1 and which way the
+    jack opens came from the makers' drawings (Espressif's DXF, WIZnet's page 10, BIGTREETECH's size drawing), and
+    an agent's summary of a drawing was wrong once (the jack's direction): look at the drawing yourself.
+31. **Give a socket courtyards around its pin rows only.** Then low parts can stand under the module and the DRC
+    still catches a part on a pin row; the height under the module is `check_board.py`'s job (BRD-11).
+32. **A router treats a pour as a plane it may cut.** Freerouting ran signal tracks through the VIN pour and cut it
+    in two. The supply path is now laid as tracks of the wanted width (`placement.TRACKS`), which a router leaves
+    whole, with the pour only as extra copper on the bottom.
+33. **Pre-route the pins a router cannot reach, and it routes the rest in a minute.** On two layers with 2.54 mm
+    headers Freerouting needs under a minute and leaves about ten connections open, always around the same spots:
+    a supply pin of a SOT-23-6 shut in by its neighbours, a jumper pad in a crowded corner. A via and a track for
+    each in `placement.py` cost less than any router round.
+34. **A grid router that never moves a track is enough on two layers.** `tools/complete.py` is a third of Rev A's:
+    A* on a 0.1 mm grid, one grid per track width and gap, no pushing. It runs each round in its own process (16).
+35. **Stitch the pours, then look for loose pieces.** A ground pour cut up by tracks leaves pieces that hang on one
+    pad. `complete.py` puts vias on a 2.5 mm raster where both layers carry ground, then gives every remaining
+    piece a via of its own or a track to the main body. A second stitching pass must skip the vias of the first:
+    it once drilled 199 holes twice.
+36. **Solid pour connections on a board the owner solders.** Thermal spokes left ground pins of the driver sockets
+    on one spoke or on a loose piece of pour; the pours now connect solid. Ground pins need a second longer with
+    the iron.
+37. **Freerouting necks tracks down at fine-pitch pads** (0.19 mm at a SOT-23-6, 0.38 mm on a 0.5 mm net) and once
+    paired a 0.4 mm drill with a 0.6 mm pad. `board.py` repairs the via; the necks are allowed in BRD-05 and
+    BRD-06 and counted by `check_board.py`.
+38. **Let an independent check be independent.** `check_netlist.py` was written by a fresh agent from the specs
+    alone. It found ten places where the specs did not say enough to write a check; each was a spec defect, fixed
+    in the spec, never in the check alone.
+39. **JLC's own symbol tells the pin order of its footprint.** `fab/jlc_pins.py` prints what JLC's library calls
+    each numbered pin (G, S, D; C and A; the plus of a tantalum is drawn at pin 1). That settles a rotation
+    question before the preview does.
+40. **A calculation should be allowed to overturn a part.** The first sensor-supply regulator limited a short to
+    100 mA, which looked fine until the product with 4.6 V was set against its 0.25 W package. Three SOT-23 FETs in
+    parallel looked fine until the fuse's let-through was set against them. Both are in `calc/power.py` now.
+
+## How the routed board was made (2026-11-11)
+
+From `hardware/`, with `KP` the KiCad Python from `CLAUDE.md`. Freerouting is not repeatable, so a rerun gives
+another board; the steps are.
+
+1. `sh route/run.sh 20`: `board.py place` (the log must say "180 footprints placed"), `board.py dsn`, Freerouting
+   headless with 20 passes (under a minute), `board.py ses`, `board.py finish`, `complete.py 4`. The run that made
+   this board ended with "round 2: 0 unconnected, 0 violations".
+2. `$KP check_board.py` and `$KP check_fit.py`.
+
+Done by hand on this board afterwards, with a few lines of pcbnew each, and not in any script:
+- the VIN track at Q101's source was 1.2 mm wide for 4.7 mm; it is 3.0 mm now, as `placement.TRACKS` has it for a
+  new board;
+- the 0.38 mm necks of `+3V3` and `V_SNS` were widened to 0.5 mm, except two segments beside JP702 that are
+  0.45 mm (0.2 mm to its pad);
+- `board.py finish` was run again after the pull-up jumpers' names on the silkscreen changed.

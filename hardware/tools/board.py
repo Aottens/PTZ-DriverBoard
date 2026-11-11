@@ -7,7 +7,9 @@ Run with KiCad's Python, from hardware/:
                                     This discards the routing.
   $KP tools/board.py dsn out.dsn    Specctra export for Freerouting; what is on the board already is protected
   $KP tools/board.py ses in.ses     import the routed session
-  $KP tools/board.py finish         ground pours on both layers, stitching vias, silkscreen
+  $KP tools/board.py finish         the top ground pour and the silkscreen (the routing stays)
+  $KP tools/board.py sync           copy values and fields from the schematic onto the routed board's footprints,
+                                    after a change that keeps every footprint and net (a value, an LCSC number)
 """
 import math
 import os
@@ -228,6 +230,25 @@ def finish():
     save(board)
 
 
+def sync():
+    comps = netlist.components(netlist.export(os.path.join(HW, "ptz-driver.kicad_sch")))
+    board = pcbnew.LoadBoard(PCB)
+    changed = 0
+    for fp in board.GetFootprints():
+        comp = comps[fp.GetReference()]
+        assert comp["footprint"].split(":")[1] == fp.GetFPID().GetLibItemName().wx_str(), f"{fp.GetReference()}: another footprint, place again"
+        if fp.GetValue() != comp["value"]:
+            fp.SetValue(comp["value"])
+            changed += 1
+        for key, value in comp["fields"].items():
+            if key not in ("Footprint", "Datasheet", "Description") and (not fp.HasField(key) or fp.GetFieldText(key) != value):
+                fp.SetField(key, value)
+                fp.GetFieldByName(key).SetVisible(False)
+                changed += 1
+    save(board)
+    print(f"{changed} values and fields updated")
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "place"
     if cmd == "place":
@@ -247,3 +268,5 @@ if __name__ == "__main__":
         save(board)
     elif cmd == "finish":
         finish()
+    elif cmd == "sync":
+        sync()
