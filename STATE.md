@@ -6,7 +6,7 @@ This file is the handoff: where we are, what is next, what waits. It is not a lo
 
 ## Current focus
 **Rev B of the board is designed and ready for a JLC quote** (RB-02, PR #5): a two-layer carrier of 100 × 80 mm for
-plug-in drivers, MCU and Ethernet. The estimate for five assembled boards is €63 to €80, of the €100 in COST-01
+plug-in drivers, MCU and Ethernet. The estimate for five assembled boards is €68 to €90, of the €100 in COST-01
 (`docs/research/rev-b-cost.md`). Nothing is ordered and nothing is measured.
 
 Rev A is under the git tag `rev-a`; `hardware/` now holds Rev B.
@@ -17,8 +17,8 @@ The research phase goes on beside it: findings in `docs/research/README.md`. The
 ## Next
 1. The owner reviews and merges PR #5, then uploads `hardware/fab/ptz-driver_gerbers.zip` and the two files in
    `hardware/fab/jlc/` to JLC for the real quote, ticks the preview checklist in the PR, and orders (RB-03).
-2. The owner buys the modules and through-hole parts for one head: `hardware/sourcing/owner_bom.md`, with
-   `owner_bom_lcsc.csv` to upload at LCSC (rerun `owner_bom.py --refresh` for stock on the day).
+2. The owner buys the modules and through-hole parts for one head: `hardware/sourcing/owner_bom.md`. The loose parts
+   come from Reichelt (`owner_bom_reichelt.csv`), the modules and socket strips from TinyTronics.
 3. Bring-up from `tests/hardware/bringup-rev-b.md`, soldering section by section (RB-04).
 4. Rig: the owner prints `pulley_120T`, `fit_seat` and `fit_shaft` and orders the parts in `specs/modules/rig.md`;
    then R-TR, the rig firmware and its checklists.
@@ -32,7 +32,6 @@ The research phase goes on beside it: findings in `docs/research/README.md`. The
 
 ## Owner decisions open
 - The remaining **[OPEN]** lines in `specs/PRD.md`.
-- Which W5500 module to buy: two are named, with what differs. The 5 V regulator on the shopping list is a cheap
-  YLPTEC part that only its data sheet vouches for; a Traco fits the same holes.
+- Which W5500 module to buy: two are named, with what differs.
 - Confirm owned: lab supply to 17 V with a current limit, 1/4" camera bolt, ball-end hex key. Which 14-140 mm: 265 g or 460 g.
 - The repository is public without a licence, so all rights stay reserved until one is added.

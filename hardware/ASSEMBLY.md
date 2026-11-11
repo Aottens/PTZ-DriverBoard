@@ -14,7 +14,7 @@ tool or plug that cannot reach is a design error: change the base or the board, 
 | A301 … A601 | TMC2240 driver in StepStick format, with heat sink | 4 | Drawn for the BIGTREETECH TMC2240 V1.0. TMC2209 modules fit after cutting three jumpers each; on a BIGTREETECH TMC2209 V1.3 the DIAG pin beside EN points up, and must be turned down to reach the socket |
 | A301 … A601 | Female header 1×8 (two per socket) and 1×2 (one per socket) | 8 + 4 | The 1×2 takes the module's AIN and DIAG pins beside its EN pin |
 | A202 | WIZnet WIZ850io, or a module sold as compatible | 1 | Solder it in, or use sockets no taller than 5 mm: on 8.5 mm sockets its jack is 28 mm above the board |
-| U101 | 5 V 1 A switching regulator, SIP-3, 7805 pin order | 1 | YLPTEC K7805-1000R3 (the one on the shopping list), Traco TSR 1-2450 or Mornsun K7805-1000R3. Not a RECOM R-78E: it may charge 220 µF at most, and the board with its modules holds about 230 µF. Not a linear 7805: it would burn 4 W |
+| U101 | 5 V 1 A switching regulator, SIP-3, 7805 pin order | 1 | Traco TSR 1-2450 (the one on the shopping list), or a K7805-1000R3 of Mornsun or YLPTEC. Not a RECOM R-78E: it may charge 220 µF at most, and the board with its modules holds about 230 µF. Not a linear 7805: it would burn 4 W |
 | F101, F102 | Radial fuse, 5.08 mm pitch (TR5), time-lag: 5 A and 1 A | 1 + 1 | With a holder each, or soldered in. Schurter MST 250 is rated for DC |
 | C101 … C104 | Electrolytic capacitor 100 µF 35 V, 6.3 mm, 2.5 mm pitch | 4 | A general-purpose type, not low-ESR: its resistance damps the supply lead (`calc/power.py`) |
 | J101 | JST B2P-VH header, with VHR-2N housing and contacts | 1 | Supply. Pin 1 is plus |
@@ -26,7 +26,7 @@ tool or plug that cannot reach is a design error: change the base or the board, 
 | sensors | MT6701 or AS5600 board | up to 4 | Which one is the rig's question (R-T2) |
 
 The shopping list with part numbers, quantities and shop links is `hardware/sourcing/owner_bom.md`, made from the
-schematic by `sourcing/owner_bom.py`; its LCSC lines are in `sourcing/owner_bom_lcsc.csv` for LCSC's BOM tool.
+schematic by `sourcing/owner_bom.py`; `sourcing/owner_bom_reichelt.csv` has Reichelt's article numbers and quantities.
 
 ## Soldering, in the order the bring-up checklist asks for it
 
