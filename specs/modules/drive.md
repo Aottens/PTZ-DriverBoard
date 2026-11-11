@@ -54,6 +54,7 @@ socket without its DIAG signal.
 | C301 … C601 | 100 nF 50 V 0603 | C14663 | JLC |
 | C302 … C602 | 100 nF 50 V 0603 | C14663 | JLC |
 | R301 … R601 | 1 kΩ 0603 | C21190 | JLC |
+| R310 … R610 | 100 kΩ 0603 | C25803 | JLC |
 | D301 … D601 | B5819W Schottky, SOD-123 | C8598 | JLC |
 | JP301 … JP303, and so on to JP601 … JP603 | Solder jumper, two pads, closed by a copper bridge; two nets in the netlist | none | bare copper |
 
@@ -76,7 +77,8 @@ socket without its DIAG signal.
   push-pull, active high (`diag0_pushpull`, datasheet p57); the TMC2209's DIAG is active high as it comes (p9). A
   TMC2240 that has not been configured holds DIAG0 low, which the diode blocks. Firmware finds the axis over the
   driver bus. *(PRD DRV-04, proposal: one shared line.)*
-- **DRV-06 Step and direction.** `STEPn` and `DIRn` go straight from the MCU to pads 7 and 8.
+- **DRV-06 Step and direction.** `STEPn` and `DIRn` go straight from the MCU to pads 7 and 8. Ra10 (100 kΩ) holds
+  `STEPn` at `GND` while the MCU's pins float in reset, so a driver's step counter does not run on noise.
 - **DRV-07 Motor connector.** Ja01 pins 1 to 4 are `Mn_1` to `Mn_4`, in the order of socket pads 11 to 14. Pins 1
   and 2 are one coil and pins 3 and 4 the other, on every module in the table; which coil is called A differs per
   module, and only decides the direction of rotation, which is a firmware setting.

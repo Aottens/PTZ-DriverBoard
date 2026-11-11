@@ -12,7 +12,6 @@ Rev A's version of this file is under the git tag `rev-a`. The camera outputs (C
 | D801 | B5819W Schottky, SOD-123 | C8598 | JLC | |
 | R801 | 100 Ω 0603 | C22775 | JLC | |
 | R802 | 100 kΩ 0603 | C25803 | JLC | |
-| JP801 | Solder jumper, three pads, 1-2 closed by a copper bridge | none | bare copper | |
 | J801 | Pin header 1×2, 2.54 mm | none | owner | |
 | RT801 | NTC 10 kΩ 1 %, B 3950, 0603 | C2892547 (Extended) | JLC | KNTC0603/10KF3950 |
 | R803 | 10 kΩ 0603 | C25804 | JLC | |
@@ -25,12 +24,12 @@ Rev A's version of this file is under the git tag `rev-a`. The camera outputs (C
 - **AUX-01** The spare multiplexer channel is on header J701: `specs/modules/sensing.md`, ENC-08.
 - **AUX-02** The board has no LED of its own: the RGB LED on the MCU module is the status light, and firmware
   keeps it dark during a show. On board v1.1 it is on GPIO38, which the board leaves alone (CTL-08).
-- **AUX-03 Fan output.** J801: 1 = `FAN_V` (plus), 2 = `FAN_N` (switched minus). Q801 switches `FAN_N` to `GND`:
-  drain `FAN_N`, source `GND`, gate `FAN_G`. R801 (100 Ω) joins `FAN_PWM` from the MCU to `FAN_G`; R802 (100 kΩ)
-  pulls `FAN_G` to `GND`, so the fan is off while the MCU is in reset, and GPIO45 reads low at reset as it must
-  (CTL-08). D801 across the fan: anode `FAN_N`, cathode `FAN_V`. JP801 chooses the fan's supply: pad 2 is
-  `FAN_V`, pad 1 is `+5V` (closed as delivered), pad 3 is `VM`. On `VM` the output is protected by fuse F101
-  only; on `+5V` by the regulator's own short-circuit protection.
+- **AUX-03 Fan output, for a 5 V fan.** J801: 1 = `+5V` (plus), 2 = `FAN_N` (switched minus). Q801 switches
+  `FAN_N` to `GND`: drain `FAN_N`, source `GND`, gate `FAN_G`. R801 (100 Ω) joins `FAN_PWM` from the MCU to
+  `FAN_G`; R802 (100 kΩ) pulls `FAN_G` to `GND`, so the fan is off while the MCU is in reset, and GPIO45 reads low
+  at reset as it must (CTL-08). D801 across the fan: anode `FAN_N`, cathode `+5V`. A short on the connector is
+  limited by the 5 V module. There is no jumper to the motor supply: on `VM` only the 5 A fuse would stand
+  between a shorted fan lead and a 0.5 mm track (blind review, B2).
 - **AUX-04 Board temperature.** RT801 from `NTC_SENSE` to `GND`, R803 (10 kΩ) from `NTC_SENSE` to `+3V3`, C801
   (100 nF) from `NTC_SENSE` to `GND`; `NTC_SENSE` goes to an ADC1 pin. RT801 stands next to the row of drivers.
   The reading is `+3V3 × R / (R + 10 kΩ)`: 1.65 V at 25 °C, by calculation 0.49 V at 70 °C.

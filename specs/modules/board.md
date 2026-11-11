@@ -41,7 +41,7 @@ From the owner's Rev A brief and the size entry of 2026-11-10 in `DECISIONS.md`.
     least 3.0 mm wide (5 A with about 10 °C rise); the branch from there to each socket's pad 9 is at least
     2.0 mm wide, and the branch to F102 at least 1.0 mm;
   - motor outputs `Mn_1` to `Mn_4` are at least 1.0 mm wide (2 A RMS) and at most 15 mm long;
-  - `VIN_L`, `+5V_REG`, `+5V`, `+3V3`, `+3V3_SNS`, `V_SNS`, `FAN_V` and `FAN_N` tracks are at least 0.5 mm wide,
+  - `VIN_L`, `+5V_REG`, `+5V`, `+3V3`, `+3V3_SNS`, `V_SNS` and `FAN_N` tracks are at least 0.5 mm wide,
     necked to no less than 0.35 mm where they enter a fine-pitch pad, for at most 3 mm per net;
   - each bulk capacitor's plus pad is within 12 mm of pad 9 of its driver socket.
 - **BRD-07 Fit, checked by code** in `hardware/check_fit.py`, with each module, heat sink, connector, mating plug
@@ -61,7 +61,8 @@ From the owner's Rev A brief and the size entry of 2026-11-10 in `DECISIONS.md`.
   does, because the top has no room for it. No text smaller than 0.8 mm high with a 0.15 mm stroke.
 - **BRD-10** ERC is clean; DRC is clean with 0 unconnected items and schematic parity, both through `kicad-cli`.
 - **BRD-11 Under the modules.** No part taller than 2.2 mm stands under a module, so a module may also be
-  soldered in without sockets. No solder jumper and no test point is under a module or a connector.
+  soldered in without sockets. No solder jumper and no test point is under a module or a connector. Nothing at all stands under the
+  Ethernet module: it is soldered in, 2.54 mm above the board, with its own parts on its underside.
 - **BRD-12 Cost (COST-01..03).** At most three BOM lines are Extended parts with a loading fee, each with its
   reason in `docs/research/rev-b-cost.md`; every other assembled line is Basic or Preferred. The estimate for
   five assembled boards, with shipping and tax, is at most €100 (`hardware/calc/cost.py`).

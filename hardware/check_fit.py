@@ -41,7 +41,7 @@ PARTS = {
     "PinHeader_1x": (2.5 + 14.0 + 6.0, "2.54 mm header: 2.5 mm base, a 14 mm crimp housing, 6 mm bend"),
     "CP_Radial_D6.3": (11.5, "100 uF 35 V, 6.3 x 11 mm"),
     "Fuseholder_TR5": (10.5, "TR5 fuse, 8 mm, in a holder; 8 mm soldered in"),
-    "SIP3_DCDC": (17.5, "Mornsun K7805-1000R3, the tallest of the three named: 17.5 mm; RECOM R-78K 10.2 mm"),
+    "SIP3_DCDC": (17.5, "Mornsun K7805-1000R3, the taller of the two named: 17.5 mm; Traco TSR 1-2450 10.2 mm"),
     "TO-252": (2.4, ""), "D_SMB": (2.5, ""), "D_SMA": (2.4, ""),
 }
 ANTENNA = (22.86 / 2, -1.0)      # the U.FL connector on the module, from the footprint's pad 1: near the antenna end, mid-width (estimate)

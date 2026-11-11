@@ -29,7 +29,7 @@ FP_R, FP_C = "Resistor_SMD:R_{}_{}Metric", "Capacitor_SMD:C_{}_{}Metric"
 METRIC = {"0603": "1608", "0805": "2012", "1206": "3216"}
 RES = {"33R": "C23140", "100R": "C22775", "1k": "C21190", "2.2k": "C4190", "4.7k": "C23162", "10k": "C25804",
        "100k": "C25803", "150k": "C22807"}
-CAP = {"100 nF": ("C14663", "0603"), "10 nF": ("C57112", "0603"), 
+CAP = {"100 nF": ("C14663", "0603"), "10 nF": ("C57112", "0603"), "1 nF": ("C1588", "0603"), 
        "10 µF 25 V": ("C15850", "0805"), "22 µF": ("C45783", "0805"), "10 µF 50 V": ("C13585", "1206")}
 
 S = {k: kicad_symbol(v) for k, v in dict(
@@ -115,7 +115,7 @@ FP = dict(
     STEPSTICK="ptz:StepStick_Socket", DEVKIT="ptz:ESP32-S3-DevKitC-1", WIZ="ptz:WIZ850io", SIP3="ptz:SIP3_DCDC_7805",
     DPAK="ptz:TO-252_JLC", TP="ptz:TestPoint_D1.5", SOT23="Package_TO_SOT_SMD:SOT-23", SOT236="Package_TO_SOT_SMD:SOT-23-6",
     SOT223="Package_TO_SOT_SMD:SOT-223-3_TabPin2", TSSOP24="Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm",
-    SOD123="Diode_SMD:D_SOD-123", SMB="Diode_SMD:D_SMB", SMA="Diode_SMD:D_SMA", TANT_B="Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B",
+    SOD123="Diode_SMD:D_SOD-123", SMB="Diode_SMD:D_SMB", SMA="Diode_SMD:D_SMA", TANT_A="Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A",
     ELEC="Capacitor_THT:CP_Radial_D6.3mm_P2.50mm", FUSE="Fuse:Fuseholder_TR5_Littelfuse_No560_No460", NTC="Resistor_SMD:R_0603_1608Metric",
     VH2="Connector_JST:JST_VH_B2P-VH_1x02_P3.96mm_Vertical", XH4="Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical",
     PH4="Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical", PH3="Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
@@ -149,17 +149,19 @@ for r in ("C101", "C102", "C103", "C104"):
 cap("C105", "10 µF 50 V", "VIN_L", "GND", sh)
 cap("C106", "100 nF", "VIN_L", "GND", sh)
 add("U101", "5 V 1 A SIP-3", SIP3, FP["SIP3"], sh, VIN="VIN_L", GND="GND", VOUT="+5V_REG")
-cap("C107", "22 µF", "+5V_REG", "GND", sh)
+cap("C107", "10 µF 25 V", "+5V_REG", "GND", sh)
 add("D102", "SS34", S["DS"], FP["SMA"], sh, "C8678", "SS34", nets=("+5V", "+5V_REG"))
 cap("C108", "22 µF", "+5V", "GND", sh)
 cap("C109", "100 nF", "+5V", "GND", sh)
 add("U102", "AMS1117-3.3", AMS1117, FP["SOT223"], sh, "C6186", "AMS1117-3.3", VIN="+5V", VOUT="+3V3", GND="GND")
 cap("C110", "10 µF 25 V", "+5V", "GND", sh)
-add("C111", "100 µF 6.3 V", S["CP"], FP["TANT_B"], sh, "C16133", "TAJB107K006RNJ", nets=("+3V3", "GND"))
+for r in ("C111", "C116", "C117"):      # three 10 µF tantalums: the AMS1117 asks for 22 µF of tantalum or more
+    add(r, "10 µF 16 V", S["CP"], FP["TANT_A"], sh, "C7171", "TAJA106K016RNJ", nets=("+3V3", "GND"))
 cap("C112", "100 nF", "+3V3", "GND", sh)
 add("U103", "AMS1117-3.3", AMS1117, FP["SOT223"], sh, "C6186", "AMS1117-3.3", VIN="+5V", VOUT="+3V3_SNS", GND="GND")
-cap("C113", "22 µF", "+5V", "GND", sh)
-add("C114", "100 µF 6.3 V", S["CP"], FP["TANT_B"], sh, "C16133", "TAJB107K006RNJ", nets=("+3V3_SNS", "GND"))
+cap("C113", "10 µF 25 V", "+5V", "GND", sh)
+for r in ("C114", "C118", "C119"):
+    add(r, "10 µF 16 V", S["CP"], FP["TANT_A"], sh, "C7171", "TAJA106K016RNJ", nets=("+3V3_SNS", "GND"))
 add("JP101", "3V3 | 5V", S["JP3"], FP["JP3"], sh, nets=("+3V3_SNS", "V_SNS", "+5V"), bom=False)
 res("R103", "100k", "VM", "VM_SENSE", sh)
 res("R104", "10k", "VM_SENSE", "GND", sh)
@@ -181,11 +183,9 @@ res("R203", "10k", "DRV_ENN", "+3V3", sh)
 res("R204", "10k", "PERIPH_RST_N", "+3V3", sh)
 res("R205", "10k", "DIAG_OR", "GND", sh)
 schottky("D201", "PERIPH_RST_N", "EN", sh)
-cap("C201", "22 µF", "+5V", "GND", sh)
 cap("C202", "100 nF", "+5V", "GND", sh)
 add("A202", "WIZ850io", WIZ, FP["WIZ"], sh, nets=("GND", "GND", "SPI_MOSI", "SPI_SCK", "ETH_CS_N", "ETH_INT_N",
                                                    "GND", "+3V3", "+3V3", None, "PERIPH_RST_N", "SPI_MISO"))
-cap("C203", "22 µF", "+3V3", "GND", sh)
 cap("C204", "100 nF", "+3V3", "GND", sh)
 
 # ------------------------------------------------------------------ axes (DRV, ENC-02, ENC-03, ENC-05)
@@ -202,6 +202,7 @@ def axis(n):
     cap(k(1), "100 nF", "VM", "GND", sh)
     cap(k(2), "100 nF", "+3V3", "GND", sh)
     res(r(1), "1k", f"DRV{n}_CS", f"DRV{n}_CSP", sh)
+    res(r(10), "100k", f"STEP{n}", "GND", sh)
     schottky(f"D{a}01", f"DIAG{n}", "DIAG_OR", sh)
     jumper(jp(1), f"DRV{n}_SDI", "SPI_MOSI", sh, True)
     jumper(jp(2), f"DRV{n}_SCK", "SPI_SCK", sh, True)
@@ -210,7 +211,7 @@ def axis(n):
     add(f"J{a}02", "B3B-PH-K", J_PH3, FP["PH3"], sh, nets=("V_SNS", "GND", f"HOME{n}_IN"))
     res(r(2), "10k", f"HOME{n}_IN", "+3V3", sh)
     res(r(3), "10k", f"HOME{n}_IN", f"HOME{n}", sh)
-    cap(k(3), "10 nF", f"HOME{n}", "GND", sh)
+    cap(k(3), "1 nF" if n == 4 else "10 nF", f"HOME{n}", "GND", sh)    # HOME4 is on the pin that sends the boot log
     add(f"D{a}02", "BAV99", BAV99, FP["SOT23"], sh, "C2500", "BAV99,215", A="GND", K="+3V3", COM=f"HOME{n}")
     # sensor port
     add(f"J{a}03", "B4B-PH-K", J_PH4, FP["PH4"], sh, nets=("V_SNS", "GND", f"SNS{n}_SDA", f"SNS{n}_SCL"))
@@ -254,11 +255,10 @@ jumper("JP702", "PU5_B", "V_SNS", sh, False)
 
 sh = c.sheet("io", "Fan output, board temperature, test points, mounting")
 add("Q801", "AO3400A", NFET, FP["SOT23"], sh, "C20917", "AO3400A", G="FAN_G", S="GND", D="FAN_N")
-schottky("D801", "FAN_N", "FAN_V", sh)
+schottky("D801", "FAN_N", "+5V", sh)
 res("R801", "100R", "FAN_PWM", "FAN_G", sh)
 res("R802", "100k", "FAN_G", "GND", sh)
-add("JP801", "5V | VM", S["JP3"], FP["JP3"], sh, nets=("+5V", "FAN_V", "VM"), bom=False)
-add("J801", "1x2 header", J_H2, FP["H2"], sh, nets=("FAN_V", "FAN_N"))
+add("J801", "1x2 header", J_H2, FP["H2"], sh, nets=("+5V", "FAN_N"))
 add("RT801", "NTC 10k", S["NTC"], FP["NTC"], sh, "C2892547", "KNTC0603/10KF3950", nets=("NTC_SENSE", "GND"))
 res("R803", "10k", "NTC_SENSE", "+3V3", sh)
 cap("C801", "100 nF", "NTC_SENSE", "GND", sh)

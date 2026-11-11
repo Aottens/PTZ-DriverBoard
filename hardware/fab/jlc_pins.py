@@ -41,7 +41,7 @@ if __name__ == "__main__":
     print("| LCSC | Part | First reference | JLC's pin: name -> net on the board |\n| --- | --- | --- | --- |")
     for row in csv.DictReader(open(os.path.join(HW, "fab", "jlc", "ptz-driver_bom.csv"))):
         ref = row["Designator"].split(",")[0]
-        if ref[0] in "RC" and not row["Comment"].startswith("100 µF") and ref[:2] != "RT":
+        if ref[0] in "RC" and not row["Footprint"].startswith("CP_") and ref[:2] != "RT":
             continue                                   # resistors and ceramic capacitors have no pin order
         p = pins(row["LCSC Part #"])
         cells = ", ".join(f"{n}: {name} -> {nets.get((ref, n), 'not connected')}" for n, name in sorted(p.items(), key=lambda x: x[0].zfill(3)))

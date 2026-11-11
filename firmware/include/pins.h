@@ -12,6 +12,7 @@
 //  - GPIO0 (BOOT), GPIO19/20 (USB) and GPIO44 (driven by the USB-UART bridge) are not used.
 //  - GPIO43 prints the ROM's boot log, so it only reads a home input, behind a 10 k resistor.
 //  - GPIO45 must be low at reset: it drives the fan switch, whose gate has a pull-down.
+//  - GPIO46 must be low to enter download mode: it carries DIR2, never the fault line.
 //  - Analog inputs are on ADC1 (GPIO1 to 10), which works with WiFi on.
 #pragma once
 
@@ -30,10 +31,10 @@
 #define PIN_DIR3 17
 #define PIN_STEP3 18
 #define PIN_DRV3_CS 8
-// Axis 2 (tilt)
-#define PIN_DIR2 3
 // Stall or fault of any driver, high = active. Ask the drivers over their bus which one.
-#define PIN_DIAG_OR 46
+#define PIN_DIAG_OR 3
+// Axis 2 (tilt). GPIO46 must be low to enter download mode: a direction line is, a fault line may not be.
+#define PIN_DIR2 46
 #define PIN_STEP2 9
 #define PIN_DRV2_CS 10
 // Axis 1 (pan)

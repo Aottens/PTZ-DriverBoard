@@ -56,17 +56,17 @@ The module has 4.7 kΩ pull-ups on SCNn, INTn and RSTn (schematic V1.1). MISO is
 | R201, R202 | 33 Ω 0603 | C23140 | JLC |
 | R203, R204, R205 | 10 kΩ 0603 | C25804 | JLC |
 | D201 | B5819W Schottky, SOD-123 | C8598 | JLC |
-| C201, C203 | 22 µF 25 V 0805 | C45783 | JLC |
 | C202, C204 | 100 nF 50 V 0603 | C14663 | JLC |
 
 ## Acceptance criteria
 
 - **CTL-01 MCU socket.** A201 pad 21 (5V) is `+5V`; pads 22, 23, 43 and 44 are `GND`; pad 3 (RST) is `EN`; pads 1
   and 2 (3V3) are `MCU_3V3`, which goes to a test point and nowhere else: the board's 3.3 V comes from its own
-  regulators (POW-08), not from the module's. C201 and C202 sit across `+5V` and `GND` at the socket.
+  regulators (POW-08), not from the module's. C202 sits across `+5V` and `GND` at the socket; the module has its own
+  bulk capacitors.
 - **CTL-02** WiFi and ESP-NOW need nothing from the board. The antenna lead leaves the module upwards; the fit
   check keeps the space above its connector free (BRD-07).
-- **CTL-03 Ethernet.** A202: pads 1, 2 and 7 `GND`; pads 8 and 9 `+3V3`, with C203 and C204 to `GND`; pad 3
+- **CTL-03 Ethernet.** A202: pads 1, 2 and 7 `GND`; pads 8 and 9 `+3V3`, with C204 to `GND` (the module carries its own bulk capacitor); pad 3
   `SPI_MOSI`, pad 4 `SPI_SCK`, pad 12 `SPI_MISO`; pad 5 `ETH_CS_N`, pad 6 `ETH_INT_N`, both to the MCU; pad 11
   `PERIPH_RST_N`; pad 10 not connected.
 - **CTL-05 SPI bus.** The MCU's `SPI_SCK_MCU` and `SPI_MOSI_MCU` reach `SPI_SCK` and `SPI_MOSI` through R201 (clock) and
@@ -88,10 +88,12 @@ The module has 4.7 kΩ pull-ups on SCNn, INTn and RSTn (schematic V1.1). MISO is
     (driven by the USB-UART bridge through 0 Ω), GPIO38 (the RGB LED on board v1.1, which may serve as AUX-02);
   - `VM_SENSE` and `NTC_SENSE` are on ADC1, GPIO1 to 10, which works with WiFi on (series datasheet v2.2, p59);
   - GPIO45 must be low at reset (module datasheet v1.8, table 4-4): only `FAN_PWM`, whose gate has a pull-down;
-  - GPIO46 has a pull-down inside and any level boots from flash (table 4-3): `DIAG_OR`, which rests low;
+  - GPIO46 has a pull-down inside; any level boots from flash, but it must be low to enter download mode (table
+    4-3): only `DIR2`, which no driver pulls high. `DIAG_OR`, which a driver in fault holds high, is kept off it;
   - GPIO43 carries the ROM's boot log, and GPIO48 the RGB LED of board v1.0: each only reads a home input,
     behind its 10 kΩ resistor;
-  - GPIO3 is a strap without a pull resistor that only selects the JTAG source: it may carry any signal.
+  - GPIO3 is a strap without a pull resistor that only selects the JTAG source when an eFuse is burnt: it carries
+    `DIAG_OR`.
 - **CTL-09** Every header pin of A201 that carries no net in the table is not connected: pads 25 (GPIO44), 32 to
   35 (GPIO38, 37, 36, 35), 36 (GPIO0), 41 and 42 (GPIO20, 19).
 

@@ -82,6 +82,16 @@ for name, loads, total in (("+3V3", LOADS_3V3, i33), ("+3V3_SNS", LOADS_SNS, isn
 i5 = MCU + i33 + isns + fan
 print(f"+5V peak: MCU module {MCU:.2f} A + {i33:.2f} A + {isns:.2f} A + a 5 V fan {fan:.2f} A = {i5:.2f} A of the 1 A module")
 assert i33 <= 0.25 and isns <= 0.12 and i5 <= 0.9
+C_BOARD = {"+5V_REG and +5V: C107 10, C108 22, C110 10, C113 10, two of 100 nF": 52.2,
+           "+3V3: C111, C116, C117 at 10 each, seven of 100 nF": 30.7, "+3V3_SNS: C114, C118, C119 at 10 each": 30.0}
+C_PLUGGED = {"MCU module: 22 at its regulator's input, 22 and 10 behind it (estimate from its schematic)": 60.0,
+             "Ethernet module (estimate)": 22.0, "four drivers' VIO at 5 each (estimate)": 20.0,
+             "four sensor boards at 2 each and a display (estimate)": 13.0}
+c_on = sum(C_BOARD.values()) + sum(C_PLUGGED.values())
+print(f"what U101 charges at switch-on (POW-07): {sum(C_BOARD.values()):.0f} uF on the board + {sum(C_PLUGGED.values()):.0f} uF plugged in (estimates) = {c_on:.0f} uF")
+for name, limit in (("Mornsun K7805-1000R3", 680), ("Traco TSR 1-2450", 470), ("RECOM R-78E5.0-1.0", 220)):
+    print(f"  {name}: limit {limit} uF, {'fits with ' + format(limit / c_on, '.1f') + ' times to spare' if limit >= 1.5 * c_on else 'no margin: not the module to buy'}")
+assert c_on <= 470 / 1.5
 V_D102 = 0.45                    # V at about 1 A: SS34, 0.55 V max at 3 A (MDD Rev 2024A5); a reading of its curve
 v5 = 5.0 - V_D102
 print(f"+5V = 5.0 V - {V_D102} V in D102 = {v5:.2f} V; the 3.3 V regulators need 1.1 V typical, 1.3 V at most at 0.8 A, and have {v5 - 3.3:.2f} V")

@@ -18,7 +18,8 @@ import jlc_api  # noqa: E402
 E = "Economic and Standard"
 PAGE = {  # LCSC: (PCBA Type, MFR part, maker) as read on the part page, 2026-11-11
     "C13585": (E, "CL31A106KBHNNNE", "Samsung"), "C14663": (E, "CC0603KRX7R9BB104", "YAGEO"), "C45783": (E, "CL21A226MAQNNNE", "Samsung"),
-    "C15850": (E, "CL21A106KAYNNNE", "Samsung"), "C16133": (E, "TAJB107K006RNJ", "(AVX part number; the page names no maker)"),
+    "C15850": (E, "CL21A106KAYNNNE", "Samsung"), "C7171": (E, "TAJA106K016RNJ", "(AVX part number; the page names no maker)"),
+    "C1588": (E, "CL10B102KB8NNNC", "Samsung"),
     "C57112": (E, "0603B103K500NT", "FH"), "C19077573": (E, "SMBJ18A", "hongjiacheng"), "C8678": (E, "SS34", "MDD"),
     "C8598": (E, "B5819W SL", "Changjing"), "C2500": (E, "BAV99,215", "Nexperia"), "C400894": (E, "AOD4185", "Alpha & Omega"),
     "C20917": (E, "AO3400A", "Alpha & Omega"), "C22807": (E, "0603WAF1503T5E", "UNI-ROYAL"), "C25803": (E, "0603WAF1003T5E", "UNI-ROYAL"),

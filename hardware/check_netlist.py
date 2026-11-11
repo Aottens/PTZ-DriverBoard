@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.join(ROOT, "hardware", "tools"))
 VAL = {}          # ref -> value the spec text gives (R and C), number and prefix compared, rating ignored
 NET_ONLY = {}     # function name -> [(net, {refs allowed on it})]
 AXES = [(n, n + 2) for n in range(1, 5)]   # axis n -> reference hundreds a (axis 1 = 3xx)
-BRIDGE12 = {"JP101", "JP801"}              # three-pad jumpers whose pads 1 and 2 are closed as delivered
+BRIDGE12 = {"JP101"}              # three-pad jumpers whose pads 1 and 2 are closed as delivered
 
 
 # ---------------------------------------------------------------- helpers
@@ -111,13 +111,13 @@ def pins_h_problems(pins):
             flag(n + " not ADC1", "%s on GPIO1..10, is GPIO%d" % (n, pins[n]))
     if pins.get("FAN_PWM") != 45:
         flag("FAN_PWM not GPIO45", "FAN_PWM on GPIO45")
-    if pins.get("DIAG_OR") != 46:
-        flag("DIAG_OR not GPIO46", "DIAG_OR on GPIO46")
+    if pins.get("DIAG_OR") != 3:
+        flag("DIAG_OR not GPIO3", "DIAG_OR on GPIO3")
     for g in (43, 48):
         for n in by_gpio.get(g, []):
             if not n.startswith("HOME"):
                 flag("GPIO%d on %s" % (g, n), "GPIO%d only on a HOME net" % g)
-    for g, only in ((45, "FAN_PWM"), (46, "DIAG_OR")):
+    for g, only in ((45, "FAN_PWM"), (46, "DIR2")):
         for n in by_gpio.get(g, []):
             if n != only:
                 flag("GPIO%d on %s" % (g, n), "GPIO%d only on %s" % (g, only))
@@ -179,7 +179,7 @@ def pow_07_regulator_5v():
     setp(d, "U101", {1: "VIN_L", 2: "GND", 3: "+5V_REG"})
     two(d, "C105", "VIN_L", "GND", "10 µF")
     two(d, "C106", "VIN_L", "GND", "100 nF")
-    two(d, "C107", "+5V_REG", "GND", "22 µF")
+    two(d, "C107", "+5V_REG", "GND", "10 µF")
     two(d, "C108", "+5V", "GND", "22 µF")
     two(d, "C109", "+5V", "GND", "100 nF")
     NET_ONLY["pow_07_regulator_5v"] = [("VIN_L", {"F102", "U101", "C105", "C106"}),
@@ -192,11 +192,13 @@ def pow_08_regulators_3v3():
     d = {}
     setp(d, "U102", {1: "GND", 2: "+3V3", 3: "+5V"})
     two(d, "C110", "+5V", "GND", "10 µF")
-    ordered(d, "C111", "+3V3", "GND", "100 µF")
+    for c in ("C111", "C116", "C117"):
+        ordered(d, c, "+3V3", "GND", "10 µF")
     two(d, "C112", "+3V3", "GND", "100 nF")
     setp(d, "U103", {1: "GND", 2: "+3V3_SNS", 3: "+5V"})
-    two(d, "C113", "+5V", "GND", "22 µF")
-    ordered(d, "C114", "+3V3_SNS", "GND", "100 µF")
+    two(d, "C113", "+5V", "GND", "10 µF")
+    for c in ("C114", "C118", "C119"):
+        ordered(d, c, "+3V3_SNS", "GND", "10 µF")
     setp(d, "JP101", {1: "+3V3_SNS", 2: "V_SNS", 3: "+5V"})
     return d
 
@@ -248,6 +250,7 @@ def drv_06_step_dir():
     d = {}
     for n, a in AXES:
         setp(d, "A%d01" % a, {7: "STEP%d" % n, 8: "DIR%d" % n})
+        two(d, "R%d10" % a, "STEP%d" % n, "GND", "100k")
     return d
 
 
@@ -302,7 +305,7 @@ def enc_03_home_inputs():
         setp(d, "J%d02" % a, {1: "V_SNS", 2: "GND", 3: "HOME%d_IN" % n})
         two(d, "R%d02" % a, "HOME%d_IN" % n, "+3V3", "10k")
         two(d, "R%d03" % a, "HOME%d_IN" % n, "HOME%d" % n, "10k")
-        two(d, "C%d03" % a, "HOME%d" % n, "GND", "10 nF")
+        two(d, "C%d03" % a, "HOME%d" % n, "GND", "1 nF" if n == 4 else "10 nF")
         setp(d, "D%d02" % a, {1: "GND", 2: "+3V3", 3: "HOME%d" % n})
     return d
 
@@ -352,7 +355,6 @@ def ctl_01_mcu_socket():
     """CTL-01. A201 pad 21 +5V; 22, 23, 43, 44 GND; 3 EN; 1 and 2 MCU_3V3. C201 / C202 across +5V and GND."""
     d = {}
     setp(d, "A201", {21: "+5V", 22: "GND", 23: "GND", 43: "GND", 44: "GND", 3: "EN", 1: "MCU_3V3", 2: "MCU_3V3"})
-    two(d, "C201", "+5V", "GND", "22 µF")
     two(d, "C202", "+5V", "GND", "100 nF")
     NET_ONLY["ctl_01_mcu_socket"] = [("MCU_3V3", {"A201", "TP816"})]
     return d
@@ -364,7 +366,6 @@ def ctl_03_ethernet():
     d = {}
     setp(d, "A202", {1: "GND", 2: "GND", 7: "GND", 8: "+3V3", 9: "+3V3", 3: "SPI_MOSI", 4: "SPI_SCK", 12: "SPI_MISO",
                      5: "ETH_CS_N", 6: "ETH_INT_N", 11: "PERIPH_RST_N", 10: None})
-    two(d, "C203", "+3V3", "GND", "22 µF")
     two(d, "C204", "+3V3", "GND", "100 nF")
     return d
 
@@ -411,14 +412,12 @@ def aux_03_fan():
     """AUX-03. J801 1 FAN_V, 2 FAN_N; Q801 1 gate FAN_G, 2 source GND, 3 drain FAN_N; R801 FAN_PWM-FAN_G;
     R802 FAN_G-GND; D801 cathode FAN_V, anode FAN_N; JP801 1 +5V, 2 FAN_V, 3 VM."""
     d = {}
-    setp(d, "J801", {1: "FAN_V", 2: "FAN_N"})
+    setp(d, "J801", {1: "+5V", 2: "FAN_N"})
     setp(d, "Q801", {1: "FAN_G", 2: "GND", 3: "FAN_N"})
     two(d, "R801", "FAN_PWM", "FAN_G", "100")
     two(d, "R802", "FAN_G", "GND", "100k")
-    ordered(d, "D801", "FAN_V", "FAN_N")
-    setp(d, "JP801", {1: "+5V", 2: "FAN_V", 3: "VM"})
-    NET_ONLY["aux_03_fan"] = [("FAN_G", {"Q801", "R801", "R802"}), ("FAN_N", {"Q801", "D801", "J801"}),
-                              ("FAN_V", {"J801", "D801", "JP801"})]
+    ordered(d, "D801", "+5V", "FAN_N")
+    NET_ONLY["aux_03_fan"] = [("FAN_G", {"Q801", "R801", "R802"}), ("FAN_N", {"Q801", "D801", "J801"})]
     return d
 
 

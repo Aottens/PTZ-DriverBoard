@@ -45,22 +45,30 @@ for k, x in enumerate(XK):
     at(f"JP{a}02", x + 5.17, 29.0, 270)
     at(f"R{a}01", x + 7.75, 29.0, 90)                    # 1 k in the select line, south of pad 4
     at(f"JP{a}03", x + 10.16, 29.0, 270)
+    at(f"R{a}10", x + 6 * P, 22.6, 90)                  # 100 k from STEP to ground, under the module beside pad 7
     # home input and sensor port: connectors on the south edge, their parts north of them
     cx = CX[k]
-    yb = 69.6 if k < 3 else 66.6                         # cell 4 lies under the Ethernet module's south pin row
     at(f"J{a}02", cx + 2.5, Y_CONN, 0, "1")
     at(f"J{a}03", cx + 11.7, Y_CONN, 0, "1")
     at(f"R{a}02", cx + 4.9, 72.75, 90)                   # home pull-up
     at(f"R{a}03", cx + 6.5, 72.75, 90)                   # home series resistor, north of the connector's pin 3
-    at(f"C{a}03", cx + 6.5, 69.6, 90)
-    at(f"D{a}02", cx + 3.0, 69.4, 0)                     # clamp
     at(f"JP{a}04", cx + 9.5, 72.95, 0)                   # pull-up jumpers: 4.7 k (closed) and 2.2 k (open)
     at(f"JP{a}05", cx + 12.95, 72.95, 0)
     at(f"R{a}04", cx + 16.2, 73.35, 0)                   # 100 R in SDA and SCL, north of the connector's pins 3 and 4
     at(f"R{a}05", cx + 19.2, 73.35, 0)
+    if k == 3:
+        continue        # port 4: nothing may stand under the Ethernet module (BRD-11); its other parts are placed below
+    at(f"C{a}03", cx + 6.5, 69.6, 90)
+    at(f"D{a}02", cx + 3.0, 69.4, 0)                     # clamp
     for i, r in enumerate((6, 7, 8, 9)):
-        at(f"R{a}0{r}", cx + 10.3 + 1.6 * i, yb, 270)    # pull-ups, their jumper side south
-    at(f"U{a}01", cx + 18.4, yb - 0.2, 0)                # ESD array at the port
+        at(f"R{a}0{r}", cx + 10.3 + 1.6 * i, 69.6, 270)  # pull-ups, their jumper side south
+    at(f"U{a}01", cx + 18.4, 69.4, 0)                    # ESD array at the port
+# port 4's clamp, pull-ups and ESD array stand west of the Ethernet module, in the column between it and the MCU module
+at("C603", 70.2, 72.75, 90)
+at("D602", 65.4, 65.4, 0)
+at("U601", 69.6, 65.4, 0)
+for i, r in enumerate((6, 7, 8, 9)):
+    at(f"R60{r}", 64.4 + 1.6 * i, 61.6, 270)
 
 # ---------------------------------------------------------------- MCU module and what hangs on its pins
 at("A201", *MCU, 270, "1")
@@ -75,9 +83,8 @@ at("R201", j1(5), 37.4, 90)        # 33 R in the SPI clock, north of GPIO5
 at("R202", j1(4), 37.4, 90)        # 33 R in MOSI, north of GPIO4
 at("D201", j1(3), 36.4, 90)        # reset diode, cathode at the RST pin
 at("R203", j1(20), 37.4, 90)       # enable pull-up, north of GPIO14
-at("R205", j1(14), 37.4, 90)       # DIAG_OR pull-down, north of GPIO46
-at("C201", 9.23, 43.2, 180)        # across the 5V and GND pins, under the module
-at("C202", 9.23, 45.1, 180)
+at("R205", j1(13), 37.4, 90)       # DIAG_OR pull-down, north of GPIO3
+at("C202", 9.23, 43.2, 180)        # across the 5V and GND pins, under the module
 at("TP816", 60.0, 36.5)            # MCU_3V3
 at("TP815", 58.6, 33.6)            # PERIPH_RST_N
 at("TP814", 30.6, 34.3)            # DIAG_OR
@@ -97,8 +104,7 @@ at("TP812", j1(9), 66.5)
 
 # ---------------------------------------------------------------- Ethernet module
 at("A202", *ETH, 270, "1")
-at("C203", 91.8, 66.4, 180)
-at("C204", 91.9, 64.3, 180)
+at("C204", 91.5, 72.3, 0)          # south of the module, outside its outline
 
 # ---------------------------------------------------------------- power input, east
 at("J101", 94.4, 45.2, 90, "1")    # plus south, minus north, at the east edge
@@ -114,23 +120,25 @@ at("D101", 97.3, 20.5, 270)        # TVS on the VM strip, cathode north
 at("C105", 65.0, 33.5, 90)
 at("C106", 62.4, 33.5, 90)
 at("U101", 67.06, 44.85, 0, "1")   # 5 V module, pins on its south side: in west, out east
-at("C107", 74.5, 48.15, 0)
+at("C107", 78.4, 45.5, 90)
 at("D102", 67.4, 48.95, 0)          # cathode (+5V) west
 at("U102", 67.5, 55.3, 270, "o")   # 3.3 V regulator: input north-west, tab (output) south
 at("C110", 61.6, 52.2, 90)         # the 5 V capacitors under the antenna end of the MCU module
 at("C108", 59.4, 50.2, 90)
 at("C109", 61.6, 48.4, 90)
-at("C111", 67.5, 62.0, 0)
-at("C112", 67.5, 64.9, 0)
-at("TP803", 64.2, 66.6)            # +5V
-at("TP804", 70.4, 66.6)            # +3V3
+for i, r in enumerate(("C111", "C116", "C117")):
+    at(r, 59.5, 55.7 + 2.3 * i, 180)   # U102's output tantalums, plus east
+at("C112", 56.0, 56.6, 90)
 
 # ---------------------------------------------------------------- sensor supply, south-west corner
 at("U103", 17.5, 51.0, 0, "o")     # under the west half of the MCU module, next to its 5V pin: input south-west, tab east
 at("C113", 11.4, 53.3, 180)
-at("C114", 17.5, 57.6, 180)
+for i, r in enumerate(("C114", "C118", "C119")):
+    at(r, 15.5, 56.0 + 2.3 * i, 0)     # U103's output tantalums, plus west
 at("JP101", 4.3, 68.4, 0)
-at("TP805", 7.7, 68.4)             # V_SNS
+at("TP803", 7.7, 68.4)             # +5V, beside the jumper's 5 V pad
+at("TP804", 5.0, 65.9)             # +3V3
+at("TP805", 2.2, 71.0)             # V_SNS
 
 # ---------------------------------------------------------------- west column: spare I2C port, fan, test points
 at("J701", 2.2, 10.9, 0, "1")
@@ -145,7 +153,6 @@ at("R708", 9.3, 18.1, 0)
 at("JP701", 6.05, 20.4, 0)
 at("JP702", 9.15, 23.1, 0)
 at("J801", 2.2, 23.0, 0, "1")      # fan
-at("JP801", 6.7, 26.0, 0)          # fan supply: 5 V west, VM east
 at("Q801", 6.2, 29.3, 0)
 at("D801", 10.3, 30.3, 90)
 at("R801", 2.4, 30.0, 90)
@@ -183,6 +190,9 @@ TRACKS.append(("VIN", "F.Cu", 1.5, [(82.2, 32.85), (74.08, 32.35)]))
 # the sensor supply: a riser up the west edge to the spare port, and a trunk along the south edge on the bottom, south of the connectors, with a stub up to pin 1 of each
 TRACKS.append(("V_SNS", "B.Cu", 0.6, [(CX[0] + 2.5, Y_CONN), (8.9, 75.2), (8.9, 66.6), (6.3, 66.6), (3.2, 63.5), (0.8, 61.1),
                                       (0.8, 10.9), (2.2, 10.9)]))
+# the supply jumper's middle pad leaves southwards: to the riser through a via, and to its test point
+TRACKS.append(("V_SNS", "F.Cu", 0.5, [(4.3, 68.4), (4.3, 70.5), (8.9, 71.6)]))
+TRACKS.append(("V_SNS", "F.Cu", 0.5, [(4.3, 70.5), (2.2, 71.0)]))
 TRACKS.append(("V_SNS", "B.Cu", 0.6, [(CX[0] + 2.5, 78.7), (CX[3] + 11.7, 78.7)]))
 for cx in CX:
     for dx in (2.5, 11.7):
@@ -192,14 +202,10 @@ for cx in CX:
 for cx in CX[:3]:
     TRACKS.append(("V_SNS", "F.Cu", 0.5, [(cx + 19.54, 69.4), (cx + 20.6, 69.4)]))
     TRACKS.append(("V_SNS", "B.Cu", 0.5, [(cx + 20.6, 69.4), (cx + 20.6, 78.7)]))
-# the fan jumper's VM pad: a short track east, a via, and north on the bottom to the west end of the VM bus
-TRACKS.append(("VM", "F.Cu", 0.6, [(8.0, 26.0), (9.9, 26.0)]))
-TRACKS.append(("VM", "B.Cu", 0.6, [(9.9, 26.0), (9.9, 11.0)]))
-# the ESD array of port 4 sits under the Ethernet module, shut in by its pin row: its supply pin goes round the east
-TRACKS.append(("V_SNS", "F.Cu", 0.5, [(CX[3] + 19.54, 66.4), (89.8, 66.4), (89.8, 64.2)]))
-TRACKS.append(("V_SNS", "B.Cu", 0.5, [(89.8, 64.2), (93.4, 64.2), (93.4, 72.0), (91.0, 74.4), (91.0, 78.7), (CX[3] + 11.7, 78.7)]))
+# port 4's ESD array stands beside port 3's: its supply pin joins that one's via
+TRACKS.append(("V_SNS", "F.Cu", 0.5, [(70.74, 65.4), (71.9, 65.4), (71.9, 68.2), (70.7, 69.4), (CX[2] + 20.6, 69.4)]))
 # (net, x, y): vias from the TVS's cathode pad down to the VM strip, and the vias of the tracks above
-VIAS = [("VM", 96.2, 16.9), ("VM", 97.3, 16.9), ("VM", 98.4, 16.9), ("V_SNS", 6.3, 66.6), ("VM", 9.9, 26.0), ("V_SNS", 89.8, 64.2)] + [("V_SNS", cx + 20.6, 69.4) for cx in CX[:3]]
+VIAS = [("VM", 96.2, 16.9), ("VM", 97.3, 16.9), ("VM", 98.4, 16.9), ("V_SNS", 8.9, 71.6)] + [("V_SNS", cx + 20.6, 69.4) for cx in CX[:3]]
 
 # ---------------------------------------------------------------- silkscreen names (tools/silk.py)
 TP_NAMES = {"+5V": "5V", "+3V3": "3V3", "V_SNS": "VSNS", "SPI_SCK": "SCK", "SPI_MOSI": "MOSI", "SPI_MISO": "MISO",

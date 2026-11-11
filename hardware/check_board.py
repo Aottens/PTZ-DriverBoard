@@ -25,7 +25,7 @@ fails = []
 MODULES = ("StepStick_Socket", "ESP32-S3-DevKitC-1", "WIZ850io")
 # height above the board by footprint name (mm), for what may stand under a module (BRD-11): makers' package drawings
 HEIGHT = {"R_0603": 0.55, "C_0603": 0.9, "C_0805": 1.35, "C_1206": 1.8, "SOT-23-6": 1.3, "SOT-23": 1.2, "SOT-223": 1.8, "TSSOP-24": 1.2,
-          "D_SOD-123": 1.35, "D_SMA": 2.4, "D_SMB": 2.5, "CP_EIA-3528-21": 2.1, "TO-252": 2.4, "TestPoint": 0.0, "SolderJumper": 0.0}
+          "D_SOD-123": 1.35, "D_SMA": 2.4, "D_SMB": 2.5, "CP_EIA-3216-18": 1.8, "TO-252": 2.4, "TestPoint": 0.0, "SolderJumper": 0.0}
 
 
 def xy(v):
@@ -191,7 +191,7 @@ def brd_06_current_paths():
             if sum(t.GetLength() for t in ts) / 1e6 > 15.0:
                 long.append(f"M{n}_{i}")
     check(not thin and not long, "BRD-06 all sixteen motor outputs are 1.0 mm wide or more and at most 15 mm long" + (f"; thin {thin}, long {long}" if thin or long else ""))
-    for net in ("VIN_L", "+5V_REG", "+5V", "+3V3", "+3V3_SNS", "V_SNS", "FAN_V", "FAN_N"):
+    for net in ("VIN_L", "+5V_REG", "+5V", "+3V3", "+3V3_SNS", "V_SNS", "FAN_N"):
         w = [t.GetWidth() / 1e6 for t in TRACKS if t.GetNetname() == net]
         neck = sum(t.GetLength() for t in TRACKS if t.GetNetname() == net and t.GetWidth() / 1e6 < 0.5 - 1e-6) / 1e6
         check(bool(w) and min(w) >= 0.35 - 1e-6 and neck <= 3.0,
@@ -203,7 +203,7 @@ def brd_09_silkscreen():
     back = [d.GetText() for d in board.GetDrawings() if d.GetClass() == "PCB_TEXT" and d.GetLayer() == pcbnew.B_SilkS]
     name = [t for t in texts if "PTZ" in t and "REV B" in t and re.search(r"20\d\d-\d\d-\d\d", t)]
     check(len(name) == 1, "BRD-09 board name, revision and date are on the top silkscreen")
-    need = (["11-17V", "+", "-", "F1 T5A", "F2 T1A", "5V REG", "IN", "OUT", "FAN", "I2C", "VSNS", "3V3", "5V", "VM", "USB", "ANT", "RJ45"] +
+    need = (["11-17V", "+", "-", "F1 T5A", "F2 T1A", "5V REG", "IN", "OUT", "FAN", "+5V", "I2C", "VSNS", "3V3", "5V", "VM", "USB", "ANT", "RJ45"] +
             [f"{k}{n}" for k in "MHS" for n in (1, 2, 3, 4)] + [f"DRIVER {n}" for n in (1, 2, 3, 4)])
     missing = [n for n in need if n not in texts]
     check(not missing, "BRD-09 every connector, socket and fuse is named on the top side" + (f"; missing {missing}" if missing else ""))
@@ -213,7 +213,7 @@ def brd_09_silkscreen():
     names = ("VIN", "VM", "5V", "3V3", "VSNS", "GND", "SCK", "MOSI", "MISO", "SDA", "SCL", "ENN", "DIAG", "RST", "M3V3")
     check(sum(texts.count(n) for n in names) >= len(tps), f"BRD-09 all {len(tps)} test points are named")
     legend = " ".join(back)
-    check(all(k in legend for k in ("SUPPLY", "MOTOR", "S1-S4", "HOME", "FAN", "VSNS", "PULL-UPS", "TMC2209", "U.FL", "5V REG")),
+    check(all(k in legend for k in ("SUPPLY", "MOTOR", "S1-S4", "HOME", "FAN, 5V ONLY", "VSNS", "PULL-UPS", "TMC2209", "U.FL", "K7805")),
           "BRD-09 the pin order of every connector and the use of every jumper is printed on the bottom side")
     small = [d.GetText() for d in board.GetDrawings() if d.GetClass() == "PCB_TEXT" and d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS)
              and (d.GetTextHeight() / 1e6 < 0.8 - 1e-6 or d.GetTextThickness() / 1e6 < 0.15 - 1e-6)]
@@ -242,6 +242,10 @@ def brd_11_under_the_modules():
         rect(fp.GetCourtyard(pcbnew.F_CrtYd).BBox())[1] < b[3] and b[1] < rect(fp.GetCourtyard(pcbnew.F_CrtYd).BBox())[3] for b in bodies.values()))
     check(not tall and not unknown, f"BRD-11 the {n} parts under a module are 2.2 mm tall at most" + (f"; too tall: {tall}; height unknown: {unknown}" if tall or unknown else ""))
     check(not hidden, "BRD-11 no solder jumper and no test point is under a module" + (f": {hidden}" if hidden else ""))
+    b = module_body(FPS["A202"])
+    under = sorted(r for r, fp in FPS.items() if r != "A202" and not re.fullmatch(r"H\d", r) and any(
+        b[0] < xy(p.GetPosition())[0] < b[2] and b[1] < xy(p.GetPosition())[1] < b[3] for p in fp.Pads()))
+    check(not under, "BRD-11 nothing stands under the Ethernet module, which is soldered in" + (f": {under}" if under else ""))
 
 
 def brd_12_cost():

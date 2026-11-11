@@ -49,6 +49,16 @@
   "price": 0.0314,
   "stock": 8257578
  },
+ "C1588": {
+  "describe": "-55\u2103~+125\u2103 1nF 50V X7R \u00b110% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+  "lcsc": "C1588",
+  "library": "Basic",
+  "maker": "Samsung Electro-Mechanics",
+  "mpn": "CL10B102KB8NNNC",
+  "package": "0603",
+  "price": 0.0082,
+  "stock": 5530340
+ },
  "C16133": {
   "describe": "-55\u2103~+125\u2103 1.7\u03a9@100kHz 100uF 6.3V \u00b110% CASE-B-3528-21(mm) Tantalum Capacitors ROHS",
   "lcsc": "C16133",
@@ -228,6 +238,16 @@
   "package": "SOT-223",
   "price": 0.1938,
   "stock": 1502957
+ },
+ "C7171": {
+  "describe": "-55\u2103~+125\u2103 10uF 16V 3\u03a9@100kHz \u00b110% CASE-A-3216-18(mm) Tantalum Capacitors ROHS",
+  "lcsc": "C7171",
+  "library": "Basic",
+  "maker": "--",
+  "mpn": "TAJA106K016RNJ",
+  "package": "CASE-A-3216-18(mm)",
+  "price": 0.1768,
+  "stock": 771397
  },
  "C7420376": {
   "describe": "-55\u2103~+150\u2103 15V 1pF 4A 5V 5uA 6V 80W ESD Four channels IEC 61000-4-2\u3001IEC 61000-4-5 Unidirectional SOT-23-6L ESD and Surge Protection (TVS/ESD) ROHS",

@@ -401,10 +401,6 @@
       },
       {
         "netclass": "Power",
-        "pattern": "FAN_V"
-      },
-      {
-        "netclass": "Power",
         "pattern": "FAN_N"
       }
     ]

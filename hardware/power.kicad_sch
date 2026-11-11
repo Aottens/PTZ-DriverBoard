@@ -1824,7 +1824,7 @@
 	)
 	(symbol
 		(lib_id "ptz:VH_2_SUPPLY")
-		(at 462.28 76.2 0)
+		(at 462.28 86.36 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1834,7 +1834,7 @@
 		(dnp no)
 		(uuid "cd370d7a-57ac-5a94-8432-5e2c26f833c0")
 		(property "Reference" "J101"
-			(at 462.28 73.9 0)
+			(at 462.28 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1844,7 +1844,7 @@
 			)
 		)
 		(property "Value" "B2P-VH"
-			(at 462.28 78.5 0)
+			(at 462.28 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1854,7 +1854,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_VH_B2P-VH_1x02_P3.96mm_Vertical"
-			(at 462.28 76.2 0)
+			(at 462.28 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1865,7 +1865,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 462.28 76.2 0)
+			(at 462.28 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1876,7 +1876,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 462.28 76.2 0)
+			(at 462.28 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1887,7 +1887,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 462.28 76.2 0)
+			(at 462.28 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1898,7 +1898,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 462.28 76.2 0)
+			(at 462.28 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1925,7 +1925,7 @@
 	)
 	(global_label "VIN_RAW"
 		(shape passive)
-		(at 452.12 76.2 180)
+		(at 452.12 86.36 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1935,7 +1935,7 @@
 		)
 		(uuid "94278acf-a841-543a-8fb7-d8a9ae56a1a9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 452.12 76.2 0)
+			(at 452.12 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -1946,7 +1946,7 @@
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 452.12 78.74 180)
+		(at 452.12 88.9 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1956,7 +1956,7 @@
 		)
 		(uuid "bfc4019e-08f3-5041-a38a-293b4503dfcb")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 452.12 78.74 0)
+			(at 452.12 88.9 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2174,7 +2174,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 294.64 86.36 90)
+		(at 294.64 96.52 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2184,7 +2184,7 @@
 		(dnp no)
 		(uuid "23b7cc6f-438c-5e4b-abfb-c32fd436510e")
 		(property "Reference" "R101"
-			(at 294.64 84.06 0)
+			(at 294.64 94.22 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2194,7 +2194,7 @@
 			)
 		)
 		(property "Value" "150k"
-			(at 294.64 88.66 0)
+			(at 294.64 98.82 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2204,7 +2204,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 294.64 86.36 0)
+			(at 294.64 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2215,7 +2215,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 294.64 86.36 0)
+			(at 294.64 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2226,7 +2226,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 294.64 86.36 0)
+			(at 294.64 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2237,7 +2237,7 @@
 			)
 		)
 		(property "LCSC" "C22807"
-			(at 294.64 86.36 0)
+			(at 294.64 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2248,7 +2248,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 294.64 86.36 0)
+			(at 294.64 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2275,7 +2275,7 @@
 	)
 	(global_label "RP_GATE"
 		(shape passive)
-		(at 290.83 86.36 180)
+		(at 290.83 96.52 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2285,7 +2285,7 @@
 		)
 		(uuid "680645c6-e710-556e-bfb6-f6e5b580041e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 290.83 86.36 0)
+			(at 290.83 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2296,7 +2296,7 @@
 	)
 	(global_label "VIN"
 		(shape passive)
-		(at 298.45 86.36 0)
+		(at 298.45 96.52 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2306,7 +2306,7 @@
 		)
 		(uuid "964b1874-069d-5290-8cd7-c3f8689e779c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 298.45 86.36 0)
+			(at 298.45 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2317,7 +2317,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 350.52 86.36 90)
+		(at 350.52 96.52 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2327,7 +2327,7 @@
 		(dnp no)
 		(uuid "5ff5b2a7-fa22-5822-80b6-00f52dc214c8")
 		(property "Reference" "R102"
-			(at 350.52 84.06 0)
+			(at 350.52 94.22 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2337,7 +2337,7 @@
 			)
 		)
 		(property "Value" "100k"
-			(at 350.52 88.66 0)
+			(at 350.52 98.82 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2347,7 +2347,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 350.52 86.36 0)
+			(at 350.52 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2358,7 +2358,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 350.52 86.36 0)
+			(at 350.52 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2369,7 +2369,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 350.52 86.36 0)
+			(at 350.52 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2380,7 +2380,7 @@
 			)
 		)
 		(property "LCSC" "C25803"
-			(at 350.52 86.36 0)
+			(at 350.52 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2391,7 +2391,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 350.52 86.36 0)
+			(at 350.52 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2418,7 +2418,7 @@
 	)
 	(global_label "RP_GATE"
 		(shape passive)
-		(at 346.71 86.36 180)
+		(at 346.71 96.52 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2428,7 +2428,7 @@
 		)
 		(uuid "602c5263-9767-59e3-9ae8-1b4774d689ae")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 346.71 86.36 0)
+			(at 346.71 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2439,7 +2439,7 @@
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 354.33 86.36 0)
+		(at 354.33 96.52 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2449,7 +2449,7 @@
 		)
 		(uuid "40107724-8199-53c2-8a8c-ff973e310d0f")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 354.33 86.36 0)
+			(at 354.33 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2460,7 +2460,7 @@
 	)
 	(symbol
 		(lib_id "Device:Fuse")
-		(at 350.52 76.2 90)
+		(at 350.52 86.36 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2470,7 +2470,7 @@
 		(dnp no)
 		(uuid "aa322007-5b1d-598e-b00d-6e897be67dfc")
 		(property "Reference" "F101"
-			(at 350.52 73.9 0)
+			(at 350.52 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2480,7 +2480,7 @@
 			)
 		)
 		(property "Value" "T 5 A"
-			(at 350.52 78.5 0)
+			(at 350.52 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2490,7 +2490,7 @@
 			)
 		)
 		(property "Footprint" "Fuse:Fuseholder_TR5_Littelfuse_No560_No460"
-			(at 350.52 76.2 0)
+			(at 350.52 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2501,7 +2501,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 350.52 76.2 0)
+			(at 350.52 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2512,7 +2512,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 350.52 76.2 0)
+			(at 350.52 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2523,7 +2523,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 350.52 76.2 0)
+			(at 350.52 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2534,7 +2534,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 350.52 76.2 0)
+			(at 350.52 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2561,7 +2561,7 @@
 	)
 	(global_label "VIN"
 		(shape passive)
-		(at 346.71 76.2 180)
+		(at 346.71 86.36 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2571,7 +2571,7 @@
 		)
 		(uuid "d020bdd5-95c6-5c6e-9250-d6779fbe83b9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 346.71 76.2 0)
+			(at 346.71 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2582,7 +2582,7 @@
 	)
 	(global_label "VM"
 		(shape passive)
-		(at 354.33 76.2 0)
+		(at 354.33 86.36 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2592,7 +2592,7 @@
 		)
 		(uuid "5f2b6cfa-579b-5ea7-8846-c0e9218721b9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 354.33 76.2 0)
+			(at 354.33 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2603,7 +2603,7 @@
 	)
 	(symbol
 		(lib_id "Device:Fuse")
-		(at 406.4 76.2 90)
+		(at 406.4 86.36 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2613,7 +2613,7 @@
 		(dnp no)
 		(uuid "575fd3ff-e6dc-56c6-8456-7af4398f11dd")
 		(property "Reference" "F102"
-			(at 406.4 73.9 0)
+			(at 406.4 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2623,7 +2623,7 @@
 			)
 		)
 		(property "Value" "T 1 A"
-			(at 406.4 78.5 0)
+			(at 406.4 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2633,7 +2633,7 @@
 			)
 		)
 		(property "Footprint" "Fuse:Fuseholder_TR5_Littelfuse_No560_No460"
-			(at 406.4 76.2 0)
+			(at 406.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2644,7 +2644,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 406.4 76.2 0)
+			(at 406.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2655,7 +2655,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 406.4 76.2 0)
+			(at 406.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2666,7 +2666,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 406.4 76.2 0)
+			(at 406.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2677,7 +2677,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 406.4 76.2 0)
+			(at 406.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2704,7 +2704,7 @@
 	)
 	(global_label "VIN"
 		(shape passive)
-		(at 402.59 76.2 180)
+		(at 402.59 86.36 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2714,7 +2714,7 @@
 		)
 		(uuid "7b0fdedc-b834-53cb-ad6e-6a830167c26b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 402.59 76.2 0)
+			(at 402.59 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2725,7 +2725,7 @@
 	)
 	(global_label "VIN_L"
 		(shape passive)
-		(at 410.21 76.2 0)
+		(at 410.21 86.36 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2735,7 +2735,7 @@
 		)
 		(uuid "4b70898c-0213-543f-8cf6-4b341419ff07")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 410.21 76.2 0)
+			(at 410.21 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2746,7 +2746,7 @@
 	)
 	(symbol
 		(lib_id "Device:D_Zener")
-		(at 462.28 66.04 0)
+		(at 462.28 76.2 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2756,7 +2756,7 @@
 		(dnp no)
 		(uuid "25089e62-af57-583e-bdf8-811896075577")
 		(property "Reference" "D101"
-			(at 462.28 63.74 0)
+			(at 462.28 73.9 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2766,7 +2766,7 @@
 			)
 		)
 		(property "Value" "SMBJ18A"
-			(at 462.28 68.34 0)
+			(at 462.28 78.5 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2776,7 +2776,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SMB"
-			(at 462.28 66.04 0)
+			(at 462.28 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2787,7 +2787,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 462.28 66.04 0)
+			(at 462.28 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2798,7 +2798,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 462.28 66.04 0)
+			(at 462.28 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2809,7 +2809,7 @@
 			)
 		)
 		(property "LCSC" "C19077573"
-			(at 462.28 66.04 0)
+			(at 462.28 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2820,7 +2820,7 @@
 			)
 		)
 		(property "MPN" "SMBJ18A"
-			(at 462.28 66.04 0)
+			(at 462.28 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2847,7 +2847,7 @@
 	)
 	(global_label "VM"
 		(shape passive)
-		(at 458.47 66.04 180)
+		(at 458.47 76.2 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2857,7 +2857,7 @@
 		)
 		(uuid "29f3fc92-b9f0-5c1e-8495-238caa44bf94")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 458.47 66.04 0)
+			(at 458.47 76.2 0)
 			(effects
 				(font
 					(size 1 1)
@@ -2868,7 +2868,7 @@
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 466.09 66.04 0)
+		(at 466.09 76.2 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2878,7 +2878,7 @@
 		)
 		(uuid "862417d5-d55e-5695-b671-53215bc00835")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 466.09 66.04 0)
+			(at 466.09 76.2 0)
 			(effects
 				(font
 					(size 1 1)
@@ -3973,7 +3973,7 @@
 				)
 			)
 		)
-		(property "Value" "22 µF"
+		(property "Value" "10 µF 25 V"
 			(at 406.4 48.02 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4016,7 +4016,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C45783"
+		(property "LCSC" "C15850"
 			(at 406.4 45.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4097,7 +4097,7 @@
 	)
 	(symbol
 		(lib_id "Device:D_Schottky")
-		(at 294.64 76.2 0)
+		(at 294.64 86.36 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4107,7 +4107,7 @@
 		(dnp no)
 		(uuid "dbdf2cbe-5360-5ef1-b2af-98b8aa6a7548")
 		(property "Reference" "D102"
-			(at 294.64 73.9 0)
+			(at 294.64 84.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4117,7 +4117,7 @@
 			)
 		)
 		(property "Value" "SS34"
-			(at 294.64 78.5 0)
+			(at 294.64 88.66 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4127,7 +4127,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SMA"
-			(at 294.64 76.2 0)
+			(at 294.64 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4138,7 +4138,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 294.64 76.2 0)
+			(at 294.64 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4149,7 +4149,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 294.64 76.2 0)
+			(at 294.64 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4160,7 +4160,7 @@
 			)
 		)
 		(property "LCSC" "C8678"
-			(at 294.64 76.2 0)
+			(at 294.64 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4171,7 +4171,7 @@
 			)
 		)
 		(property "MPN" "SS34"
-			(at 294.64 76.2 0)
+			(at 294.64 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4198,7 +4198,7 @@
 	)
 	(global_label "+5V"
 		(shape passive)
-		(at 290.83 76.2 180)
+		(at 290.83 86.36 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4208,7 +4208,7 @@
 		)
 		(uuid "b9d93858-1929-57e9-a195-66e7c50b25f7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 290.83 76.2 0)
+			(at 290.83 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -4219,7 +4219,7 @@
 	)
 	(global_label "+5V_REG"
 		(shape passive)
-		(at 298.45 76.2 0)
+		(at 298.45 86.36 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4229,7 +4229,7 @@
 		)
 		(uuid "9623c699-4469-58fe-8e63-d962d44123ba")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 298.45 76.2 0)
+			(at 298.45 86.36 0)
 			(effects
 				(font
 					(size 1 1)
@@ -4895,7 +4895,7 @@
 				)
 			)
 		)
-		(property "Value" "100 µF 6.3 V"
+		(property "Value" "10 µF 16 V"
 			(at 406.4 58.18 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4905,7 +4905,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A"
 			(at 406.4 55.88 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4938,7 +4938,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C16133"
+		(property "LCSC" "C7171"
 			(at 406.4 55.88 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4949,7 +4949,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "TAJB107K006RNJ"
+		(property "MPN" "TAJA106K016RNJ"
 			(at 406.4 55.88 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5009,6 +5009,292 @@
 		(uuid "57452bb1-1f73-5207-bfe2-44e7a3dc63d4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 410.21 55.88 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Polarized")
+		(at 462.28 66.04 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "2ecf1817-b53a-5fb4-b754-79d1e2116360")
+		(property "Reference" "C116"
+			(at 462.28 63.74 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "10 µF 16 V"
+			(at 462.28 68.34 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A"
+			(at 462.28 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 462.28 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 462.28 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C7171"
+			(at 462.28 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TAJA106K016RNJ"
+			(at 462.28 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a3e5a70a-0989-5115-b792-3ac1f6d11b79")
+		)
+		(pin "2"
+			(uuid "9b5ce1e3-fe14-54f4-bd51-1f4548be230b")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/128b2c02-df10-5dc2-a53b-e952b0030142"
+					(reference "C116")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+3V3"
+		(shape passive)
+		(at 458.47 66.04 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "01461826-29c0-530d-ac8a-9227e502f349")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 458.47 66.04 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape passive)
+		(at 466.09 66.04 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "78db0e60-9670-5143-9f36-f0df4d7bba85")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 466.09 66.04 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Polarized")
+		(at 294.64 76.2 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "42e118fc-ab04-5b36-ba18-01e4ce3082ba")
+		(property "Reference" "C117"
+			(at 294.64 73.9 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "10 µF 16 V"
+			(at 294.64 78.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A"
+			(at 294.64 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 294.64 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 294.64 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C7171"
+			(at 294.64 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TAJA106K016RNJ"
+			(at 294.64 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a7acfdf9-6c7a-534e-987f-f1da74b2c78e")
+		)
+		(pin "2"
+			(uuid "31b8fcf2-a524-5645-8385-f309cdba0b4e")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/128b2c02-df10-5dc2-a53b-e952b0030142"
+					(reference "C117")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+3V3"
+		(shape passive)
+		(at 290.83 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "4e527cfc-b9bc-5298-ab87-b29412879ea8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 290.83 76.2 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape passive)
+		(at 298.45 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "ab5a2e4a-7e65-5071-b65b-4233a666e0df")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 298.45 76.2 0)
 			(effects
 				(font
 					(size 1 1)
@@ -5388,7 +5674,7 @@
 				)
 			)
 		)
-		(property "Value" "22 µF"
+		(property "Value" "10 µF 25 V"
 			(at 294.64 68.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5431,7 +5717,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C45783"
+		(property "LCSC" "C15850"
 			(at 294.64 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5531,7 +5817,7 @@
 				)
 			)
 		)
-		(property "Value" "100 µF 6.3 V"
+		(property "Value" "10 µF 16 V"
 			(at 350.52 68.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5541,7 +5827,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A"
 			(at 350.52 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5574,7 +5860,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C16133"
+		(property "LCSC" "C7171"
 			(at 350.52 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5585,7 +5871,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "TAJB107K006RNJ"
+		(property "MPN" "TAJA106K016RNJ"
 			(at 350.52 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5645,6 +5931,292 @@
 		(uuid "7a7ab264-947d-5b4f-a8c9-d981505a7c34")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 354.33 66.04 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Polarized")
+		(at 350.52 76.2 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "25a70d44-5a66-57c8-afa7-29c020239203")
+		(property "Reference" "C118"
+			(at 350.52 73.9 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "10 µF 16 V"
+			(at 350.52 78.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A"
+			(at 350.52 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 350.52 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 350.52 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C7171"
+			(at 350.52 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TAJA106K016RNJ"
+			(at 350.52 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "42c1fa71-e7fa-5f82-8b90-60693f41156d")
+		)
+		(pin "2"
+			(uuid "f29327f3-39e6-515e-9aec-c26ede1c0d23")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/128b2c02-df10-5dc2-a53b-e952b0030142"
+					(reference "C118")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+3V3_SNS"
+		(shape passive)
+		(at 346.71 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "730385a3-690c-5804-99aa-daec93de1a5e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 346.71 76.2 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape passive)
+		(at 354.33 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "8cc6ed74-f9bc-57db-9e18-be9ea86f986e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 354.33 76.2 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Polarized")
+		(at 406.4 76.2 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "86d84ecd-5be0-59fb-9564-fc4906eac02a")
+		(property "Reference" "C119"
+			(at 406.4 73.9 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "10 µF 16 V"
+			(at 406.4 78.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A"
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C7171"
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TAJA106K016RNJ"
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3fbc1f51-8c8a-512d-95b1-7a27d3e719be")
+		)
+		(pin "2"
+			(uuid "9fd7031c-5ec2-5c7b-a882-17badb242e2f")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/128b2c02-df10-5dc2-a53b-e952b0030142"
+					(reference "C119")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+3V3_SNS"
+		(shape passive)
+		(at 402.59 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "ee430dcf-9d7d-5460-aee4-b180654454f2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 402.59 76.2 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape passive)
+		(at 410.21 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "e1aceb91-3745-5aa2-a332-6814c222bcb0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 410.21 76.2 0)
 			(effects
 				(font
 					(size 1 1)
@@ -5862,7 +6434,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 406.4 86.36 90)
+		(at 406.4 96.52 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5872,7 +6444,7 @@
 		(dnp no)
 		(uuid "2b5ba08e-f615-5b1c-8662-6a006f8cffaa")
 		(property "Reference" "R103"
-			(at 406.4 84.06 0)
+			(at 406.4 94.22 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5882,7 +6454,7 @@
 			)
 		)
 		(property "Value" "100k"
-			(at 406.4 88.66 0)
+			(at 406.4 98.82 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5892,7 +6464,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 406.4 86.36 0)
+			(at 406.4 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5903,7 +6475,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 406.4 86.36 0)
+			(at 406.4 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5914,7 +6486,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 406.4 86.36 0)
+			(at 406.4 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5925,7 +6497,7 @@
 			)
 		)
 		(property "LCSC" "C25803"
-			(at 406.4 86.36 0)
+			(at 406.4 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5936,7 +6508,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 406.4 86.36 0)
+			(at 406.4 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5963,7 +6535,7 @@
 	)
 	(global_label "VM"
 		(shape passive)
-		(at 402.59 86.36 180)
+		(at 402.59 96.52 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5973,7 +6545,7 @@
 		)
 		(uuid "aa111034-af23-58c1-be10-967fcba79476")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 402.59 86.36 0)
+			(at 402.59 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -5984,7 +6556,7 @@
 	)
 	(global_label "VM_SENSE"
 		(shape passive)
-		(at 410.21 86.36 0)
+		(at 410.21 96.52 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5994,7 +6566,7 @@
 		)
 		(uuid "e95e3ef8-9317-554e-b03b-01399d9e7ef6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 410.21 86.36 0)
+			(at 410.21 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -6005,7 +6577,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 462.28 86.36 90)
+		(at 462.28 96.52 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6015,7 +6587,7 @@
 		(dnp no)
 		(uuid "a446f54b-de76-54cf-8062-3338922a3580")
 		(property "Reference" "R104"
-			(at 462.28 84.06 0)
+			(at 462.28 94.22 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6025,7 +6597,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 462.28 88.66 0)
+			(at 462.28 98.82 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6035,7 +6607,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 462.28 86.36 0)
+			(at 462.28 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6046,7 +6618,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 462.28 86.36 0)
+			(at 462.28 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6057,7 +6629,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 462.28 86.36 0)
+			(at 462.28 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6068,7 +6640,7 @@
 			)
 		)
 		(property "LCSC" "C25804"
-			(at 462.28 86.36 0)
+			(at 462.28 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6079,7 +6651,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 462.28 86.36 0)
+			(at 462.28 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6106,7 +6678,7 @@
 	)
 	(global_label "VM_SENSE"
 		(shape passive)
-		(at 458.47 86.36 180)
+		(at 458.47 96.52 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6116,7 +6688,7 @@
 		)
 		(uuid "fdc94b80-0cbe-5b6a-93f4-460bbb8366dd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 458.47 86.36 0)
+			(at 458.47 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -6127,7 +6699,7 @@
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 466.09 86.36 0)
+		(at 466.09 96.52 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6137,7 +6709,7 @@
 		)
 		(uuid "ddd2b0aa-36bf-56d1-bf5b-6f04e031ca7a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 466.09 86.36 0)
+			(at 466.09 96.52 0)
 			(effects
 				(font
 					(size 1 1)
@@ -6291,7 +6863,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 294.64 96.52 0)
+		(at 294.64 106.68 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6301,7 +6873,7 @@
 		(dnp no)
 		(uuid "0fde81cd-343e-53e7-aff4-261fd42b8107")
 		(property "Reference" "#FLG01"
-			(at 294.64 94.22 0)
+			(at 294.64 104.38 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6311,7 +6883,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 294.64 98.82 0)
+			(at 294.64 108.98 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6321,7 +6893,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 294.64 96.52 0)
+			(at 294.64 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6332,7 +6904,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 294.64 96.52 0)
+			(at 294.64 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6343,7 +6915,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 294.64 96.52 0)
+			(at 294.64 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6354,7 +6926,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 294.64 96.52 0)
+			(at 294.64 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6365,7 +6937,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 294.64 96.52 0)
+			(at 294.64 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6389,7 +6961,7 @@
 	)
 	(global_label "+3V3"
 		(shape passive)
-		(at 294.64 96.52 270)
+		(at 294.64 106.68 270)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6399,7 +6971,7 @@
 		)
 		(uuid "960beb75-43ea-5a31-b050-11b3be4e14d6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 294.64 96.52 0)
+			(at 294.64 106.68 0)
 			(effects
 				(font
 					(size 1 1)
@@ -6410,7 +6982,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 350.52 96.52 0)
+		(at 350.52 106.68 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6420,7 +6992,7 @@
 		(dnp no)
 		(uuid "0a495643-1e17-5e6b-a5f7-b82b0e85de91")
 		(property "Reference" "#FLG02"
-			(at 350.52 94.22 0)
+			(at 350.52 104.38 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6430,7 +7002,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 350.52 98.82 0)
+			(at 350.52 108.98 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6440,7 +7012,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 350.52 96.52 0)
+			(at 350.52 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6451,7 +7023,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 350.52 96.52 0)
+			(at 350.52 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6462,7 +7034,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 350.52 96.52 0)
+			(at 350.52 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6473,7 +7045,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 350.52 96.52 0)
+			(at 350.52 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6484,7 +7056,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 350.52 96.52 0)
+			(at 350.52 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6508,7 +7080,7 @@
 	)
 	(global_label "+5V"
 		(shape passive)
-		(at 350.52 96.52 270)
+		(at 350.52 106.68 270)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6518,7 +7090,7 @@
 		)
 		(uuid "d38338e9-61d2-57ed-af8e-31b39fb9ce9f")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 350.52 96.52 0)
+			(at 350.52 106.68 0)
 			(effects
 				(font
 					(size 1 1)
@@ -6529,7 +7101,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 406.4 96.52 0)
+		(at 406.4 106.68 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6539,7 +7111,7 @@
 		(dnp no)
 		(uuid "9b94c343-58a7-54f4-a91c-35a0aff77542")
 		(property "Reference" "#FLG03"
-			(at 406.4 94.22 0)
+			(at 406.4 104.38 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6549,7 +7121,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 406.4 98.82 0)
+			(at 406.4 108.98 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6559,7 +7131,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 406.4 96.52 0)
+			(at 406.4 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6570,7 +7142,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 406.4 96.52 0)
+			(at 406.4 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6581,7 +7153,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 406.4 96.52 0)
+			(at 406.4 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6592,7 +7164,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 406.4 96.52 0)
+			(at 406.4 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6603,7 +7175,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 406.4 96.52 0)
+			(at 406.4 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6627,7 +7199,7 @@
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 406.4 96.52 270)
+		(at 406.4 106.68 270)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6637,7 +7209,7 @@
 		)
 		(uuid "3fa54041-ec03-5e5a-8851-ba0cdf2cd5a0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 406.4 96.52 0)
+			(at 406.4 106.68 0)
 			(effects
 				(font
 					(size 1 1)

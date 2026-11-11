@@ -16,17 +16,17 @@ BOARD = "PTZ DRIVER  REV B  2026-11-11"
 
 NAMES = {  # reference -> text beside it
     "J101": "11-17V", "F101": "F1 T5A", "F102": "F2 T1A", "U101": "5V REG", "J801": "FAN", "J701": "I2C",
-    "JP101": "VSNS", "JP801": "FAN V", "JP701": "PU", "D101": "TVS", "RT801": "NTC",
+    "JP101": "VSNS", "JP701": "PU", "D101": "TVS", "RT801": "NTC",
 }
 for n in (1, 2, 3, 4):
     a = n + 2
     NAMES.update({f"J{a}01": f"M{n}", f"J{a}02": f"H{n}", f"J{a}03": f"S{n}", f"JP{a}04": "PU", f"JP{a}02": "SPI"})
 # (reference, pad, text): a mark at one pad
-PAD_MARKS = [("J101", "1", "+"), ("J101", "2", "-"), ("JP101", "1", "3V3"), ("JP101", "3", "5V"), ("JP801", "1", "5V"),
-             ("JP801", "3", "VM"), ("U101", "1", "IN"), ("U101", "3", "OUT"), ("J801", "1", "+")]
+PAD_MARKS = [("JP101", "1", "3V3"), ("JP101", "3", "5V"), ("U101", "1", "IN"), ("U101", "3", "OUT"), ("J801", "1", "+5V")]
 # texts with a fixed place, inside a module's outline or along an edge: (text, x, y, angle, height)
-INSIDE = [("ESP32-S3-DEVKITC-1", 30.0, 46.3, 0, 1.2), ("USB", 3.4, 52.0, 90, 1.2), ("ANT", 59.3, 56.3, 90, 1.0),
-          ("WIZ850IO", 84.0, 58.0, 0, 1.2), ("RJ45", 95.3, 60.0, 90, 1.2), ("3V3", 61.3, 43.4, 90, 0.8), ("5V", 10.5, 47.4, 90, 0.8)]
+INSIDE = [("ESP32-S3-DEVKITC-1", 30.0, 46.3, 0, 1.2), ("USB", 3.4, 52.0, 90, 1.2), ("ANT", 58.0, 45.0, 0, 1.0),
+          ("WIZ850IO", 84.0, 58.0, 0, 1.2), ("RJ45", 95.3, 60.0, 90, 1.2), ("3V3", 61.3, 43.4, 90, 0.8), ("5V", 10.5, 47.4, 90, 0.8),
+          ("+", 89.1, 45.7, 0, 1.2), ("-", 89.1, 43.0, 0, 1.2)]      # the last two: beside pin 1 and pin 2 of the supply connector
 LEGEND = [      # at most 52 characters a line: it has to fit between the MCU module's pin rows
     BOARD,
     "SUPPLY 11-17V: 1 PLUS  2 GND",
@@ -34,10 +34,10 @@ LEGEND = [      # at most 52 characters a line: it has to fit between the MCU mo
     "M1-M4 MOTOR: 1-2 ONE COIL  3-4 THE OTHER",
     "S1-S4 AND I2C: 1 VSNS  2 GND  3 SDA  4 SCL",
     "H1-H4 HOME: 1 VSNS  2 GND  3 SWITCH TO GND",
-    "FAN: 1 PLUS  2 SWITCHED MINUS   FAN V: 5V OR VM",
+    "FAN, 5V ONLY: 1 PLUS 5V  2 SWITCHED MINUS",
     "VSNS: 3V3 OR 5V FOR ALL SENSOR AND HOME PLUGS",
     "PU: I2C PULL-UPS. CLOSED JUMPER 4K7, OPEN ONE 2K2",
-    "5V REG: 7805-PINOUT SWITCHER  1 IN  2 GND  3 OUT",
+    "5V REG: TSR 1-2450 OR K7805-1000R3. NOT A 7805",
 ]
 LEGEND_2 = [    # under the row of drivers
     "DRIVER SOCKETS: TMC2240 ON SPI = THE 3 SPI JUMPERS CLOSED.  TMC2209 ON UART = CUT THE 3 OF THAT SOCKET",
@@ -100,7 +100,7 @@ def draw(board):
             solid.append(rect(t.GetBoundingBox(), 0.1))
     placed, missed = [], []
 
-    def put(s, cx, cy, h_text, reach=9.0, ref=""):
+    def put(s, cx, cy, h_text, reach=14.0, ref=""):
         """Place s as near (cx, cy) as it fits; the anchor itself is usually inside a part."""
         best = None
         for angle, bias in ((0, 0.0), (90, 0.5)):       # upright text is preferred; turned text must be clearly nearer
@@ -144,7 +144,9 @@ def draw(board):
             placed.append(_box(s, tx, ty, hh, 0))
             _text(board, s, tx, ty, hh)
     for ref, name in NAMES.items():
-        put(name, *centre(fps[ref]), H_NAME, ref=ref)
+        if not put(name, *centre(fps[ref]), H_NAME, ref=ref):       # a smaller text finds room where the larger does not
+            missed.pop()
+            put(name, *centre(fps[ref]), H_SMALL, ref=ref)
     for ref, pad, s in PAD_MARKS:
         p = [q for q in fps[ref].Pads() if q.GetNumber() == pad][0].GetPosition()
         put(s, p.x / 1e6 - OX, p.y / 1e6 - OY, H_SMALL, ref=ref)

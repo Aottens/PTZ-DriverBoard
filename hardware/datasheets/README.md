@@ -56,7 +56,7 @@ Each was read from the datasheet that LCSC links on the part's page, because the
 | Part | What is used | Source of it |
 | --- | --- | --- |
 | BAV99 (C2500), B5819W (C8598) | Standard pin order of the package | JLC's own library symbol and footprint, read through the EasyEDA API (`fab/jlc_pins.py`) |
-| TAJB107K006RNJ (C16133) | Pad 1 is the plus | JLC's library symbol draws the plus sign at pin 1, and its footprint marks pad 1 |
+| TAJA106K016RNJ (C7171) | Pad 1 is the plus | JLC's library symbol draws the plus sign at pin 1, and its footprint marks pad 1 |
 | AO3400A, AOD4185 | 1 gate, 2 source or drain, 3 drain or source | JLC's library symbols name the pins G, S and D (`fab/jlc_pins.py`) |
 | Heat sink on a driver module | 12 mm tall | An assumption in `check_fit.py`; BIGTREETECH's documents give no height |
 | 100 µF 35 V electrolytic | ESR about 0.5 Ω | An assumption for a general-purpose 6.3 × 11 mm part, used in `calc/power.py` |

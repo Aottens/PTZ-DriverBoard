@@ -42,7 +42,7 @@ each sensor sits alone behind its own channel of the multiplexer. Axis n has its
   can push into U701.
 - **ENC-03 Home inputs.** Ja02: 1 = `V_SNS` (for a hall sensor), 2 = `GND`, 3 = `HOMEn_IN`. Ra02 (10 kΩ) pulls
   `HOMEn_IN` to `+3V3`, so a switch to ground reads low. Ra03 (10 kΩ) joins `HOMEn_IN` to `HOMEn`, which goes to
-  the MCU and has Ca03 (10 nF) to `GND` and Da02 as a clamp: pin 1 `GND`, pin 2 `+3V3`, pin 3 `HOMEn`. With 17 V
+  the MCU and has Ca03 to `GND` (10 nF; 1 nF on axis 4, whose MCU pin also sends the boot log) and Da02 as a clamp: pin 1 `GND`, pin 2 `+3V3`, pin 3 `HOMEn`. With 17 V
   on the pin, the calculation in `hardware/calc/power.py` gives 1.3 mA into the clamp and 19 mW in Ra02.
 - **ENC-04** The longest sensor cable is proven on the rig (R-T2), not here. What the board gives that test:
   ENC-05, ENC-06 and a test point on the bus.
@@ -57,8 +57,9 @@ each sensor sits alone behind its own channel of the multiplexer. Axis n has its
   sensor cable does not take down the logic supply (POW-08). JP101 can move `V_SNS` to `+5V`: the multiplexer then
   translates, since each side has its own pull-ups (TCA9548A datasheet, voltage translation). With `V_SNS` on 5 V
   a short on a sensor cable does take down `+5V`.
-- **ENC-07 ESD.** Every line that leaves the board on a sensor port has a channel of an SRV05-4 right at its
-  connector, one part per port: Ua01 holds `SNSn_SDA` on pin 1 and `SNSn_SCL` on pin 3; U702 holds `AUX_SDA` on
+- **ENC-07 ESD.** Every line that leaves the board on a sensor port has a channel of an SRV05-4 on the connector's
+  side of the 100 Ω resistors, one part per port, within 8 mm of the connector (port 4: 25 mm, because nothing may
+  stand under the Ethernet module, BRD-11): Ua01 holds `SNSn_SDA` on pin 1 and `SNSn_SCL` on pin 3; U702 holds `AUX_SDA` on
   pin 1 and `AUX_SCL` on pin 3. On each, pins 4 and 6 are not connected, pin 2 is `GND` and pin 5 is `V_SNS`. The home inputs are protected by their resistors and clamp (ENC-03), which
   also survive a steady 17 V; an SRV05-4 would not.
 - **ENC-08 Spare channel (AUX-01).** J701: 1 = `V_SNS`, 2 = `GND`, 3 = `AUX_SDA`, 4 = `AUX_SCL`, on channel 4

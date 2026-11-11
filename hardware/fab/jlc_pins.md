@@ -1,6 +1,6 @@
 | LCSC | Part | First reference | JLC's pin: name -> net on the board |
 | --- | --- | --- | --- |
-| C16133 | 100 µF 6.3 V | C111 | 1: 1 -> +3V3, 2: 2 -> GND |
+| C7171 | 10 µF 16 V | C111 | 1: 1 -> +3V3, 2: 2 -> GND |
 | C19077573 | SMBJ18A | D101 | 1: C -> VM, 2: A -> GND |
 | C8678 | SS34 | D102 | 1: K -> +5V, 2: A -> +5V_REG |
 | C8598 | B5819W | D201 | 1: - -> EN, 2: + -> PERIPH_RST_N |

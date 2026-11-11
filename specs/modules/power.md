@@ -12,7 +12,7 @@ J101 ─ VIN_RAW ─ Q101 (reverse polarity) ─ VIN ─┬─ F101 T 5 A ─ VM
 +5V ─┬─ MCU module (its 5V pin; USB feeds the same net through the module's own diodes)
      ├─ U102 ─ +3V3      multiplexer, Ethernet module, VIO of the drivers, pull-ups
      ├─ U103 ─ +3V3_SNS ─ JP101 ─ V_SNS   the five cabled I2C ports and the home connectors
-     └─ JP801 ─ fan
+     └─ fan
 ```
 
 The 5 V regulator is a plug-in part like the other modules: a three-pin switching regulator in the 7805 pin order,
@@ -34,15 +34,14 @@ that Extended line.
 | C101 … C104 | 100 µF 35 V aluminium electrolytic, radial, Ø 6.3 mm, 2.5 mm pitch | none | owner | one per driver; chosen for its ESR, which damps a hot-plug |
 | C105 | 10 µF 50 V 1206 | C13585 | JLC | |
 | C106, C109, C112 | 100 nF 50 V 0603 | C14663 | JLC | |
-| U101 | 5 V, 1 A switching regulator, SIP-3, pins 1 = in, 2 = ground, 3 = out | none | owner | RECOM R-78K5.0-1.0 (Rev 6-2025), Mornsun K7805-1000R3, Traco TSR 1-2450 |
+| U101 | 5 V, 1 A switching regulator, SIP-3, pins 1 = in, 2 = ground, 3 = out | none | owner | Traco TSR 1-2450 (6.5 to 36 V in, 470 µF load) or Mornsun K7805-1000R3 (8 to 36 V, 680 µF). Not the RECOM R-78E5.0-1.0: its 220 µF limit is below what this board and its modules hold (POW-07) |
 | D102 | SS34 Schottky, 40 V 3 A, SMA | C8678 | JLC | MDD Rev 2024A5; band = cathode |
-| C107, C108 | 22 µF 25 V 0805 | C45783 | JLC | |
+| C108 | 22 µF 25 V 0805 | C45783 | JLC | |
+| C107, C110, C113 | 10 µF 25 V 0805 | C15850 | JLC | |
 | U102 | AMS1117-3.3, SOT-223 | C6186 | JLC | Advanced Monolithic Systems: 1 ground, 2 and tab out, 3 in |
-| C110 | 10 µF 25 V 0805 | C15850 | JLC | |
-| C111 | 100 µF 6.3 V tantalum, case B | C16133 | JLC | AVX TAJB107K006RNJ; the AMS1117 sheet asks for tantalum of 22 µF or more |
+| C111, C116, C117 | 10 µF 16 V tantalum, case A | C7171 | JLC | AVX TAJA106K016RNJ, three in parallel: the AMS1117 sheet asks for 22 µF of tantalum or more, and JLC's fee-free tantalums are 10 µF and 100 µF |
 | U103 | AMS1117-3.3, SOT-223 | C6186 | JLC | as U102; chosen for its thermal shutdown, see below the table |
-| C113 | 22 µF 25 V 0805 | C45783 | JLC | |
-| C114 | 100 µF 6.3 V tantalum, case B | C16133 | JLC | as C111 |
+| C114, C118, C119 | 10 µF 16 V tantalum, case A | C7171 | JLC | as C111 |
 | JP101 | Solder jumper, three pads, 1-2 closed by a copper bridge | none | bare copper | |
 | R103 | 100 kΩ 0603 | C25803 | JLC | |
 | R104 | 10 kΩ 0603 | C25804 | JLC | |
@@ -82,11 +81,15 @@ damage it.
   10 kΩ and C115 100 nF to `GND`) on an ADC1 pin: 1.00 V at 11 V, 1.55 V at 17 V. A blown F101 reads 0 V.
 - **POW-07** `+5V_REG` is 5 V from U101: pin 1 `VIN_L`, pin 2 `GND`, pin 3 `+5V_REG`. C105 and C106 from `VIN_L`
   to `GND`; C107 from `+5V_REG` to `GND`; C108 and C109 from `+5V` to `GND`. `+5V` is `+5V_REG` less D102's
-  drop, about 4.6 V at full load by calculation; the budget is 0.9 A peak of the regulator's 1 A.
+  drop, about 4.6 V at full load by calculation; the budget is 0.9 A peak of the regulator's 1 A. What the module
+  must charge at switch-on is 113 µF on the board (52 µF on the 5 V side, 31 µF and 30 µF behind the two regulators)
+  and about 115 µF in the plugged-in modules by estimate, summed in `hardware/calc/power.py`: about 230 µF. The
+  Traco TSR 1-2450 (470 µF) and the Mornsun K7805-1000R3 (680 µF) take that with room to spare; the RECOM
+  R-78E5.0-1.0 (220 µF) does not, and is not the module to buy.
 - **POW-08** `+3V3` is 3.3 V from U102 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3`), with C110 at its input
-  and C111 (plus on `+3V3`) and C112 at its output. It feeds the multiplexer, the Ethernet module, the drivers'
+  and C111, C116, C117 (plus on `+3V3`) and C112 at its output. It feeds the multiplexer, the Ethernet module, the drivers'
   VIO and the pull-ups, not the MCU: the MCU module has its own regulator.
-  `+3V3_SNS` is 3.3 V from U103 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3_SNS`), with C113 at its input and C114 (plus on
+  `+3V3_SNS` is 3.3 V from U103 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3_SNS`), with C113 at its input and C114, C118, C119 (plus on
   `+3V3_SNS`)
   at its output. JP101 chooses `V_SNS`, the supply of every cabled sensor and home connector: pad 2 is `V_SNS`,
   pad 1 is `+3V3_SNS` (closed as delivered), pad 3 is `+5V`.
@@ -101,13 +104,17 @@ damage it.
 | J303 … J603, J701 sensor | `V_SNS` to `GND` | U103's current limit, 0.9 to 1.5 A, then its thermal shutdown; with JP101 on 5 V, U101's protection | up to 1.5 A from `+5V` until U103 shuts down: more than a 1 A module gives, so `+5V` may dip and the MCU restart |
 | same | SDA or SCL to `GND` or `V_SNS` | pull-ups of 1.5 kΩ at least, 100 Ω to the multiplexer | under 4 mA |
 | J302 … J602 home | signal to `GND` (its normal use) or to `V_SNS` | 10 kΩ pull-up and 10 kΩ series | under 1 mA |
-| J801 fan | `FAN_V` to `GND`, `FAN_V` to `FAN_N` | on 5 V: U101's protection; on `VM`: F101 | see AUX-03 |
+| J801 fan | `+5V` to `GND`, `+5V` to `FAN_N` | U101's protection: the fan runs from 5 V only | at most what the module gives; Q801 carries 5.7 A |
 
 ## Not verified in this build
 
 - Nothing is measured. The hot-plug calculation rests on assumed values for the lead's inductance and the
   capacitors' ESR, which are named in `calc/power.py`.
-- Which 5 V module the owner buys is open; the three named ones share pin order and pitch. RECOM states the
-  back-feed rule; Mornsun says its part may not be used "with output in parallel", which D102 also answers.
+- With F101 out, only C105 (10 µF) stands on the logic branch: plugging in under voltage can then ring it to about
+  24 V at a 17 V supply (the blind review's estimate), under the 36 V that both named modules take. With
+  F101 in, the bulk capacitors damp it.
+- Which of the two named 5 V modules the owner buys is open; they share pin order and pitch. Mornsun says its part
+  may not be used "with output in parallel", and RECOM forbids back-feed for its like parts; D102 answers both.
+  The capacitance in the plugged-in modules is an estimate, not read from their schematics.
 - On USB alone `+3V3` is fed from about 4.6 V through a regulator that needs up to 1.3 V at full load; at the
   0.25 A here the calculation leaves it in regulation, but with a weak USB port it can sag towards 3.1 V.

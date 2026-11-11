@@ -22,7 +22,7 @@ CLASSES = {  # name: (track, clearance, via, drill, priority)
     "Power": (0.5, 0.2, 0.8, 0.4, 2),
 }
 PATTERNS = [("Supply", n) for n in ("VIN_RAW", "VIN", "VM")] + [("Motor", "M?_?")]
-PATTERNS += [("Power", n) for n in ("VIN_L", "+5V_REG", "+5V", "+3V3", "+3V3_SNS", "V_SNS", "FAN_V", "FAN_N")]
+PATTERNS += [("Power", n) for n in ("VIN_L", "+5V_REG", "+5V", "+3V3", "+3V3_SNS", "V_SNS", "FAN_N")]
 # DRC checks switched off, each with its reason. Everything else stays at KiCad's default and must come out at zero.
 DRC_OFF = {
     "silk_edge_clearance": "the Ethernet module's outline runs off the board on purpose (its jack overhangs); the fab clips it",

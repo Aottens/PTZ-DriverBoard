@@ -11,6 +11,8 @@ A round:
   3. for every unconnected pair, find a way with A* on a 0.1 mm grid, on either layer with vias, in the track width
      and clearance of the net's class, and lay it; a ground pad that the pour does not reach is led to the nearest
      spot where the pour's main body lies;
+     a 0.5 mm supply track that finds no way (between two header pins there is room for 0.4 mm only) is laid at
+     0.4 mm and widened again piece by piece wherever 0.5 mm fits (BRD-06 allows such necks);
   4. refill the zones and save.
 It stops when a round has nothing left to do or changes nothing. Nothing here is trusted: check_board.py runs the
 DRC again afterwards. Unlike Rev A's version it never moves a track that is already there.
@@ -383,8 +385,8 @@ def one_round(n):
     codes = {str(name): net.GetNetCode() for name, net in board.GetNetsByName().items()}
     grids = {}
 
-    def grid_for(name):
-        kind = KINDS[net_class(name)]
+    def grid_for(name, kind=None):
+        kind = kind or KINDS[net_class(name)]
         if kind not in grids:
             grids[kind] = Grid(board, *kind)
             for item in made_all:                 # what this round laid before the grid existed
@@ -392,7 +394,7 @@ def one_round(n):
         return grids[kind]
 
     made_all, changed = [], 0
-    k, loose = stitch(board, grid_for("GND"), codes["GND"])
+    k, loose = stitch(board, grid_for("GND"), codes["GND"]) if n <= 2 else (0, [])    # twice: the first round's tracks cut new pieces off
     changed += k
     print(f"  {k} stitching vias, {len(loose)} loose pieces of pour")
     body = {0: main_body(board, pcbnew.F_Cu), 1: main_body(board, pcbnew.B_Cu)}
@@ -409,10 +411,18 @@ def one_round(n):
         else:
             goals = [(li, *cell(b[2], b[3])) for li in b[1]]
             found = search(grid, code, starts, goals=set(goals), goal=goals[0])
+        wide = None
+        if not found and not b[4] and grid.width == 0.5:      # try again with a neck
+            wide, grid = grid, grid_for(name, (0.4, grid.gap))
+            found = search(grid, code, starts, goals=set(goals), goal=goals[0])
         if not found:
             print(f"  no way: {name} ({a[2]:.1f}, {a[3]:.1f}) to " + ("the pour" if b[4] else f"({b[2]:.1f}, {b[3]:.1f})"))
             continue
         made = lay(board, grids, grid, code, *found)
+        if wide:
+            for t in made:
+                if t.Type() != pcbnew.PCB_VIA_T and wide.clear(t.GetLayer(), cell(*xy(t.GetStart())), cell(*xy(t.GetEnd())), code, found[1]):
+                    t.SetWidth(mm(0.5))
         made_all += made
         changed += 1
         print(f"  {name}: {len(made)} pieces from ({a[2]:.1f}, {a[3]:.1f})")

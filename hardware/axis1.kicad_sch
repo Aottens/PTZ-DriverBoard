@@ -3277,6 +3277,149 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 406.4 76.2 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "2ab1adcd-c651-56ee-959a-58be4053f7af")
+		(property "Reference" "R310"
+			(at 406.4 73.9 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 406.4 78.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25803"
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 406.4 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a65ca0a3-fdc9-5b2d-8e72-d8942ad5a309")
+		)
+		(pin "2"
+			(uuid "38ff76b0-af45-5dc5-a55d-2b34560ee7b9")
+		)
+		(instances
+			(project "ptz-driver"
+				(path "/03b6ee76-2eff-53cc-9a8f-9fb9870152d0/3f847006-171a-5733-9a65-471d7fc5abd1"
+					(reference "R310")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "STEP1"
+		(shape passive)
+		(at 402.59 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "776bd3e5-8955-5d22-9653-0321e0fd679d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 402.59 76.2 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape passive)
+		(at 410.21 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "9cbb6e69-25c2-5529-adbd-b69bf59fdd6d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 410.21 76.2 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:D_Schottky")
 		(at 462.28 35.56 0)
 		(unit 1)
