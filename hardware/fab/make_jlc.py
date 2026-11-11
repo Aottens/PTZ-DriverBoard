@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""JLC BOM and CPL for the PTZ driver board. Rerun after every board change.
+"""JLC BOM and CPL for the PTZ driver board, Rev B. Rerun after every board change.
+
+Only the SMD parts are in these files: a through-hole part carries no LCSC number, because the owner solders it.
 
 Run with KiCad's Python, from hardware/:
   /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 fab/make_jlc.py
@@ -24,6 +26,11 @@ HW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(HW, "fab", "jlc")
 CACHE = os.path.join(HW, "fab", "easyeda_cache.json")
 FIT_MAX = 0.35      # mm, largest pad-centre distance accepted
+# Parts whose JLC land pattern has its pads 0.4 mm further out than KiCad's, on both sides alike: no rotation or
+# pin-order question, and the part's leads still land on KiCad's longer pads. Checked against the makers' outlines.
+SPREAD = {"C19077573": "SMB: JLC's pad centres are 5.1 mm apart, KiCad's 4.3 mm with 2.5 mm long pads (0.9 to 3.4 mm from the centre); the leads span 5.4 mm",
+          "C2500": "SOT-23 (Nexperia): JLC's pad centres are 2.48 mm apart, KiCad's 1.88 mm with 1.48 mm long pads (0.2 to 1.7 mm); the leads span at most 2.5 mm"}
+FIT_MAX_SPREAD = 0.45
 _cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
 
 
@@ -99,7 +106,7 @@ def fit(fp, lcsc):
 
 def main():
     board = pcbnew.LoadBoard(os.path.join(HW, "ptz-driver.kicad_pcb"))
-    rows, groups, bad = [], {}, []
+    rows, groups, bad, pads = [], {}, [], {}
     for fp in sorted(board.GetFootprints(), key=lambda f: (f.GetReference().rstrip("0123456789"), int("".join(c for c in f.GetReference() if c.isdigit()) or 0))):
         lcsc = fp.GetFieldText("LCSC") if fp.HasField("LCSC") else ""
         if not lcsc:
@@ -107,9 +114,10 @@ def main():
         assert not fp.IsFlipped(), f"{fp.GetReference()} is on the bottom: Economic assembly is top side only"
         r, m, err, how = fit(fp, lcsc)
         title = _cache[lcsc]["title"] if _cache[lcsc] else "NOT IN JLC'S FOOTPRINT LIBRARY: check this part in the preview"
-        if err >= FIT_MAX:
+        if err >= (FIT_MAX_SPREAD if lcsc in SPREAD else FIT_MAX):
             bad.append(f"{fp.GetReference()} {lcsc}: JLC's footprint ({title}) is {err:.2f} mm off")
         ref = fp.GetReference()
+        pads[ref] = len([p for p in fp.Pads() if p.GetNumber()])
         rows.append((ref, f"{m[0]:.3f}mm", f"{-m[1]:.3f}mm", "Top", r))
         g = groups.setdefault(lcsc, ([], fp.GetFPID().GetLibItemName().wx_str(), []))      # one line per part number
         g[0].append(fp.GetValue()) if fp.GetValue() not in g[0] else None
@@ -127,7 +135,8 @@ def main():
         w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
         for lcsc, (values, name, refs) in groups.items():
             w.writerow([" / ".join(values), ",".join(refs), name, lcsc])
-    print(f"{len(rows)} parts, {len(groups)} BOM lines")
+    json.dump(pads, open(os.path.join(OUT, "ptz-driver_pads.json"), "w"), indent=0, sort_keys=True)     # solder joints, for calc/cost.py
+    print(f"{len(rows)} parts, {len(groups)} BOM lines, {sum(pads.values())} solder joints")
 
 
 if __name__ == "__main__":

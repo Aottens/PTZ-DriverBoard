@@ -82,7 +82,7 @@ damage it.
   10 kΩ and C115 100 nF to `GND`) on an ADC1 pin: 1.00 V at 11 V, 1.55 V at 17 V. A blown F101 reads 0 V.
 - **POW-07** `+5V_REG` is 5 V from U101: pin 1 `VIN_L`, pin 2 `GND`, pin 3 `+5V_REG`. C105 and C106 from `VIN_L`
   to `GND`; C107 from `+5V_REG` to `GND`; C108 and C109 from `+5V` to `GND`. `+5V` is `+5V_REG` less D102's
-  drop, about 4.6 V at full load by calculation; the budget is 0.85 A peak of the regulator's 1 A.
+  drop, about 4.6 V at full load by calculation; the budget is 0.9 A peak of the regulator's 1 A.
 - **POW-08** `+3V3` is 3.3 V from U102 (pin 3 `+5V`, pin 1 `GND`, pin 2 and tab `+3V3`), with C110 at its input
   and C111 (plus on `+3V3`) and C112 at its output. It feeds the multiplexer, the Ethernet module, the drivers'
   VIO and the pull-ups, not the MCU: the MCU module has its own regulator.
@@ -91,7 +91,7 @@ damage it.
   at its output. JP101 chooses `V_SNS`, the supply of every cabled sensor and home connector: pad 2 is `V_SNS`,
   pad 1 is `+3V3_SNS` (closed as delivered), pad 3 is `+5V`.
 - **POW-09 Budget**, in `hardware/calc/power.py`: `+3V3` at most 0.25 A, `+3V3_SNS` at most 0.12 A,
-  `+5V` at most 0.85 A, and the input current with four axes at 1.5 A below F101's 5 A.
+  `+5V` at most 0.9 A, and the input current with four axes at 1.5 A below F101's 5 A.
 
 ## Outputs and what limits them (POW-02c)
 

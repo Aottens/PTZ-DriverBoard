@@ -32,14 +32,17 @@ From the owner's Rev A brief and the size entry of 2026-11-10 in `DECISIONS.md`.
   poured with ground as well.
 - **BRD-04** At most 100 × 80 mm, the size that fits the envelope (`DECISIONS.md`, 2026-11-10) and stays in JLC's
   cheapest size class of 100 × 100 mm.
-- **BRD-05 Design rules,** wider than JLC's limits because nothing here needs fine lines: tracks and gaps at
-  least 0.2 mm; vias at least 0.3 mm drill and 0.6 mm pad; copper at least 0.3 mm from the board edge; smallest
+- **BRD-05 Design rules,** wider than JLC's limits because nothing here needs fine lines: tracks 0.25 mm, necked
+  to no less than 0.15 mm where they leave a fine-pitch pad; gaps at least 0.2 mm; vias at least 0.3 mm drill and
+  0.6 mm pad; copper at least 0.3 mm from the board edge; smallest
   passive 0603; smallest IC pitch 0.65 mm.
 - **BRD-06 Current paths,** by the IPC-2221 figures in `hardware/calc/power.py`:
-  - `VIN_RAW`, `VIN` and `VM` from J101 through Q101 and F101 to the last driver socket are copper at least
-    3.0 mm wide (5 A with about 10 °C rise);
+  - `VIN_RAW`, `VIN` and `VM` from J101 through Q101 and F101 and along the row of driver sockets are tracks at
+    least 3.0 mm wide (5 A with about 10 °C rise); the branch from there to each socket's pad 9 is at least
+    2.0 mm wide, and the branch to F102 at least 1.0 mm;
   - motor outputs `Mn_1` to `Mn_4` are at least 1.0 mm wide (2 A RMS) and at most 15 mm long;
-  - `VIN_L`, `+5V_REG`, `+5V`, `+3V3`, `+3V3_SNS`, `V_SNS`, `FAN_V` and `FAN_N` tracks are at least 0.5 mm wide;
+  - `VIN_L`, `+5V_REG`, `+5V`, `+3V3`, `+3V3_SNS`, `V_SNS`, `FAN_V` and `FAN_N` tracks are at least 0.5 mm wide,
+    necked to no less than 0.35 mm where they enter a fine-pitch pad, for at most 3 mm per net;
   - each bulk capacitor's plus pad is within 12 mm of pad 9 of its driver socket.
 - **BRD-07 Fit, checked by code** in `hardware/check_fit.py`, with each module, heat sink, connector, mating plug
   and cable bend as a box:
@@ -52,12 +55,12 @@ From the owner's Rev A brief and the size entry of 2026-11-10 in `DECISIONS.md`.
   - no two boxes overlap, and a screwdriver reaches each mounting screw from above.
 - **BRD-08 Assembly** is written out in `hardware/ASSEMBLY.md`: what the owner solders and in which order, the
   order of mounting and plugging, and which tool reaches which bolt.
-- **BRD-09 Silkscreen.** Top: a name at every connector, socket, jumper and test point; pin 1 at every connector
-  and socket; plus, minus and the voltage range at the supply input; the fuse ratings; the pin names of the
-  sensor, home, motor and fan connectors; which way round each module goes. Board name, revision and date. No
-  text smaller than 0.8 mm high with a 0.15 mm stroke.
+- **BRD-09 Silkscreen.** Top: a name at every connector, socket, fuse, jumper and test point; pin 1 at every
+  connector and socket; plus, minus and the voltage range at the supply input; the fuse ratings; which way round
+  each module goes; board name, revision and date. Bottom: the pin order of every connector and what each jumper
+  does, because the top has no room for it. No text smaller than 0.8 mm high with a 0.15 mm stroke.
 - **BRD-10** ERC is clean; DRC is clean with 0 unconnected items and schematic parity, both through `kicad-cli`.
-- **BRD-11 Under the modules.** No part taller than 2.0 mm stands under a module, so a module may also be
+- **BRD-11 Under the modules.** No part taller than 2.2 mm stands under a module, so a module may also be
   soldered in without sockets. No solder jumper and no test point is under a module or a connector.
 - **BRD-12 Cost (COST-01..03).** At most three BOM lines are Extended parts with a loading fee, each with its
   reason in `docs/research/rev-b-cost.md`; every other assembled line is Basic or Preferred. The estimate for

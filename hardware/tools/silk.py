@@ -16,12 +16,11 @@ BOARD = "PTZ DRIVER  REV B  2026-11-11"
 
 NAMES = {  # reference -> text beside it
     "J101": "11-17V", "F101": "F1 T5A", "F102": "F2 T1A", "U101": "5V REG", "J801": "FAN", "J701": "I2C",
-    "JP101": "VSNS", "JP801": "FAN V", "JP701": "4K7", "JP702": "2K2", "D101": "TVS", "RT801": "NTC",
+    "JP101": "VSNS", "JP801": "FAN V", "JP701": "PU", "D101": "TVS", "RT801": "NTC",
 }
 for n in (1, 2, 3, 4):
     a = n + 2
-    NAMES.update({f"J{a}01": f"M{n}", f"J{a}02": f"H{n}", f"J{a}03": f"S{n}", f"JP{a}04": "4K7", f"JP{a}05": "2K2",
-                  f"JP{a}02": "SPI"})
+    NAMES.update({f"J{a}01": f"M{n}", f"J{a}02": f"H{n}", f"J{a}03": f"S{n}", f"JP{a}04": "PU", f"JP{a}02": "SPI"})
 # (reference, pad, text): a mark at one pad
 PAD_MARKS = [("J101", "1", "+"), ("J101", "2", "-"), ("JP101", "1", "3V3"), ("JP101", "3", "5V"), ("JP801", "1", "5V"),
              ("JP801", "3", "VM"), ("U101", "1", "IN"), ("U101", "3", "OUT"), ("J801", "1", "+")]
@@ -37,7 +36,7 @@ LEGEND = [      # at most 52 characters a line: it has to fit between the MCU mo
     "H1-H4 HOME: 1 VSNS  2 GND  3 SWITCH TO GND",
     "FAN: 1 PLUS  2 SWITCHED MINUS   FAN V: 5V OR VM",
     "VSNS: 3V3 OR 5V FOR ALL SENSOR AND HOME PLUGS",
-    "4K7 2K2: I2C PULL-UPS PER PORT, CLOSE OR CUT",
+    "PU: I2C PULL-UPS. CLOSED JUMPER 4K7, OPEN ONE 2K2",
     "5V REG: 7805-PINOUT SWITCHER  1 IN  2 GND  3 OUT",
 ]
 LEGEND_2 = [    # under the row of drivers

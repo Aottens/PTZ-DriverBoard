@@ -178,7 +178,7 @@ for x in XK:
     TRACKS.append(("VM", "B.Cu", 2.0, [(x - 0.2, 5.0), (x - 0.1, 5.6), (x - 0.1, 12.4), (x, Y_PWR)]))
 TRACKS.append(("VIN_RAW", "F.Cu", 3.0, [(84.5, 45.2), (94.4, 45.2)]))
 TRACKS.append(("VIN", "F.Cu", 3.0, [(90.5, 33.0), (90.0, 32.85), (82.2, 32.85)]))
-TRACKS.append(("VIN", "F.Cu", 1.2, [(82.214, 32.85), (82.214, 37.525)]))
+TRACKS.append(("VIN", "F.Cu", 3.0, [(82.214, 32.85), (82.214, 36.9)]))
 TRACKS.append(("VIN", "F.Cu", 1.5, [(82.2, 32.85), (74.08, 32.35)]))
 # the sensor supply: a riser up the west edge to the spare port, and a trunk along the south edge on the bottom, south of the connectors, with a stub up to pin 1 of each
 TRACKS.append(("V_SNS", "B.Cu", 0.6, [(CX[0] + 2.5, Y_CONN), (8.9, 75.2), (8.9, 66.6), (6.3, 66.6), (3.2, 63.5), (0.8, 61.1),

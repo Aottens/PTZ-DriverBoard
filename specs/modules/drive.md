@@ -86,7 +86,7 @@ socket without its DIAG signal.
   TMC2240 4.5 to 36 V, absolute maximum 41 V (datasheet p9); TMC2209 5.5 to 29 V, absolute maximum 32 V
   (datasheet p75). `+3V3` is inside both drivers' VCC_IO range (2.2 to 5.5 V and 3.0 to 5.25 V).
 - **DRV-10 Thermal.** The modules carry their own heat sinks. The sockets stand in one row with the modules 0.68 mm
-  apart, so air can pass along the row from the fan (AUX-03); nothing taller than 2 mm stands under a module. The
+  apart, so air can pass along the row from the fan (AUX-03); nothing taller than 2.2 mm stands under a module. The
   height of module and heat sink is checked in `hardware/check_fit.py` (BRD-07).
 
 ## Not verified in this build
