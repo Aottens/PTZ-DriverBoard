@@ -32,6 +32,7 @@ The research phase goes on beside it: findings in `docs/research/README.md`. The
 
 ## Owner decisions open
 - The remaining **[OPEN]** lines in `specs/PRD.md`.
-- Which 5 V regulator module and which W5500 module to buy: two of each are named, with what differs.
+- Which W5500 module to buy: two are named, with what differs. The 5 V regulator on the shopping list is a cheap
+  YLPTEC part that only its data sheet vouches for; a Traco fits the same holes.
 - Confirm owned: lab supply to 17 V with a current limit, 1/4" camera bolt, ball-end hex key. Which 14-140 mm: 265 g or 460 g.
 - The repository is public without a licence, so all rights stay reserved until one is added.

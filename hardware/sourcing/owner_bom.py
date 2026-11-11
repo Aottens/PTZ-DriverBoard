@@ -62,9 +62,8 @@ BUY = {
         (TT + "communication-and-signals/ethernet/modules/w5500-ethernet-module-wiz850io-compatible",
          "W5500 module, WIZ850io compatible, €9.00 at TinyTronics (a clone: check its pin order). WIZnet's own is LCSC C134462", 1)],
     ("5 V 1 A SIP-3", "SIP3_DCDC_7805"): [
-        ("https://www.digikey.nl/en/products/detail/traco-power/TSR-1-2450/9383780",
-         "5 V regulator Traco TSR 1-2450, €5.57 + VAT at DigiKey. LCSC had none in stock; the parts LCSC sells as "
-         "K7805-1000R3 are other makers' and their data sheets were not read", 1)],
+        ("C2992391", "5 V regulator, YLPTEC's K7805-1000R3 (8 to 36 V in, 680 µF load; sheet V1.00 06/2013), and a spare. "
+                     "The certified one is a Traco TSR 1-2450: none at LCSC, €18 shipping at DigiKey", 2)],
 }
 NOT_ON_THE_BOARD = [
     (TT + "sensors/magnetic-field/as5600-magnetic-angle-sensor-encoder-module", "AS5600 sensor board, €3.00 at TinyTronics, one per axis", 4),

@@ -18,3 +18,4 @@ Quantity,Manufacture Part Number,Manufacturer,Description,LCSC Part Number
 10,B4B-PH-K-S(LF)(SN),JST,"Sensor connector on the board, JST B4B-PH-K-S",C131334
 50,PHR-4,JST,"Its plug housing, JST PHR-4",C111514
 5,PZ2.54-1X40P-H25,JXTCONN,"Pin header 1×40, to cut: spare I2C port and fan",C42431788
+2,K7805-1000R3,YLPTEC,"5 V regulator, YLPTEC's K7805-1000R3 (8 to 36 V in, 680 µF load; sheet V1.00 06/2013), and a spare. The certified one is a Traco TSR 1-2450: none at LCSC, €18 shipping at DigiKey",C2992391

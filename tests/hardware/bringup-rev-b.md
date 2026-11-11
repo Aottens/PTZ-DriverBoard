@@ -25,8 +25,8 @@ connecting. The board comes from JLC with its SMD parts only; the steps say when
 
 ## 1. Logic supply, current-limited (POW-01, POW-02, POW-03, POW-07, POW-08)
 
-Solder J101, F102 (T 1 A, or its holder with the fuse in) and U101 (the 5 V module, a Traco TSR 1-2450 or Mornsun
-K7805-1000R3; pin 1 at `IN`). **Not yet:**
+Solder J101, F102 (T 1 A, or its holder with the fuse in) and U101 (the 5 V module, a K7805-1000R3 or a Traco
+TSR 1-2450; pin 1 at `IN`). **Not yet:**
 F101, the capacitors, the sockets.
 
 - [ ] 1.1 **Reverse polarity first, on purpose:** supply at 12 V, limit 50 mA, plus and minus swapped on J101.

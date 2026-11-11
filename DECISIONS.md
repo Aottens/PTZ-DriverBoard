@@ -4,6 +4,23 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev B: the 5 V regulator on the shopping list is YLPTEC's K7805-1000R3
+
+The owner asked which shop is cheapest for the loose parts. The parts cost little everywhere; what counts is the
+number of parcels. The Traco TSR 1-2450 was the only reason for a DigiKey order: €5.57 + VAT, and €18 shipping
+below €50. LCSC had no Traco, but 11 005 of YLPTEC's K7805-1000R3 (C2992391) at $2.38, which rides in the LCSC
+order the owner places anyway. Its data sheet (V1.00, 06/2013, listed in `hardware/datasheets/README.md`) gives pins 1 = in,
+2 = ground, 3 = out, 8 to 36 V in, 1 A, 680 µF of capacitive load and a body of 11.5 × 7.55 × 10.2 mm: what POW-07
+and the footprint ask. The list orders two, one as a spare.
+*Alternatives:* the Traco at Reichelt (€7.22) or RS (€7.08), each a parcel of its own with shipping that was not
+found on an official page; TinyTronics' Hi-Link K7805-500R3, which gives 0.5 A where the budget is 0.9 A.
+*What is given up:* a certified maker. The sheet is three pages, with no absolute maximum input voltage, no
+start-up behaviour and no word on back-feed (D102 covers that) or over-temperature. Nothing is measured.
+*Reversal trigger:* the 5 V rail fails section 1 of `tests/hardware/bringup-rev-b.md`, or dips when the modules go
+in; then a Traco TSR 1-2450 or a Mornsun K7805-1000R3 goes into the same holes.
+
+---
+
 ## 2026-11-11 — Rev B: what was done with the blind review
 
 The first review is `hardware/review/BLIND_REVIEW.md`: no KRITIEK finding, three BELANGRIJK, all three fixed.
