@@ -33,7 +33,7 @@ Questions and first findings: `docs/research/README.md`. Each closes with an ent
 | R-08 | The reduction per axis is decided from R-T1. | TGT-02..05 | S | todo |
 | R-TR | A one-axis test rig is designed with the owner, printed and running on a TMC5240 breakout. | RIG-01..12 | L | doing: frame modelled for Ø165, firmware next |
 | R-T1 | The owner's run on the rig records slowest clean move, fastest quiet move and the stop, on screen and by ear at 1 and 2 m, at 6.25:1 and 7.5:1. | TGT-02..05 | M | todo |
-| R-T2 | On the rig, the owner's run counts sensor read errors over the longest cable next to the motor, I2C against SPI, and records read noise at standstill. | ENC-04 | M | todo |
+| R-T2 | On the rig, the owner's run counts sensor read errors over the longest cable next to the motor, I2C against SPI, records read noise at standstill, and how close a preset lands after a restart. | ENC-04, ENC-06 | M | todo |
 
 ## Rev A — one run
 
@@ -67,13 +67,14 @@ Covers S2-01 to S3-03 below. The research questions and slice 1 stay open: the r
 | S3-01 | Placement and layout are routed, with DRC clean and 0 unconnected. | BRD-01..03, DRV-05 | L | done (2026-11-11, #3) |
 | S3-02 | `make_jlc.py` produces BOM and CPL that fit the EasyEDA footprints. | BRD-02 | S | done (2026-11-11, #3) |
 | S3-03 | The blind review is written and each finding is fixed or accepted. | CORE-01 | M | done (2026-11-11, #3) |
-| S3-04 | The owner orders, after the order gate in `CLAUDE.md`. | BRD-02 | S | todo |
+| S3-04 | The owner orders, after the order gate in `CLAUDE.md`. | BRD-02 | S | blocked: Rev A is not ordered on cost (2026-11-11), Rev B replaces it |
 
-## After Rev A
+## Rev B — a cheap board for plug-in modules
 
 | Id | Task (one sentence, verifiable) | Spec ids | Size | Status |
 | --- | --- | --- | --- | --- |
-| RB-01 | After bring-up, the owner decides from the checklist run and `hardware/review/HANDLED.md` whether a Rev B is needed, and a list of its changes exists (crystal beside its pins, own enable for the sensor buffer, ESD clamps on cabled ports, a TVS part JLC's library knows). | BRD, ENC, CTL | S | todo |
+| RB-01 | The owner approves the Rev B PRD and the cost estimate in `docs/research/rev-b-cost.md` (gate 1). | COST-01..03, CORE-01 | S | done (2026-11-11) |
+| RB-02 | One Fable 5.2 session delivers one PR with Rev B's specs, checks, KiCad project, JLC files, a redone cost estimate within COST-01 and a handled blind review, from `docs/prompts/fable-board-rev-b.md`. | COST, POW, DRV, ENC, CTL, AUX, BRD | XL | todo |
 
 ## Slice 4 — bring-up and firmware
 

@@ -1,7 +1,7 @@
 # Research phase
 
 The owner and Claude work through these questions together before the hardware is fixed. Each ends in an entry in
-`DECISIONS.md` and a change to `specs/PRD.md`. No schematic work starts before they are closed, except the Rev A one-run build (`DECISIONS.md`, 2026-11-10), which uses the leading candidates below.
+`DECISIONS.md` and a change to `specs/PRD.md`. No schematic work starts before they are closed, except the one-run board builds (Rev A, Rev B; `DECISIONS.md`), which use the choices in `specs/PRD.md`.
 
 **Confidence tags:** `[datasheet]` = read in the manufacturer's datasheet, page given. `[zeker]` = from the JLC parts search on
 2026-11-04 or a calculation shown here. `[bron]` = from a secondary source listed at the bottom. `[geheugen]` = from Claude's memory, no
@@ -11,11 +11,11 @@ source yet; treat as a question.
 | --- | --- | --- | --- |
 | R-01 | What must the head do, in numbers? | Owner | closed: targets approved 2026-11-04 |
 | R-02 | Which motor technology? | Claude + test rig | leading candidate |
-| R-03 | Which driver, and where does motion happen? | Claude + test rig | TMC5240 checked on paper, rig left |
-| R-04 | Which MCU? | Claude | C6-MINI-1U chosen for Rev A (owner), pin table open |
-| R-05 | Which position sensor, over which bus? | Claude + test rig | leading candidate |
+| R-03 | Which driver, and where does motion happen? | Claude + test rig | Rev B: plug-in StepStick modules, TMC2240 default, steps from the MCU (owner, 2026-11-11); rig left |
+| R-04 | Which MCU? | Claude | Rev B: plug-in ESP32-S3-DevKitC-1U (owner, 2026-11-11); the C6 drives only two steppers from hardware |
+| R-05 | Which position sensor, over which bus? | Claude + test rig | Rev B: AS5600 or MT6701 on I2C behind a multiplexer (owner, 2026-11-11); cable test R-T2 left |
 | R-06 | How small can the board get? | Claude + 3D design | first round |
-| R-07 | Which supply voltage? | Claude + test rig | open: 12 or 24 V, rig decides |
+| R-07 | Which supply voltage? | Claude + test rig | 11 to 17 V: 12 V supply or D-Tap (owner, 2026-11-11) |
 | R-08 | Which reduction? | Claude + test rig | one belt stage in Ø165 (owner), 6.25:1 or 7.5:1 on the rig |
 
 ## R-01 — What must the head do, in numbers?

@@ -3,10 +3,9 @@
 A driver board for PTZ camera heads and its firmware, designed together: one print that can drive any head.
 
 ## Status
-Rev A of the board is designed and has passed its checks and a blind review; nothing is ordered or built yet.
-It is 100 × 80 mm with four layers and all parts on top, for JLCPCB Economic assembly.
-Before an order the owner checks the JLC preview and the stock (order gate in `CLAUDE.md`).
-There is no firmware yet. The test rig for the mechanics is modelled, not printed.
+Rev A of the board is designed and checked, but not ordered: five boards would cost almost €400.
+Rev B is being specified: a cheap board for plug-in drivers, MCU and Ethernet, at most €100 per order.
+Rev A stays in `hardware/` as reference. There is no firmware yet. The test rig for the mechanics is modelled, not printed.
 Plan in `BACKLOG.md`, handoff in `STATE.md`, decisions in `DECISIONS.md`.
 
 ## What works today
