@@ -26,11 +26,11 @@ that Extended line.
 | --- | --- | --- | --- | --- |
 | J101 | JST B2P-VH, 2 pins, 3.96 mm, with latch, 10 A | none | owner | JST VH series |
 | Q101 | AOD4185, P-channel, −40 V, 20 mΩ at −4.5 V, TO-252 | C400894 (Extended) | JLC | Alpha & Omega Rev 4.2, June 2024; 1 gate, 2 (tab) drain, 3 source |
-| R101 | 150 kΩ 0603 | C22807 | JLC | |
+| R101 | 100 kΩ 0603 | C25803 | JLC | |
 | R102 | 100 kΩ 0603 | C25803 | JLC | |
 | F101 | Radial fuse 5.08 mm (TR5 type), time-lag 5 A, or its holder | none | owner | Schurter MST 250: 250 V AC, 63 V DC |
 | F102 | Radial fuse 5.08 mm, time-lag 1 A, or its holder | none | owner | same |
-| D101 | SMBJ18A, unidirectional TVS, 600 W, SMB | C19077573 (Preferred) | JLC | Hongjiacheng Rev 1.1: stand-off 18 V, breakdown 20.0 to 22.1 V, clamp 29.2 V at 20.55 A; band = cathode |
+| D101, D103 | SMBJ18A, unidirectional TVS, 600 W, SMB | C19077573 (Preferred) | JLC | Hongjiacheng Rev 1.1: stand-off 18 V, breakdown 20.0 to 22.1 V, clamp 29.2 V at 20.55 A; band = cathode. D101 on `VM`, D103 on `VIN_L` |
 | C101 … C104 | 100 µF 35 V aluminium electrolytic, radial, Ø 6.3 mm, 2.5 mm pitch | none | owner | one per driver; chosen for its ESR, which damps a hot-plug |
 | C105 | 10 µF 50 V 1206 | C13585 | JLC | |
 | C106, C109, C112 | 100 nF 50 V 0603 | C14663 | JLC | |
@@ -59,11 +59,15 @@ damage it.
   voltage of 20.0 V.
 - **POW-02** The board survives:
   - **a. Reverse polarity** to −30 V: Q101 is in the plus line with its drain at `VIN_RAW` and its source at
-    `VIN`, its gate at `RP_GATE`. R101 (150 kΩ) from `RP_GATE` to `VIN` and R102 (100 kΩ) from `RP_GATE` to `GND`
-    give it 0.6 × the input as gate drive: 6.6 V at 11 V, 10.2 V at 17 V, and 17.5 V at the TVS clamp, inside
-    its ±20 V. Reversed, the gate sits at the source and the FET blocks.
+    `VIN`, its gate at `RP_GATE`. R101 (100 kΩ) from `RP_GATE` to `VIN` and R102 (100 kΩ) from `RP_GATE` to `GND`
+    give it half the input as gate drive: 5.5 V at 11 V, 8.5 V at 17 V, and 14.6 V at the TVS clamp; its ±20 V
+    limit is reached only at 40 V in, which is also its drain-source limit. Reversed, the gate sits at the
+    source and the FET blocks.
   - **b. A hot-plug spike:** C101 to C104 damp the ring of the supply lead and D101 clamps `VM` (cathode `VM`,
-    anode `GND`). `hardware/calc/power.py` gives the peak.
+    anode `GND`). D103 clamps `VIN_L` (cathode `VIN_L`, anode `GND`), so the logic branch and the FET's gate are
+    also protected while F101 is out or blown: at the first power-up, with only the logic fuse fitted, nothing
+    but a 10 µF ceramic capacitor would otherwise meet the lead's inductance. `hardware/calc/power.py` gives
+    the peaks.
   - **c. A short on any output connector** to `GND` or to its neighbour pin, per connector in the table below.
 - **POW-03** Motor and logic supply are fused separately: F101 between `VIN` and `VM`, F102 between `VIN` and
   `VIN_L`. Nothing but Q101, R101, F101, F102 and test point TP801 connects to `VIN`. Both fuses are plug-in parts.
@@ -71,7 +75,7 @@ damage it.
   energy a decelerating or hand-turned head returns, against the limits in DRV-09 (TMC2209: 29 V operating, 32 V
   absolute; TMC2240: 36 V and 41 V). One bulk capacitor per driver socket, C101 to C104, from `VM` to `GND`,
   each within 12 mm of its socket's pad 9 (BRD-06). Every part on `VIN_RAW`, `VIN`, `VM` and `VIN_L` is rated for
-  at least 35 V, except D101.
+  at least 35 V, except D101 and D103.
 - **POW-05 USB alone** powers the logic and never the motors. The MCU module feeds USB power to its `5V` pin
   through its own Schottky diodes D1 and D7 (Espressif schematic V1.1), so with USB alone `+5V` carries about
   4.6 V and both 3.3 V regulators run. D102 (anode `+5V_REG`, cathode `+5V`) keeps that voltage out of U101, as

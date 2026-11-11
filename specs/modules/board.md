@@ -63,6 +63,16 @@ From the owner's Rev A brief and the size entry of 2026-11-10 in `DECISIONS.md`.
 - **BRD-11 Under the modules.** No part taller than 2.2 mm stands under a module, so a module may also be
   soldered in without sockets. No solder jumper and no test point is under a module or a connector. Nothing at all stands under the
   Ethernet module: it is soldered in, 2.54 mm above the board, with its own parts on its underside.
+- **BRD-13 Ground between the two halves.** The signal tracks between the MCU module and the driver sockets cut
+  both ground pours across the whole width of the board. Ground tracks laid before routing keep the halves
+  together on the bottom layer: a spine 1.8 mm wide just north of the MCU module's J1 row, from that module's
+  ground pin (A201 pad 22) to the minus pin of J101, a link to it from the module's ground pins on its south row
+  round each end of the module, and four bridges north from it, one west of the first
+  socket and one through each gap between two sockets, ending on a ground pin of a socket; the three through
+  the gaps are 1.0 mm on each layer there. `hardware/tools/groundcut.py` measures the narrowest total
+  cross-section of ground copper, on both layers together: at least 8 mm between J101 pad 2 and the eight
+  ground pins of the driver sockets, and at least 8 mm between the MCU module's four ground pins and those
+  eight. (Before this criterion the board had 4.2 mm for both.)
 - **BRD-12 Cost (COST-01..03).** At most three BOM lines are Extended parts with a loading fee, each with its
   reason in `docs/research/rev-b-cost.md`; every other assembled line is Basic or Preferred. The estimate for
   five assembled boards, with shipping and tax, is at most €100 (`hardware/calc/cost.py`).

@@ -139,11 +139,12 @@ def jumper(ref, a, b, sheet, closed):
 sh = c.sheet("power", "Power: input protection, 5 V module, 3.3 V rails")
 add("J101", "B2P-VH", J_VH2, FP["VH2"], sh, nets=("VIN_RAW", "GND"))
 add("Q101", "AOD4185", PFET, FP["DPAK"], sh, "C400894", "AOD4185", G="RP_GATE", D="VIN_RAW", S="VIN")
-res("R101", "150k", "RP_GATE", "VIN", sh)
+res("R101", "100k", "RP_GATE", "VIN", sh)      # half the input on the gate: inside its 20 V up to 40 V in
 res("R102", "100k", "RP_GATE", "GND", sh)
 two("F101", "T 5 A", "F", FP["FUSE"], "VIN", "VM", sh)
 two("F102", "T 1 A", "F", FP["FUSE"], "VIN", "VIN_L", sh)
 add("D101", "SMBJ18A", S["DZ"], FP["SMB"], sh, "C19077573", "SMBJ18A", nets=("VM", "GND"))
+add("D103", "SMBJ18A", S["DZ"], FP["SMB"], sh, "C19077573", "SMBJ18A", nets=("VIN_L", "GND"))   # the logic branch, when F101 is out
 for r in ("C101", "C102", "C103", "C104"):
     two(r, "100 µF 35 V", "CP", FP["ELEC"], "VM", "GND", sh)
 cap("C105", "10 µF 50 V", "VIN_L", "GND", sh)

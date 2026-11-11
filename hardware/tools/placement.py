@@ -110,17 +110,18 @@ at("C204", 91.5, 72.3, 0)          # south of the module, outside its outline
 at("J101", 94.4, 45.2, 90, "1")    # plus south, minus north, at the east edge
 at("Q101", 84.5, 41.0, 270, "o")   # tab (drain) south towards J101, source and gate north
 at("R101", 84.5, 35.2, 180)        # gate to source
-at("R102", 89.0, 40.5, 270)        # gate to ground
+at("R102", 89.0, 39.65, 270)       # gate to ground
 at("F101", 90.5, 33.0, 0, "1")     # motor fuse: VIN west, VM east
 at("F102", 74.08, 32.35, 180, "1") # logic fuse: VIN east, VIN_L west
 at("TP801", 79.0, 33.1)            # VIN
-at("TP802", 97.3, 26.0)            # VM
+at("TP802", 97.3, 14.9)            # VM, on the TVS's cathode pad: nothing of VM on the top layer further south (BRD-13)
 at("TP807", 97.3, 12.2)            # GND
 at("D101", 97.3, 20.5, 270)        # TVS on the VM strip, cathode north
+at("D103", 78.4, 41.3, 90)         # TVS of the logic branch, cathode south; too tall to stand under a module
 at("C105", 65.0, 33.5, 90)
 at("C106", 62.4, 33.5, 90)
 at("U101", 67.06, 44.85, 0, "1")   # 5 V module, pins on its south side: in west, out east
-at("C107", 78.4, 45.5, 90)
+at("C107", 78.4, 46.6, 0)          # 5 V module output, south of the logic branch's TVS
 at("D102", 67.4, 48.95, 0)          # cathode (+5V) west
 at("U102", 67.5, 55.3, 270, "o")   # 3.3 V regulator: input north-west, tab (output) south
 at("C110", 61.6, 52.2, 90)         # the 5 V capacitors under the antenna end of the MCU module
@@ -204,8 +205,28 @@ for cx in CX[:3]:
     TRACKS.append(("V_SNS", "B.Cu", 0.5, [(cx + 20.6, 69.4), (cx + 20.6, 78.7)]))
 # port 4's ESD array stands beside port 3's: its supply pin joins that one's via
 TRACKS.append(("V_SNS", "F.Cu", 0.5, [(70.74, 65.4), (71.9, 65.4), (71.9, 68.2), (70.7, 69.4), (CX[2] + 20.6, 69.4)]))
+TRACKS.append(("VM", "F.Cu", 0.8, [(97.3, 14.9), (97.3, 18.35)]))        # the VM test point, through the middle via
+# Ground between the two halves (BRD-13). The signals between the MCU module and the sockets cut both pours from
+# west to east, so the ground that must stay whole is laid as tracks on the bottom, and every signal crosses it on top.
+SPINE_Y = 38.5
+GAPS = [x + 19.39 for x in XK[:3]]                                        # the middle of each gap between two sockets
+TRACKS.append(("GND", "B.Cu", 1.7, [(7.96, 40.5), (7.96, SPINE_Y)]))      # from the MCU module's ground pin at the west end of J1
+TRACKS.append(("GND", "B.Cu", 1.8, [(5.5, SPINE_Y), (91.5, SPINE_Y), (94.4, 41.24)]))   # to the supply connector's minus
+# and from its ground pins on the south row, round both ends of the module
+TRACKS.append(("GND", "B.Cu", 1.5, [(7.96, 63.36), (5.5, 61.0), (5.5, SPINE_Y)]))
+TRACKS.append(("GND", "B.Cu", 1.5, [(61.3, 63.36), (63.2, 61.5), (63.2, SPINE_Y)]))
+TRACKS.append(("GND", "B.Cu", 1.0, [(XK[0] + 2.54, Y_PWR), (XK[0] + 2.54, 15.8), (10.6, 16.6)]))   # west of the first socket
+TRACKS.append(("GND", "B.Cu", 1.5, [(10.6, 16.6), (10.6, SPINE_Y)]))
+for k, gx in enumerate(GAPS):
+    TRACKS.append(("GND", "B.Cu", 1.0, [(XK[k] + 17.78, Y_PWR), (gx, 16.0), (gx, 28.4)]))   # from the socket's ground pin through the gap
+    TRACKS.append(("GND", "F.Cu", 1.0, [(gx, 23.6), (gx, 27.9)]))                           # and once more on top
+    if k < 2:
+        TRACKS.append(("GND", "B.Cu", 3.0, [(gx, 28.4), (gx, SPINE_Y - 0.9)]))   # its round ends stay clear of the pins north and south
+    else:                                                                                   # round the logic fuse
+        TRACKS.append(("GND", "B.Cu", 2.0, [(gx, 27.9), (76.7, 30.2), (76.7, SPINE_Y)]))
 # (net, x, y): vias from the TVS's cathode pad down to the VM strip, and the vias of the tracks above
 VIAS = [("VM", 96.2, 16.9), ("VM", 97.3, 16.9), ("VM", 98.4, 16.9), ("V_SNS", 8.9, 71.6)] + [("V_SNS", cx + 20.6, 69.4) for cx in CX[:3]]
+VIAS += [("GND", gx, y) for gx in GAPS for y in (23.6, 27.9)]
 
 # ---------------------------------------------------------------- silkscreen names (tools/silk.py)
 TP_NAMES = {"+5V": "5V", "+3V3": "3V3", "V_SNS": "VSNS", "SPI_SCK": "SCK", "SPI_MOSI": "MOSI", "SPI_MISO": "MISO",

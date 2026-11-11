@@ -10,7 +10,7 @@ One function per acceptance criterion, named after its id (pow_02a_..., drv_02_.
   * key (ref, "1,2")          -> two-pad part without polarity: the two pads carry the pair (a, b) in either order
   * key (ref, "pins.h:...")   -> a pins.h consistency problem (never present in a netlist, so it always fails)
 Pad numbers are footprint pad names. Conventions of the build brief:
-  diodes D101 D102 D201 D801 D301..D601: pad 1 cathode, pad 2 anode. C111 and C101..C104: pad 1 plus.
+  diodes D101 D102 D103 D201 D801 D301..D601: pad 1 cathode, pad 2 anode. C111 and C101..C104: pad 1 plus.
   BAV99 (D302..D602): 1 anode, 2 cathode, 3 common. Q101 (TO-252): 1 gate, 2 drain, 3 source.
   Q801 (SOT-23): 1 gate, 2 source, 3 drain. U102 (SOT-223): 1 ground, 2 out, 3 in. U103: 1 ground, 2 out, 3 in.
   U101 (SIP-3): 1 in, 2 ground, 3 out. Axis n = 1..4 has reference hundreds a = n + 2.
@@ -134,17 +134,18 @@ def pow_02a_reverse_polarity():
     """POW-02a. Q101 AOD4185 TO-252: 1 gate RP_GATE, 2 drain VIN_RAW, 3 source VIN. R101 RP_GATE-VIN, R102 RP_GATE-GND."""
     d = {}
     setp(d, "Q101", {1: "RP_GATE", 2: "VIN_RAW", 3: "VIN"})
-    two(d, "R101", "RP_GATE", "VIN", "150k")
+    two(d, "R101", "RP_GATE", "VIN", "100k")
     two(d, "R102", "RP_GATE", "GND", "100k")
     return d
 
 
 def pow_02b_hotplug_clamp():
-    """POW-02b. C101..C104 plus on VM; D101 cathode VM, anode GND."""
+    """POW-02b. C101..C104 plus on VM; D101 cathode VM, anode GND; D103 cathode VIN_L, anode GND."""
     d = {}
     for c in ("C101", "C102", "C103", "C104"):
         ordered(d, c, "VM", "GND", "100 µF")
     ordered(d, "D101", "VM", "GND")
+    ordered(d, "D103", "VIN_L", "GND")
     return d
 
 
@@ -182,7 +183,7 @@ def pow_07_regulator_5v():
     two(d, "C107", "+5V_REG", "GND", "10 µF")
     two(d, "C108", "+5V", "GND", "22 µF")
     two(d, "C109", "+5V", "GND", "100 nF")
-    NET_ONLY["pow_07_regulator_5v"] = [("VIN_L", {"F102", "U101", "C105", "C106"}),
+    NET_ONLY["pow_07_regulator_5v"] = [("VIN_L", {"F102", "U101", "C105", "C106", "D103"}),
                                        ("+5V_REG", {"U101", "D102", "C107"})]
     return d
 

@@ -55,8 +55,16 @@ assert VIN_MAX + dv < TVS_VBR_MIN and KE * w_hand < TMC2209_OP
 
 print("\n== 4. Reverse polarity and the FET (POW-02a)")
 for v in (VIN_MIN, VIN_MAX, TVS_VCLAMP):
-    print(f"gate drive at {v:.1f} V in: {0.6 * v:.1f} V (R101 150k over R102 100k)")
-assert 0.6 * VIN_MIN >= 4.5 and 0.6 * TVS_VCLAMP < 20.0      # AOD4185: 20 mOhm at -4.5 V, +-20 V absolute (Rev 4.2)
+    print(f"gate drive at {v:.1f} V in: {0.5 * v:.1f} V (R101 100k over R102 100k)")
+assert 0.5 * VIN_MIN >= 4.5 and 0.5 * TVS_VCLAMP < 20.0      # AOD4185: 20 mOhm at -4.5 V, +-20 V absolute (Rev 4.2)
+print("the gate reaches its 20 V limit at 40 V in, which is the FET's drain-source limit as well")
+# With F101 out (the first power-up, or a blown motor fuse) the bulk capacitors and D101 are not on the input:
+C105, L_LEAD = 10e-6 * 0.6, 10e-6     # F: 10 uF 50 V ceramic, about 40 % less at 17 V (assumption); H: 5 m of lead (assumption)
+z0 = math.sqrt(L_LEAD / C105)
+print(f"hot-plug with F101 out: {L_LEAD * 1e6:.0f} uH against {C105 * 1e6:.0f} uF would ring towards {2 * VIN_MAX:.0f} V, or more as the capacitor loses value;")
+print(f"  D103 on VIN_L clamps it: at most {VIN_MAX / z0:.0f} A for a fraction of a millisecond, below the {TVS_IPP} A of its {TVS_VCLAMP} V clamp;")
+print(f"  the gate then sees at most {0.5 * TVS_VCLAMP:.1f} V and the 5 V module at most {TVS_VCLAMP} V of its 36 V")
+assert VIN_MAX / z0 < TVS_IPP and TVS_VCLAMP < 36.0
 print("reversed: gate and source sit together, the FET is off and its body diode blocks; it sees the supply as Vds, 17 V of 40 V")
 I_FUSE = 5.0
 print(f"loss at {I_FUSE} A: {I_FUSE ** 2 * 0.020:.2f} W in a TO-252 on its copper")

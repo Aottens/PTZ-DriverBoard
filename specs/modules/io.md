@@ -33,7 +33,8 @@ Rev A's version of this file is under the git tag `rev-a`. The camera outputs (C
 - **AUX-04 Board temperature.** RT801 from `NTC_SENSE` to `GND`, R803 (10 kΩ) from `NTC_SENSE` to `+3V3`, C801
   (100 nF) from `NTC_SENSE` to `GND`; `NTC_SENSE` goes to an ADC1 pin. RT801 stands next to the row of drivers.
   The reading is `+3V3 × R / (R + 10 kΩ)`: 1.65 V at 25 °C, by calculation 0.49 V at 70 °C.
-- **AUX-05 Test points**, one bare pad each, named on the silkscreen:
+- **AUX-05 Test points**, one bare pad each, named on the silkscreen. `VIN_L`, `+5V_REG` and `+3V3_SNS` have none:
+  each is on a through-hole pin or jumper pad that a probe reaches (F102, U101's `IN` and `OUT`, JP101's `3V3` pad).
 
   | Ref | Net | Ref | Net |
   | --- | --- | --- | --- |

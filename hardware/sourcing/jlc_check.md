@@ -20,10 +20,9 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | C20917 | AO3400A | Alpha & Omega | SOT-23 | 1 | Economic and Standard | Basic | 936 909 | 0.0801 | AO3400A |
 | C21190 | 0603WAF1001T5E | UNI-ROYAL | 0603 | 4 | Economic and Standard | Basic | 26 227 038 | 0.0017 | 1k |
 | C22775 | 0603WAF1000T5E | UNI-ROYAL | 0603 | 11 | Economic and Standard | Basic | 8 677 762 | 0.0021 | 100R |
-| C22807 | 0603WAF1503T5E | UNI-ROYAL | 0603 | 1 | Economic and Standard | Basic | 692 953 | 0.0017 | 150k |
 | C23140 | 0603WAF330JT5E | UNI-ROYAL | 0603 | 2 | Economic and Standard | Basic | 3 475 892 | 0.0024 | 33R |
 | C23162 | 0603WAF4701T5E | UNI-ROYAL | 0603 | 12 | Economic and Standard | Basic | 14 985 025 | 0.0028 | 4.7k |
-| C25803 | 0603WAF1003T5E | UNI-ROYAL | 0603 | 7 | Economic and Standard | Basic | 15 342 193 | 0.0029 | 100k |
+| C25803 | 0603WAF1003T5E | UNI-ROYAL | 0603 | 8 | Economic and Standard | Basic | 15 342 193 | 0.0029 | 100k |
 | C25804 | 0603WAF1002T5E | UNI-ROYAL | 0603 | 13 | Economic and Standard | Basic | 43 968 405 | 0.0022 | 10k |
 | C45783 | CL21A226MAQNNNE | Samsung | 0805 | 1 | Economic and Standard | Basic | 3 760 967 | 0.1055 | 22 µF |
 | C57112 | 0603B103K500NT | FH | 0603 | 3 | Economic and Standard | Basic | 5 469 737 | 0.0103 | 10 nF |
@@ -31,7 +30,7 @@ Stock changes daily: **recheck every line on the day of the order** (order gate,
 | C400894 | AOD4185 | Alpha & Omega | TO-252(DPAK) | 1 | Economic and Standard | Extended | 53 597 | 0.3724 | AOD4185 |
 | C2892547 | KNTC0603/10KF3950 | KUU | 0603 | 1 | Economic and Standard | Extended | 106 141 | 0.03 | NTC 10k |
 | C7420376 | SRV05-4 | hongjiacheng | SOT-23-6L | 5 | Economic and Standard | Preferred | 308 443 | 0.085 | SRV05-4 |
-| C19077573 | SMBJ18A | hongjiacheng | DO-214AA(SMB) | 1 | Economic and Standard | Preferred | 14 795 | 0.0494 | SMBJ18A |
+| C19077573 | SMBJ18A | hongjiacheng | DO-214AA(SMB) | 2 | Economic and Standard | Preferred | 14 795 | 0.0494 | SMBJ18A |
 
-25 BOM lines: 20 Basic, 3 Extended, 2 Preferred. All are "Economic and Standard".
+24 BOM lines: 19 Basic, 3 Extended, 2 Preferred. All are "Economic and Standard".
 Lowest stock: no line has less than 200 times what one board needs.

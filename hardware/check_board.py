@@ -198,6 +198,19 @@ def brd_06_current_paths():
               f"BRD-06 {net} tracks are 0.5 mm or wider" + (f", but for {neck:.1f} mm of {min(w):.2f} mm necks at fine-pitch pads (at most 3 mm)" if neck else ""))
 
 
+def brd_13_ground_between_the_halves():
+    sys.path.insert(0, os.path.join(HERE, "tools"))
+    import groundcut
+    r = groundcut.raster(board)
+    for text, a, b in groundcut.PAIRS:
+        w = groundcut.width(board, a, b, r)
+        check(w >= 8.0, f"BRD-13 {w:.1f} mm of ground copper, of at least 8, between {text}")
+    spine = [t for t in TRACKS if t.GetNetname() == "GND" and t.GetLayer() == pcbnew.B_Cu and t.GetWidth() / 1e6 >= 1.8 - 1e-6
+             and abs(xy(t.GetStart())[1] - xy(t.GetEnd())[1]) < 0.01]
+    length = sum(t.GetLength() for t in spine) / 1e6
+    check(length >= 80.0, f"BRD-13 the ground spine on the bottom layer is {length:.0f} mm of track 1.8 mm wide or more")
+
+
 def brd_09_silkscreen():
     texts = [d.GetText() for d in board.GetDrawings() if d.GetClass() == "PCB_TEXT" and d.GetLayer() == pcbnew.F_SilkS]
     back = [d.GetText() for d in board.GetDrawings() if d.GetClass() == "PCB_TEXT" and d.GetLayer() == pcbnew.B_SilkS]
@@ -281,7 +294,7 @@ def brd_10_erc_drc():
 
 if __name__ == "__main__":
     for f in (brd_01_outline_and_holes, brd_02_sides_and_assembly, brd_03_layers, brd_05_design_rules, brd_06_current_paths,
-              brd_09_silkscreen, brd_11_under_the_modules, brd_12_cost, brd_10_erc_drc):
+              brd_09_silkscreen, brd_11_under_the_modules, brd_13_ground_between_the_halves, brd_12_cost, brd_10_erc_drc):
         f()
     print(f"\n{len(fails)} failures")
     sys.exit(1 if fails else 0)

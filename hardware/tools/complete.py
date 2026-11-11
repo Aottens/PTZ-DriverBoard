@@ -440,12 +440,33 @@ def one_round(n):
     return changed
 
 
+def prune():
+    """Remove the vias that DRC finds connected on one layer only: Freerouting leaves them where it gave a route up."""
+    gone = {i.get("uuid") for v in drc().get("violations", []) if v["type"] == "via_dangling" for i in v["items"]}
+    board = pcbnew.LoadBoard(PCB)
+    n = 0
+    for t in list(board.GetTracks()):
+        if t.Type() == pcbnew.PCB_VIA_T and t.m_Uuid.AsString() in gone:
+            board.Remove(t)
+            KEEP.append(t)
+            n += 1
+    if n:
+        pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+        pcbnew.SaveBoard(PCB, board)
+    print(f"  {n} dangling vias removed")
+    return n
+
+
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["--prune"]:
+        sys.exit(min(prune(), 250))
     if sys.argv[1:2] == ["--round"]:              # one round per process: KiCad's Python does not survive loading a board twice
         sys.exit(min(one_round(int(sys.argv[2])), 250))
     rounds = int(sys.argv[1]) if len(sys.argv) > 1 else 4
     for n in range(1, rounds + 1):
         if not subprocess.run([sys.executable, os.path.abspath(__file__), "--round", str(n)]).returncode:
             break
+    if subprocess.run([sys.executable, os.path.abspath(__file__), "--prune"]).returncode:
+        subprocess.run([sys.executable, os.path.abspath(__file__), "--round", "3"])      # a via gone may leave a hole in a pour
     r = drc()
     print(f"left: {len(r.get('unconnected_items', []))} unconnected, {len(r.get('violations', []))} violations")

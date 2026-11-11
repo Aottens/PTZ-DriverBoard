@@ -16,7 +16,7 @@ BOARD = "PTZ DRIVER  REV B  2026-11-11"
 
 NAMES = {  # reference -> text beside it
     "J101": "11-17V", "F101": "F1 T5A", "F102": "F2 T1A", "U101": "5V REG", "J801": "FAN", "J701": "I2C",
-    "JP101": "VSNS", "JP701": "PU", "D101": "TVS", "RT801": "NTC",
+    "JP101": "VSNS", "JP701": "PU", "D101": "TVS", "D103": "TVS", "RT801": "NTC",
 }
 for n in (1, 2, 3, 4):
     a = n + 2
@@ -26,7 +26,7 @@ PAD_MARKS = [("JP101", "1", "3V3"), ("JP101", "3", "5V"), ("U101", "1", "IN"), (
 # texts with a fixed place, inside a module's outline or along an edge: (text, x, y, angle, height)
 INSIDE = [("ESP32-S3-DEVKITC-1", 30.0, 46.3, 0, 1.2), ("USB", 3.4, 52.0, 90, 1.2), ("ANT", 58.0, 45.0, 0, 1.0),
           ("WIZ850IO", 84.0, 58.0, 0, 1.2), ("RJ45", 95.3, 60.0, 90, 1.2), ("3V3", 61.3, 43.4, 90, 0.8), ("5V", 10.5, 47.4, 90, 0.8),
-          ("+", 89.1, 45.7, 0, 1.2), ("-", 89.1, 43.0, 0, 1.2)]      # the last two: beside pin 1 and pin 2 of the supply connector
+          ("+", 89.1, 45.5, 0, 1.2), ("-", 89.1, 41.9, 0, 1.2)]      # the last two: beside pin 1 and pin 2 of the supply connector
 LEGEND = [      # at most 52 characters a line: it has to fit between the MCU module's pin rows
     BOARD,
     "SUPPLY 11-17V: 1 PLUS  2 GND",

@@ -32,6 +32,7 @@
 #define PIN_STEP3 18
 #define PIN_DRV3_CS 8
 // Stall or fault of any driver, high = active. Ask the drivers over their bus which one.
+// A TMC2240's DIAG0 is open drain after reset and cannot raise this line: set diag0_pushpull in GCONF first.
 #define PIN_DIAG_OR 3
 // Axis 2 (tilt). GPIO46 must be low to enter download mode: a direction line is, a fault line may not be.
 #define PIN_DIR2 46
