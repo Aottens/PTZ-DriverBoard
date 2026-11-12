@@ -24,7 +24,7 @@ tag `rev-a` (`git show rev-a:hardware/README.md`).
 | `fab/make_jlc.py`, `fab/jlc/`, `fab/gerbers/` | BOM and placement file fitted on JLC's own footprints, and the Gerbers |
 | `fab/jlc_pins.py`, `fab/jlc_pins.md` | What JLC's own library calls each pin of every polar part, against the board's nets |
 | `sourcing/` | JLC's parts API (`jlc_api.py`) and the check table per BOM line (`jlc_check.md`) |
-| `sourcing/owner_bom.py`, `owner_bom.md`, `owner_bom_lcsc.csv` | The owner's shopping list for everything JLC does not assemble, from the schematic, with LCSC numbers |
+| `sourcing/owner_bom.py`, `owner_bom.md`, `owner_bom_reichelt.csv` | The owner's shopping list for everything JLC does not assemble, from the schematic, with Reichelt's article numbers and prices |
 | `review/` | The blind review and what was done with it |
 | `ASSEMBLY.md`, `BUILD_NOTES.md`, `datasheets/README.md` | What the owner buys, solders and plugs; lessons; datasheet sources and revisions |
 

@@ -24,6 +24,8 @@ EXTENDED_FEE = 3.07               # [page] per Extended line; Basic and Preferre
 PCB = (2.0, 7.0)                  # [schatting] five bare 2-layer boards up to 100 x 100 mm, low and high
 SHIPPING = (15.0, 25.0)           # [schatting] to the Netherlands, low and high
 VAT = 0.21                        # [schatting] that JLC charges Dutch VAT on goods and shipping at checkout
+IMPORT_EUR = (5.0, 10.0)          # [page] jlcpcb.com/help/article/eu-customs-reform-faq: EUR 3 of duty per kind of product and EUR 2
+                                  # of handling per customs line on a parcel up to EUR 150; [schatting] one line or two
 USD_EUR = 0.892                   # ECB reference rate of 2026-11-10 (api.frankfurter.dev)
 CACHE = os.path.join(HW, "sourcing", "jlc_parts.json")
 
@@ -59,7 +61,8 @@ def main():
     part_cost = sum(q * BOARDS * info[c]["price"] for c, q, _, _ in rows)
     extended = [(c, w) for c, _, _, w in rows if info[c]["library"] == "Extended"]
     fixed = SETUP + STENCIL + joints * PER_JOINT + len(extended) * EXTENDED_FEE + part_cost
-    low, high = [(fixed + PCB[i] + SHIPPING[i]) * (1 + VAT) * USD_EUR for i in (0, 1)]
+    eur = [(fixed + PCB[i] + SHIPPING[i]) * (1 + VAT) * USD_EUR for i in (0, 1)]
+    low, high = [eur[i] + IMPORT_EUR[i] for i in (0, 1)]
     lines = [
         f"Source of the parts list: `{source}`: {len(rows)} lines, {sum(q for _, q, _, _ in rows)} parts and {joints // BOARDS} solder joints per board.",
         "",
@@ -73,7 +76,9 @@ def main():
         f"| Shipping to the Netherlands | ${SHIPPING[0]:.2f} | ${SHIPPING[1]:.2f} | `[schatting]` |",
         f"| **Subtotal** | **${fixed + PCB[0] + SHIPPING[0]:.2f}** | **${fixed + PCB[1] + SHIPPING[1]:.2f}** | |",
         f"| With 21 % VAT | ${(fixed + PCB[0] + SHIPPING[0]) * (1 + VAT):.2f} | ${(fixed + PCB[1] + SHIPPING[1]) * (1 + VAT):.2f} | `[schatting]` |",
-        f"| **In euros, at {USD_EUR}** | **€{low:.0f}** | **€{high:.0f}** | ECB rate of 2026-11-10 |",
+        f"| In euros, at {USD_EUR} | €{eur[0]:.0f} | €{eur[1]:.0f} | ECB rate of 2026-11-10 |",
+        f"| EU import duty and handling | €{IMPORT_EUR[0]:.0f} | €{IMPORT_EUR[1]:.0f} | `[page]` for the rule, `[schatting]` for the number of customs lines |",
+        f"| **Total** | **€{low:.0f}** | **€{high:.0f}** | |",
         "",
         f"Extended lines ({len(extended)} of at most 3): " + "; ".join(f"{w} ({c})" for c, w in extended) + ".",
         "Free of the loading fee: " + f"{sum(info[c]['library'] == 'Basic' for c, *_ in rows)} Basic and {sum(info[c]['library'] == 'Preferred' for c, *_ in rows)} Preferred lines.",

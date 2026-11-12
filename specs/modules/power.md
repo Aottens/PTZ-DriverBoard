@@ -34,7 +34,7 @@ that Extended line.
 | C101 … C104 | 100 µF 35 V aluminium electrolytic, radial, Ø 6.3 mm, 2.5 mm pitch | none | owner | one per driver; chosen for its ESR, which damps a hot-plug |
 | C105 | 10 µF 50 V 1206 | C13585 | JLC | |
 | C106, C109, C112 | 100 nF 50 V 0603 | C14663 | JLC | |
-| U101 | 5 V, 1 A switching regulator, SIP-3, pins 1 = in, 2 = ground, 3 = out | none | owner | YLPTEC K7805-1000R3 (LCSC C2992391; sheet V1.00 06/2013: 8 to 36 V in, 680 µF load, 11.5 × 7.55 × 10.2 mm), the one on the shopping list; or Traco TSR 1-2450 (6.5 to 36 V in, 470 µF load) or Mornsun K7805-1000R3 (8 to 36 V, 680 µF). Not the RECOM R-78E5.0-1.0: its 220 µF limit is below what this board and its modules hold (POW-07) |
+| U101 | 5 V, 1 A switching regulator, SIP-3, pins 1 = in, 2 = ground, 3 = out | none | owner | Traco TSR 1-2450 (6.5 to 36 V in, 470 µF load), the one on the shopping list; or a K7805-1000R3 of Mornsun (8 to 36 V, 680 µF) or of YLPTEC (LCSC C2992391; sheet V1.00 06/2013: 8 to 36 V in, 680 µF load, 11.5 × 7.55 × 10.2 mm). Not the RECOM R-78E5.0-1.0: its 220 µF limit is below what this board and its modules hold (POW-07) |
 | D102 | SS34 Schottky, 40 V 3 A, SMA | C8678 | JLC | MDD Rev 2024A5; band = cathode |
 | C108 | 22 µF 25 V 0805 | C45783 | JLC | |
 | C107, C110, C113 | 10 µF 25 V 0805 | C15850 | JLC | |
@@ -117,11 +117,10 @@ damage it.
 - With F101 out, only C105 (10 µF) stands on the logic branch: plugging in under voltage can then ring it to about
   24 V at a 17 V supply (the blind review's estimate), under the 36 V that both named modules take. With
   F101 in, the bulk capacitors damp it.
-- The shopping list names YLPTEC's K7805-1000R3 for its price: $2.38 in the LCSC order, against about €25 for a
-  Traco with DigiKey's shipping. Its data sheet is three pages and matches the board on pin order, input range,
+- The shopping list names the Traco TSR 1-2450. YLPTEC's K7805-1000R3 costs a third of it at LCSC and was on the
+  list while LCSC was the shop; its three-page data sheet matches the board on pin order, input range,
   capacitive load and size, but states no absolute maximum input voltage, no start-up behaviour, no
-  over-temperature protection (LCSC's listing claims one) and nothing on back-feed. Nothing about it is measured;
-  the bring-up checklist's first section is where it shows. A Traco or a Mornsun fits the same holes.
+  over-temperature protection (LCSC's listing claims one) and nothing on back-feed. Nothing about it is measured.
 - The three named 5 V modules share pin order and pitch. Mornsun says its part
   may not be used "with output in parallel", and RECOM forbids back-feed for its like parts; D102 answers both.
   The capacitance in the plugged-in modules is an estimate, not read from their schematics.

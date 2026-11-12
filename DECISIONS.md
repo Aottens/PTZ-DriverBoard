@@ -4,6 +4,26 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-11 — Rev B: the loose parts come from Reichelt, and the regulator is the Traco again
+
+The owner's LCSC cart showed about €22 of import charges on the $22.51 of loose parts. Since 1 July 2026 a parcel
+up to €150 from outside the EU pays €3 of duty per kind of product (LCSC counts its first-level categories), with
+handling on top; the quantity does not count, the number of kinds does. So the list moves inside the EU.
+Reichelt has 17 of its lines, read on its Dutch pages: genuine JST headers, housings and contacts for VH, XH and
+PH, Littelfuse TR5 fuses and holders, the capacitors, a pin header and the Traco TSR 1-2450, together €22.25 with
+VAT and €6.95 for DPD. The socket strips come as four female headers 1×40 with the modules from TinyTronics.
+This overturns the entry below, of the same day: its reason was DigiKey's €18 of shipping for one regulator, and
+at Reichelt the Traco (€6.97) comes with the rest.
+*Alternatives:* LCSC, cheaper per part but about €25 of goods with VAT, shipping and the €22; TME, whose product
+pages could not be read (shipping €7.14); TinyTronics alone, which has no VH connector, no TR5 fuse and no 1 A
+regulator in this form.
+*What is given up:* a stock check by script, since Reichelt's pages refuse one. The supply connector is the
+B2P-VH-B, the same header in PBT: KiCad's footprints for the two have the same pads.
+*Also changed:* the estimate of the JLC order counts the same charge, €5 to €10, and is now €68 to €90.
+*Reversal trigger:* the charge goes, or an order grows so large that LCSC's prices outweigh it.
+
+---
+
 ## 2026-11-11 — Rev B: the 5 V regulator on the shopping list is YLPTEC's K7805-1000R3
 
 The owner asked which shop is cheapest for the loose parts. The parts cost little everywhere; what counts is the
