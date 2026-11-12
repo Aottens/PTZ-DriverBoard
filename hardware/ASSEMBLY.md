@@ -9,7 +9,7 @@ tool or plug that cannot reach is a design error: change the base or the board, 
 
 | For | Part | Count | Notes |
 | --- | --- | --- | --- |
-| A201 | ESP32-S3-DevKitC-1U, board version 1.1 | 1 | Any memory variant: the board uses no pin that the N16R8's memory takes. The "1U" has the antenna connector. On a version 1.0 board the RGB LED hangs on GPIO48, which is home input 3 here |
+| A201 | ESP32-S3-DevKitC-1U, board version 1.1 | 1 | Any memory variant: the board uses no pin that the N16R8's memory takes. The "1U" has the antenna connector. Its pin rows are 22.86 mm apart: a clone with rows 25.4 mm apart does not fit. On a version 1.0 board the RGB LED hangs on GPIO48, which is home input 3 here |
 | A201 | Female header 1×22, 2.54 mm, 8.5 mm tall | 2 | Use sockets: a regulator and other parts up to 2.1 mm tall sit under the module, and it is the part most likely to be swapped |
 | A301 … A601 | TMC2240 driver in StepStick format, with heat sink | 4 | Drawn for the BIGTREETECH TMC2240 V1.0. TMC2209 modules fit after cutting three jumpers each; on a BIGTREETECH TMC2209 V1.3 the DIAG pin beside EN points up, and must be turned down to reach the socket |
 | A301 … A601 | Female header 1×8 (two per socket) and 1×2 (one per socket) | 8 + 4 | The 1×2 takes the module's AIN and DIAG pins beside its EN pin |

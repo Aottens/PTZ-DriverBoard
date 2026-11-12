@@ -4,6 +4,31 @@ Append-only. Newest at top. Each entry: date, decision, alternatives, why, rever
 
 ---
 
+## 2026-11-12 — Rev B: what was done with the third blind review
+
+The board was routed again after the second review, so a fresh reviewer saw the board as it is ordered
+(`hardware/review/BLIND_REVIEW_3.md`). Verdict: order. No KRITIEK finding, one BELANGRIJK, nine KLEIN; nothing on
+the board or in the JLC files changes. Six findings repeat ones accepted on 2026-11-11 (the RJ45 jack and the
+wall, the height above the heat sinks, the headroom of `+3V3`, the shared reset, the three rails without a test
+point, the DevKit version). Two are new and accepted:
+- **SLEEPN of the TMC2240 above VS + 0.3 V on USB alone (K6).** The BIGTREETECH module ties SLEEPN to VCC_IO
+  through 4.7 kΩ, and the board gives the modules 3.3 V on USB while `VM` is off. The calculation: at most
+  (3.3 − 0.6) V / 4.7 kΩ = 0.6 mA into the pin per module. The limit is the module maker's to keep and the
+  resistor bounds the current; the board cannot change it without giving up logic on USB, which POW-05 asks.
+  What follows for firmware: four modules can feed `VM` about 2.3 mA against the 110 kΩ of the sense divider,
+  so `VM` may read up to about 2.7 V with no supply. Bring-up 7.9 measures it.
+- **No TVS array on the home inputs (K8).** 10 kΩ in series and a BAV99 to ground and `+3V3` keep the MCU pin
+  within its limits with 17 V on the wire (1.3 mA, by calculation), which is what ENC-03 asks. A hard discharge
+  lands on a 0603 resistor.
+One finding is answered by calculation: the reviewer suspected that JLC's placement point of an asymmetric part
+differs from the point in the CPL (K5). `make_jlc.py` writes the origin of JLC's own footprint, and for the
+TO-252, both SOT-223 and the SOT-23 parts that origin is the middle of JLC's pads, within 0.1 mm of the middle of
+ours. The preview stays the check.
+*Alternatives:* a diode from `VM` to each socket's SLEEPN, which is not on the StepStick pins; a spare channel of
+each SRV05-4 on the home input, which is a board change and a new routing for a part the spec does not ask.
+*Reversal trigger:* bring-up 7.9 reads `VM` above 3 V on USB alone, or a home input fails after a discharge:
+then the next revision takes the SRV05-4's spare channels, or a GPIO on the reset line (K3).
+
 ## 2026-11-11 — Rev B: the loose parts come from Reichelt, and the regulator is the Traco again
 
 The owner's LCSC cart showed about €22 of import charges on the $22.51 of loose parts. Since 1 July 2026 a parcel
