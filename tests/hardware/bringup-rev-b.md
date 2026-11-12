@@ -122,6 +122,9 @@ Solder the driver sockets (2 × 8 pins and the 2-pin piece each) and the motor c
       temperature (the TMC2240 reports it) and `NTC_SENSE`. Note them. Nothing above 80 °C.
 - [ ] 7.8 A TMC2209 module, if one is to be used: cut the three `SPI` jumpers of its socket first. Firmware talks to
       it on that socket's select pin as a one-wire UART.
+- [ ] 7.9 All four TMC2240 modules in, supply disconnected, USB only: measure `VM`. Expected: below 3 V; it need
+      not be 0 V. Each module pulls its SLEEPN pin to 3.3 V through 4.7 kΩ, and that pin may leak into `VM` while
+      the supply is off (at most 0.6 mA per module, by calculation). Note the value: firmware must read it as "no motor supply".
 
 ## 8. Fan (AUX-03)
 

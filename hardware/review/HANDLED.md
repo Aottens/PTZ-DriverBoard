@@ -30,8 +30,8 @@ review, by a fresh reviewer, of the board after the changes below; its findings 
 ## Second review
 
 `BLIND_REVIEW_2.md`: no KRITIEK finding, three BELANGRIJK, fifteen KLEIN. The reviewer saw the board of commit
-5dbc536. The two findings on the board itself are fixed and the board was routed once more; that last board has
-had no third blind review, only the checks.
+5dbc536. The two findings on the board itself are fixed and the board was routed once more; that last board is
+the one the third review saw, in the third table.
 
 | Finding | Class | Done | Where |
 | --- | --- | --- | --- |
@@ -53,3 +53,27 @@ had no third blind review, only the checks.
 | K13 silkscreen: pin functions only on the bottom; texts at JP101 touch; the minus at J101 between the pads | KLEIN | The minus moved towards pin 2; the rest left: the top has no room for pin functions | `tools/silk.py` |
 | K14 drill maps in the Gerber zip | KLEIN | Fixed: no drill maps are made | `fab/make_gerbers.sh` |
 | K15 five lines are probably Extended | KLEIN | Not so: three, as K13 of the first review | `sourcing/jlc_check.md` |
+
+## Third review
+
+`BLIND_REVIEW_3.md`, of 2026-11-12, by a fresh reviewer who saw the board as it is ordered (the file of
+2026-11-11 12:06, SHA-256 `7f8679c4…`): verdict *bestellen*, no KRITIEK finding, one BELANGRIJK, nine KLEIN.
+Nothing on the board or in the JLC files changed. The reasons are in `DECISIONS.md` (2026-11-12).
+
+| Finding | Class | Done | Where |
+| --- | --- | --- | --- |
+| B1 about 29 mm between the RJ45 jack and the wall | BELANGRIJK | Accepted before, as B3 of the second review: a requirement on the base | `DECISIONS.md` (2026-11-11); `ASSEMBLY.md`; RB-05 |
+| K1 0.4 mm of height to spare above the driver heat sinks | KLEIN | Accepted before, as K9 and K11 | `ASSEMBLY.md`; bring-up 9.2 |
+| K2 `+3V3` has little headroom above the AMS1117 | KLEIN | Accepted before, as K1 and K3 | `DECISIONS.md` (2026-11-11) |
+| K3 multiplexer and Ethernet module reset only with the MCU module's EN pin | KLEIN | Accepted before, as K6 and K9 | `DECISIONS.md` (2026-11-11) |
+| K4 only a genuine DevKitC-1U fits, version 1.1 for the LED; clones may have rows 25.4 mm apart | KLEIN | Noted: the row spacing is in the parts table now. The shopping list names Espressif's own board | `ASSEMBLY.md` |
+| K5 JLC's placement point of an asymmetric part may lie up to 1.5 mm from the point in the CPL | KLEIN | Not so, by calculation: the CPL gives the origin of JLC's own footprint, and for Q101, U102, U103, Q801 and D302 that origin is the middle of JLC's pads, within 0.1 mm of the middle of ours. The preview still shows it | `fab/make_jlc.py`; preview checklist, last line |
+| K6 on USB alone, SLEEPN of each TMC2240 module sits above VS + 0.3 V | KLEIN | Accepted: the module's own 4.7 kΩ limits it to about 0.6 mA. New bring-up step: the four modules may lift `VM` to under 3 V with no supply | `DECISIONS.md` (2026-11-12); bring-up 7.9 |
+| K7 `VIN_L`, `+5V_REG` and `+3V3_SNS` have no test point | KLEIN | Accepted before, as K12 | AUX-05 |
+| K8 the home inputs have no TVS array | KLEIN | Accepted: 10 kΩ in series and a BAV99 clamp protect the MCU pin, which is what ENC-03 asks | `DECISIONS.md` (2026-11-12); ENC-03 |
+| K9 the sensor and home plugs stand 3.4 mm from the south edge, behind the motor | KLEIN | Covered: they are plugged before the board goes in, and the board comes out with its cables | `ASSEMBLY.md`, mounting steps 2 and 3 |
+
+The reviewer's four notes for firmware (DIAG0 push-pull, the console off UART0 because of `HOME4`, SPI mode 3 at
+10 MHz at most, the TMC2209's one-wire UART) were known: they are in `firmware/include/pins.h` and bring-up 7.3
+and 7.8. His guess of five Extended lines is the one of both earlier reviews: JLC's API gives three
+(`sourcing/jlc_check.md`), and the order page shows it.

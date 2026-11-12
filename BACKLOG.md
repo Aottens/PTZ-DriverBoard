@@ -81,6 +81,7 @@ Covers S2-01 to S3-03 below. The research questions and slice 1 stay open: the r
 | RB-06 | `hardware/sourcing/owner_bom.py` makes the owner's shopping list from the schematic: every part JLC does not assemble, with plugs, contacts and sockets, LCSC numbers, stock and prices, and a CSV for LCSC's BOM tool. | BRD-08 | S | done (2026-11-11, #6) |
 | RB-07 | The shopping list names a 5 V regulator that comes with the LCSC order, YLPTEC's K7805-1000R3, with its data sheet read against POW-07 and the choice in `DECISIONS.md`. | POW-07, BRD-08 | S | done (2026-11-11, #7) |
 | RB-08 | The shopping list buys inside the EU: the loose parts at Reichelt with article numbers and prices, the socket strips at TinyTronics, the Traco regulator again; the JLC estimate counts the EU import charge. | BRD-08, BRD-12, POW-07 | S | done (2026-11-11, #8) |
+| RB-09 | A third blind review covers the board as it is ordered, the one routed again after the second review, and each finding is fixed, accepted or answered in `hardware/review/HANDLED.md`. | BRD-10, BRD-02 | S | done (2026-11-12, #9) |
 
 ## Slice 4 — bring-up and firmware
 

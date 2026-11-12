@@ -1,13 +1,14 @@
 # PTZ driver board — State
 
-_Last updated: 2026-11-11_
+_Last updated: 2026-11-12_
 
 This file is the handoff: where we are, what is next, what waits. It is not a log.
 
 ## Current focus
 **Rev B of the board is designed and ready for a JLC quote** (RB-02, PR #5): a two-layer carrier of 100 × 80 mm for
 plug-in drivers, MCU and Ethernet. The estimate for five assembled boards is €68 to €90, of the €100 in COST-01
-(`docs/research/rev-b-cost.md`). Nothing is ordered and nothing is measured.
+(`docs/research/rev-b-cost.md`). A third blind review of the board as ordered says order, with nothing to change
+(`hardware/review/HANDLED.md`). Nothing is ordered and nothing is measured.
 
 Rev A is under the git tag `rev-a`; `hardware/` now holds Rev B.
 
